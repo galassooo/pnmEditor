@@ -1,0 +1,110 @@
+/* Stile per la finestra generale */
+.root {
+    -fx-background-color: #262626; /* Sfondo scuro principale */
+}
+
+/* MenuBar */
+.menu-bar {
+    -fx-background-color: #2f343f; /* Colore dello sfondo del MenuBar */
+}
+.pane{
+    -fx-background-color: #262626;
+    -fx-background-radius: 2;
+}
+/* Menu */
+.menu-bar .menu-item {
+
+
+}
+.menu .label{
+    -fx-background-color: #2f343f;
+    -fx-text-fill: #B8BFC9; /* Colore grigio chiaro per il testo del Menu */
+}
+
+
+/* Stile dei pulsanti */
+.button {
+    -fx-background-color: #474747; /* Colore di sfondo dei pulsanti */
+    -fx-text-fill: #ffffff; /* Colore del testo dei pulsanti */
+    -fx-background-radius: 0;
+}
+
+/* Stile dei pulsanti */
+.bottomButton {
+    -fx-background-color: #262626; /* Colore di sfondo dei pulsanti */
+    -fx-text-fill: #ffffff; /* Colore del testo dei pulsanti */
+    -fx-background-radius: 0;
+}
+
+.button:hover {
+    -fx-background-color: #6b6e7b; /* Colore quando il pulsante è in hover */
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: #676767; /* Colore del testo delle etichette */
+}
+
+/* TextField (casella di ricerca) */
+.text-field {
+    -fx-background-color: #262626;
+    -fx-text-fill: #676767;
+    -fx-prompt-text-fill: #676767;
+    -fx-background-radius: 5;
+    -fx-font-size: 12;
+}
+
+/* ImageView */
+.image-view {
+    -fx-background-color: #2b2e3b;
+}
+
+/* Stile per il ScrollPane */
+.scroll-pane {
+    -fx-background-color: #262626;  /* Sfondo del contenitore esterno dello ScrollPane */
+    -fx-border-color: transparent; /* Rimuovi eventuali bordi bianchi */
+}
+
+/* Imposta lo sfondo anche per il viewport */
+.scroll-pane .viewport {
+    -fx-background-color: #262626;  /* Sfondo del contenuto scorrevole (viewport) */
+}
+
+/* Stile per l'AnchorPane dentro lo ScrollPane */
+.anchor-pane {
+    -fx-background-color: #262626;  /* Sfondo scuro anche per l'AnchorPane interno */
+}
+/* Cambia lo stile generale della scroll-bar */
+.scroll-bar {
+    -fx-background-color: #262626; /* Colore dello sfondo della barra */
+}
+
+/* Cambia lo stile della track (la pista su cui scorre il thumb) */
+.scroll-bar .track {
+    -fx-background-color: #262626; /* Colore della traccia della barra */
+}
+
+/* Cambia lo stile del thumb (la parte trascinabile) */
+.scroll-bar .thumb {
+    -fx-background-color: #474747; /* Colore del thumb */
+    -fx-background-radius: 5px; /* Arrotondamento degli angoli del thumb */
+}
+
+/* Cambia lo stile dei bottoni di incremento/decremento */
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-pref-width: 0;    /* Imposta la larghezza a 0 per nasconderli */
+    -fx-pref-height: 0;   /* Imposta l'altezza a 0 per nasconderli */
+    -fx-opacity: 0;
+}
+
+/* Cambia il colore dei bottoni quando vengono premuti */
+.scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
+    -fx-pref-width: 0;    /* Imposta la larghezza a 0 per nasconderli */
+    -fx-pref-height: 0;   /* Imposta l'altezza a 0 per nasconderli */
+    -fx-opacity: 0;
+}
+
+/* Stile per la top HBox */
+.topHbox{
+    -fx-background-color: #474747;
+}

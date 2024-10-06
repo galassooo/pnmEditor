@@ -3,7 +3,6 @@ package ch.supsi.dispatcher;
 import ch.supsi.model.CustomCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -13,15 +12,10 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import org.apache.commons.imaging.Imaging;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.Objects;
 
-//TODO va creato un dispatcher e separati i metodi,
-// è fatto per vedere se funziona tutto come deve
-// prima di trovarmi a sistemare codice da 73819376436 parti diverse
-public class MainScreen {
+import java.net.URL;
+
+public class FilterDispatcher {
     @FXML
     private Label moduleOrder;
 
@@ -34,9 +28,6 @@ public class MainScreen {
 
     @FXML
     private Label v3;
-
-    @FXML
-    private ImageView image;
 
     @FXML
     private ImageView lente;
@@ -116,21 +107,6 @@ public class MainScreen {
         bottomButton2.setGraphic(loadButtonImages("/images/buttons/bottom/bb2.png", 20));
 
 
-        //-------- PROVA CARICAMENTO IMMAGINE -------
-        BufferedImage img = null;
-        try {
-            URL file = getClass().getResource("/images/TEST IMAGES - To be removed/image.ascii.pgm"); //ppm, bmp, pmg
-
-            img =  Imaging.getBufferedImage(file.openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if(img!= null){
-            Image i1 = SwingFXUtils.toFXImage(img, null);
-            image.setImage(i1);
-        }
-
         items = FXCollections.observableArrayList(new CustomCell("a"), new CustomCell("b"), new CustomCell("c"));
 
         list.setItems(items);
@@ -202,29 +178,29 @@ public class MainScreen {
 
                 // Gestione del rilascio dell'elemento
                 cell.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard();
-                    boolean success = false;
+                            Dragboard db = event.getDragboard();
+                            boolean success = false;
 
-                    if (db.hasString()) {
-                        int draggedId = Integer.parseInt(db.getString());
-                        CustomCell draggedData = findElementById(draggedId);
-                        // Cerca l'elemento trascinato usando l'ID memorizzato
+                            if (db.hasString()) {
+                                int draggedId = Integer.parseInt(db.getString());
+                                CustomCell draggedData = findElementById(draggedId);
+                                // Cerca l'elemento trascinato usando l'ID memorizzato
 
 
-                        int draggedIndex = items.indexOf(draggedData);  // Indice dell'elemento trascinato
-                        int targetIndex = items.indexOf(cell.getItem());  // Indice dell'elemento target
+                                int draggedIndex = items.indexOf(draggedData);  // Indice dell'elemento trascinato
+                                int targetIndex = items.indexOf(cell.getItem());  // Indice dell'elemento target
 
-                        if (draggedIndex != targetIndex && targetIndex >= 0) {
-                            // Rimuovi dalla posizione originale e aggiungi nella nuova
-                            items.remove(draggedData);
-                            items.add(targetIndex, draggedData);
-                            success = true;
+                                if (draggedIndex != targetIndex && targetIndex >= 0) {
+                                    // Rimuovi dalla posizione originale e aggiungi nella nuova
+                                    items.remove(draggedData);
+                                    items.add(targetIndex, draggedData);
+                                    success = true;
+                                }
+                            }
+
+                            event.setDropCompleted(success);
+                            event.consume();
                         }
-                    }
-
-                    event.setDropCompleted(success);
-                    event.consume();
-                }
                 );
                 cell.setOnDragDone(event -> {
                     // Rimuovi la classe CSS per ripristinare il cursore normale

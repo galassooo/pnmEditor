@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<MenuBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0" BorderPane.alignment="CENTER">
+<MenuBar stylesheets="/style/style.css" fx:controller="ch.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
+         BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
     <Menu mnemonicParsing="false" text="File">
         <items>
             <MenuItem mnemonicParsing="false" text="Open..." disable="true"/>
@@ -29,7 +27,9 @@
     </Menu>
     <Menu mnemonicParsing="false" text="Insert">
         <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
+            <MenuItem mnemonicParsing="false" text="Rotation" />
+            <MenuItem mnemonicParsing="false" text="Negative" />
+            <MenuItem mnemonicParsing="false" text="Mirror" />
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="Format">

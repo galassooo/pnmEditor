@@ -7,29 +7,29 @@
          BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
     <Menu mnemonicParsing="false" text="File">
         <items>
-            <MenuItem mnemonicParsing="false" text="Open..." disable="true"/>
+            <MenuItem mnemonicParsing="false" text="Open..." disable="true" onAction="#open"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As" />
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" onAction="#save" />
+            <MenuItem mnemonicParsing="false" text="Save As" onAction="#saveAs" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" onAction="#close"/>
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="Edit">
         <items>
-            <MenuItem mnemonicParsing="false" text="Delete" />
+            <MenuItem mnemonicParsing="false" text="Delete" onAction="#delete" />
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="View">
         <items>
-            <MenuItem mnemonicParsing="false" text="About" />
+            <MenuItem mnemonicParsing="false" text="About" onAction="#about" />
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="Insert">
         <items>
-            <MenuItem mnemonicParsing="false" text="Rotation" />
-            <MenuItem mnemonicParsing="false" text="Negative" />
-            <MenuItem mnemonicParsing="false" text="Mirror" />
+            <MenuItem mnemonicParsing="false" text="Rotation" onAction="#rotate" />
+            <MenuItem mnemonicParsing="false" text="Negative" onAction="#negative" />
+            <MenuItem mnemonicParsing="false" text="Mirror" onAction="#mirror"/>
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="Format">

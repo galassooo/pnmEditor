@@ -1,6 +1,4 @@
 package ch.supsi.model;
-
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

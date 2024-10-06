@@ -1,14 +1,11 @@
-package ch.supsi.dispatcher;
+package ch.supsi.view.image;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.apache.commons.imaging.Imaging;
-
-import java.awt.image.BufferedImage;
 import java.net.URL;
 
-public class ImageDispatcher {
+public class MainImageView {
     @FXML
     private ImageView image;
 

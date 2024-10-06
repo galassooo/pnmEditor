@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -56,6 +58,23 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl);
             VBox filterColumn = loader.load();
+
+            fxmlUrl = getClass().getResource("/layout/FilterList.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            ScrollPane filterList = loader.load();
+            filterColumn.getChildren().add(1, filterList);
+
+            fxmlUrl = getClass().getResource("/layout/InfoBar.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            HBox infoBar = loader.load();
+            filterColumn.getChildren().add(infoBar);
+
             root.setLeft(filterColumn);
 
             fxmlUrl = getClass().getResource("/layout/Image.fxml");

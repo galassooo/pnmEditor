@@ -1,51 +1,66 @@
-
+/* Background */
 .root {
     -fx-background-color: #262626;
 }
 
 /* MenuBar */
-.menu-bar {
-    -fx-background-color: #2f343f;
-}
-.pane{
-    -fx-background-color: #262626;
-    -fx-background-radius: 2;
-}
-/* Menu */
-.menu-bar .menu-item {
-
-
-}
 .menu .label{
-    -fx-background-color: #2f343f;
     -fx-text-fill: #B8BFC9;
 }
 
+.menu-bar {
+    -fx-background-color: #2f343f;
+    -fx-background-radius: 10;
+}
 
-/* Stile dei pulsanti */
+.menu {
+    -fx-background-color: #2f343f;
+    -fx-text-fill: #B8BFC9;
+}
+.menu:hover, .menu:focused{
+    -fx-background-color: #1a1d23;
+    -fx-cursor: hand;
+}
+
+.context-menu {
+    -fx-background-color: #2f343f;
+    -fx-padding: 0;
+}
+
+.menu-item:focused, .menu-item:hover {
+    -fx-background-color: #1a1d23;
+    -fx-cursor: hand;
+}
+
+.menu-item:disabled {
+    -fx-background-color: #545865;
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+/* Buttons */
 .button {
-    -fx-background-color: #474747; /* Colore di sfondo dei pulsanti */
-    -fx-text-fill: #ffffff; /* Colore del testo dei pulsanti */
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 0;
 }
 
-/* Stile dei pulsanti */
 .bottomButton {
-    -fx-background-color: #262626; /* Colore di sfondo dei pulsanti */
-    -fx-text-fill: #ffffff; /* Colore del testo dei pulsanti */
+    -fx-background-color: #262626;
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 0;
 }
 
 .button:hover {
-    -fx-background-color: #6b6e7b; /* Colore quando il pulsante è in hover */
+    -fx-background-color: #6b6e7b;
 }
 
 /* Labels */
 .label {
-    -fx-text-fill: #676767; /* Colore del testo delle etichette */
+    -fx-text-fill: #676767;
 }
 
-/* TextField (casella di ricerca) */
+/* Search box */
 .text-field {
     -fx-background-color: #262626;
     -fx-text-fill: #676767;
@@ -53,63 +68,64 @@
     -fx-background-radius: 5;
     -fx-font-size: 12;
 }
+.pane{
+    -fx-background-color: #262626;
+    -fx-background-radius: 2;
+}
 
 /* ImageView */
 .image-view {
     -fx-background-color: #2b2e3b;
 }
 
-/* Stile per il ScrollPane */
+/* ScrollPane */
 .scroll-pane {
-    -fx-background-color: #262626;  /* Sfondo del contenitore esterno dello ScrollPane */
-    -fx-border-color: transparent; /* Rimuovi eventuali bordi bianchi */
+    -fx-background-color: #262626;
+    -fx-border-color: transparent;
 }
 
-/* Imposta lo sfondo anche per il viewport */
+
 .scroll-pane .viewport {
-    -fx-background-color: #262626;  /* Sfondo del contenuto scorrevole (viewport) */
+    -fx-background-color: #262626;
 }
 
-/* Stile per l'AnchorPane dentro lo ScrollPane */
 .anchor-pane {
-    -fx-background-color: #262626;  /* Sfondo scuro anche per l'AnchorPane interno */
+    -fx-background-color: #262626;
 }
-/* Cambia lo stile generale della scroll-bar */
+
 .scroll-bar {
-    -fx-background-color: #262626; /* Colore dello sfondo della barra */
+    -fx-background-color: #262626;
 }
 
-/* Cambia lo stile della track (la pista su cui scorre il thumb) */
+
 .scroll-bar .track {
-    -fx-background-color: #262626; /* Colore della traccia della barra */
+    -fx-background-color: #262626;
+
 }
 
-/* Cambia lo stile del thumb (la parte trascinabile) */
 .scroll-bar .thumb {
-    -fx-background-color: #474747; /* Colore del thumb */
-    -fx-background-radius: 5px; /* Arrotondamento degli angoli del thumb */
+    -fx-background-color: #474747;
+    -fx-background-radius: 5px;
 }
 
-/* Cambia lo stile dei bottoni di incremento/decremento */
 .scroll-bar .increment-button, .scroll-bar .decrement-button {
-    -fx-pref-width: 0;    /* Imposta la larghezza a 0 per nasconderli */
-    -fx-pref-height: 0;   /* Imposta l'altezza a 0 per nasconderli */
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
     -fx-opacity: 0;
 }
 
-/* Cambia il colore dei bottoni quando vengono premuti */
 .scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
-    -fx-pref-width: 0;    /* Imposta la larghezza a 0 per nasconderli */
-    -fx-pref-height: 0;   /* Imposta l'altezza a 0 per nasconderli */
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
     -fx-opacity: 0;
 }
 
-/* Stile per la top HBox */
+/* top HBox */
 .topHbox{
     -fx-background-color: #474747;
 }
 
-/* File: custom-listview.css */
+/* Custom cells */
 .list-cell {
     -fx-background-color: #262626;
     -fx-text-fill: #676767;
@@ -123,12 +139,10 @@
     -fx-cell-hover-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-focus-color: transparent; /* Rimuove il colore del focus */
+    -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
-/* File: custom-listview.css */
 
-/* Rimuove le celle vuote */
 .list-cell:empty {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -137,13 +151,12 @@
 }
 
 .list-button{
-    -fx-background-color: #262626; /* Colore di sfondo dei pulsanti */
+    -fx-background-color: #262626;
     -fx-background-radius: 0;
 }
 .dragging-hand {
     -fx-cursor: closed-hand;
 }
-
 .pane-hand-hover:hover {
     -fx-cursor: open-hand;
 }

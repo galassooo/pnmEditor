@@ -3,6 +3,7 @@ package ch.supsi;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -28,17 +29,24 @@ public class MainFx extends Application {
             primaryStage.close();
         });
 
-
         try {
-            URL fxmlUrl = getClass().getResource("/mainScreen.fxml");
+            URL fxmlUrl = getClass().getResource("/layout/MainScreen.fxml");
             if (fxmlUrl == null) {
                 return;
             }
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            BorderPane content = loader.load();
+            BorderPane msContent = loader.load();
 
+            fxmlUrl = getClass().getResource("/layout/MenuBar.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            MenuBar menuBar = loader.load();
 
-            Scene scene = new Scene(content);
+            msContent.setTop(menuBar);
+
+            Scene scene = new Scene(msContent);
             primaryStage.setScene(scene);
             primaryStage.show();
 

@@ -3,9 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
@@ -18,65 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" stylesheets="style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.supsi.dispatcher.MainScreen">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" stylesheets="/style/style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.supsi.dispatcher.MainScreen">
    <top>
-       <MenuBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0" BorderPane.alignment="CENTER">
-           <Menu mnemonicParsing="false" text="File">
-               <items>
-                   <MenuItem mnemonicParsing="false" text="Close" />
-               </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Edit">
-               <items>
-                   <MenuItem mnemonicParsing="false" text="Delete" />
-               </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="View">
-               <items>
-                   <MenuItem mnemonicParsing="false" text="About" />
-               </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Insert">
-               <items>
-                   <MenuItem mnemonicParsing="false" text="Action 1" />
-               </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Format">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Styles">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Table">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Form">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Tools">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Window">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Help">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-           </Menu>
-       </MenuBar>
+
    </top>
    <right>
       <VBox prefHeight="780.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
@@ -174,7 +116,10 @@
             </StackPane>
              <ScrollPane fx:id="scPane" prefHeight="680.0" prefWidth="200.0">
                  <content>
-                     <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="234.0" styleClass="anchor-pane" />
+                     <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="250.0" styleClass="anchor-pane">
+                     <children>
+                        <ListView fx:id="list" prefHeight="662.0" prefWidth="250.0" />
+                     </children></AnchorPane>
                  </content>
              </ScrollPane>
             <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0">

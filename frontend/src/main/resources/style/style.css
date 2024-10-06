@@ -1,11 +1,11 @@
-/* Stile per la finestra generale */
+
 .root {
-    -fx-background-color: #262626; /* Sfondo scuro principale */
+    -fx-background-color: #262626;
 }
 
 /* MenuBar */
 .menu-bar {
-    -fx-background-color: #2f343f; /* Colore dello sfondo del MenuBar */
+    -fx-background-color: #2f343f;
 }
 .pane{
     -fx-background-color: #262626;
@@ -18,7 +18,7 @@
 }
 .menu .label{
     -fx-background-color: #2f343f;
-    -fx-text-fill: #B8BFC9; /* Colore grigio chiaro per il testo del Menu */
+    -fx-text-fill: #B8BFC9;
 }
 
 
@@ -107,4 +107,43 @@
 /* Stile per la top HBox */
 .topHbox{
     -fx-background-color: #474747;
+}
+
+/* File: custom-listview.css */
+.list-cell {
+    -fx-background-color: #262626;
+    -fx-text-fill: #676767;
+    -fx-padding: 8px;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.list-view {
+    -fx-control-inner-background: #262626;
+    -fx-cell-hover-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent; /* Rimuove il colore del focus */
+    -fx-faint-focus-color: transparent;
+}
+/* File: custom-listview.css */
+
+/* Rimuove le celle vuote */
+.list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.list-button{
+    -fx-background-color: #262626; /* Colore di sfondo dei pulsanti */
+    -fx-background-radius: 0;
+}
+.dragging-hand {
+    -fx-cursor: closed-hand;
+}
+
+.pane-hand-hover:hover {
+    -fx-cursor: open-hand;
 }

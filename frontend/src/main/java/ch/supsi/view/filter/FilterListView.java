@@ -155,20 +155,25 @@ public class FilterListView {
 
     private void setupKeyBindings() {
         list.setOnKeyPressed(event -> {
+            // Verifica se il tasto Control (per Windows/Linux) o Command (per macOS) è premuto
+            boolean isControlDown = event.isControlDown() || event.isMetaDown();
+
             switch (event.getCode()) {
                 case C: // Copia
-                    if (list.getSelectionModel().getSelectedItem() != null) {
+                    if (isControlDown && list.getSelectionModel().getSelectedItem() != null) {
                         copiedItem = list.getSelectionModel().getSelectedItem();
                     }
                     break;
+
                 case V: // Incolla
-                    if (copiedItem != null) {
+                    if (isControlDown && copiedItem != null) {
                         items.add(new CustomCell(copiedItem.getText()));  // Aggiungi una nuova copia dell'elemento
                     }
                     break;
             }
         });
     }
+
 
     private CustomCell findElementById(int id) {
         // Cerca un elemento per ID nella lista

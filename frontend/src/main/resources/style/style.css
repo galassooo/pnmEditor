@@ -133,6 +133,12 @@
     -fx-border-color: #3a3a3a;
     -fx-border-width: 0 0 1px 0;
 }
+.list-cell:selected {
+    -fx-background-color: #434242;
+}
+.list-cell:selected .button {
+    -fx-background-color: #434242;
+}
 
 .list-view {
     -fx-control-inner-background: #262626;
@@ -160,3 +166,4 @@
 .pane-hand-hover:hover {
     -fx-cursor: open-hand;
 }
+

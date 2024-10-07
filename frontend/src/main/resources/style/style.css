@@ -1,0 +1,162 @@
+/* Background */
+.root {
+    -fx-background-color: #262626;
+}
+
+/* MenuBar */
+.menu .label{
+    -fx-text-fill: #B8BFC9;
+}
+
+.menu-bar {
+    -fx-background-color: #2f343f;
+    -fx-background-radius: 10;
+}
+
+.menu {
+    -fx-background-color: #2f343f;
+    -fx-text-fill: #B8BFC9;
+}
+.menu:hover, .menu:focused{
+    -fx-background-color: #1a1d23;
+    -fx-cursor: hand;
+}
+
+.context-menu {
+    -fx-background-color: #2f343f;
+    -fx-padding: 0;
+}
+
+.menu-item:focused, .menu-item:hover {
+    -fx-background-color: #1a1d23;
+    -fx-cursor: hand;
+}
+
+.menu-item:disabled {
+    -fx-background-color: #545865;
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 0;
+}
+
+.bottomButton {
+    -fx-background-color: #262626;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 0;
+}
+
+.button:hover {
+    -fx-background-color: #6b6e7b;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: #676767;
+}
+
+/* Search box */
+.text-field {
+    -fx-background-color: #262626;
+    -fx-text-fill: #676767;
+    -fx-prompt-text-fill: #676767;
+    -fx-background-radius: 5;
+    -fx-font-size: 12;
+}
+.pane{
+    -fx-background-color: #262626;
+    -fx-background-radius: 2;
+}
+
+/* ImageView */
+.image-view {
+    -fx-background-color: #2b2e3b;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: #262626;
+    -fx-border-color: transparent;
+}
+
+
+.scroll-pane .viewport {
+    -fx-background-color: #262626;
+}
+
+.anchor-pane {
+    -fx-background-color: #262626;
+}
+
+.scroll-bar {
+    -fx-background-color: #262626;
+}
+
+
+.scroll-bar .track {
+    -fx-background-color: #262626;
+
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #474747;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+/* top HBox */
+.topHbox{
+    -fx-background-color: #474747;
+}
+
+/* Custom cells */
+.list-cell {
+    -fx-background-color: #262626;
+    -fx-text-fill: #676767;
+    -fx-padding: 8px;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.list-view {
+    -fx-control-inner-background: #262626;
+    -fx-cell-hover-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.list-button{
+    -fx-background-color: #262626;
+    -fx-background-radius: 0;
+}
+.dragging-hand {
+    -fx-cursor: closed-hand;
+}
+.pane-hand-hover:hover {
+    -fx-cursor: open-hand;
+}

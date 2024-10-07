@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:controller="ch.supsi.view.filter.FilterListView" fx:id="scPane" prefHeight="680.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml">
+    <content>
+        <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="250.0" styleClass="anchor-pane">
+            <children>
+                <ListView fx:id="list" prefHeight="662.0" prefWidth="250.0" />
+            </children></AnchorPane>
+    </content>
+</ScrollPane>

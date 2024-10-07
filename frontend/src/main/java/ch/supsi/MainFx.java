@@ -1,10 +1,18 @@
 package ch.supsi;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
 
 public class MainFx extends Application {
 
@@ -23,13 +31,67 @@ public class MainFx extends Application {
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
             e.consume();
-            primaryStage.close(); //TODO EXIT CONTROLLER
+            primaryStage.close();
         });
 
 
-        Scene scene = new Scene(new BorderPane());
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        try {
+            URL fxmlUrl = getClass().getResource("/layout/BasePane.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            BorderPane root = loader.load();
 
+
+            fxmlUrl = getClass().getResource("/layout/MenuBar.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            MenuBar menuBar = loader.load();
+            root.setTop(menuBar);
+
+            fxmlUrl = getClass().getResource("/layout/FilterColumn.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            VBox filterColumn = loader.load();
+
+            fxmlUrl = getClass().getResource("/layout/FilterList.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            ScrollPane filterList = loader.load();
+            filterColumn.getChildren().add(1, filterList);
+
+            fxmlUrl = getClass().getResource("/layout/InfoBar.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            HBox infoBar = loader.load();
+            filterColumn.getChildren().add(infoBar);
+
+            root.setLeft(filterColumn);
+
+            fxmlUrl = getClass().getResource("/layout/Image.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            ImageView image = loader.load();
+            root.setCenter(image);
+
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

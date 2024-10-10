@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<VBox stylesheets="/style/style.css" styleClass="history-vbox" prefHeight="780.0" prefWidth="250.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="250.0">
+            <children>
+                <Label text="▼ Information" />
+            </children>
+            <VBox.margin>
+                <Insets left="15.0" />
+            </VBox.margin>
+        </HBox>
+        <ScrollPane prefHeight="161.0" prefWidth="250.0">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="172.0" prefWidth="232.0">
+                    <children>
+                        <ListView layoutX="-1.0" prefHeight="161.0" prefWidth="235.0" />
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+    </children>
+</VBox>

@@ -9,7 +9,7 @@ public class MenuDispatcher {
     public void saveAs(){
 
     }
-    public void delete(){
+    public void preferences(){
 
     }
 
@@ -25,15 +25,4 @@ public class MenuDispatcher {
 
     }
 
-    public void negative(){
-
-    }
-
-    public void rotate(){
-
-    }
-
-    public void mirror(){
-
-    }
 }

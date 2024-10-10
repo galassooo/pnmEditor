@@ -1,5 +1,8 @@
 package ch.supsi;
 
+import ch.supsi.controller.FilterController;
+import ch.supsi.controller.IFilterController;
+import ch.supsi.view.filter.IFilteredListView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -27,6 +30,7 @@ public class MainFx extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        IFilterController filterController = FilterController.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
@@ -65,6 +69,10 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl);
             ScrollPane filterList = loader.load();
+
+            IFilteredListView controller = loader.getController();
+            filterController.addEventPublisher(controller);
+
             filterColumn.getChildren().add(1, filterList);
 
             fxmlUrl = getClass().getResource("/layout/InfoBar.fxml");
@@ -85,6 +93,23 @@ public class MainFx extends Application {
             ImageView image = loader.load();
             root.setCenter(image);
 
+            fxmlUrl = getClass().getResource("/layout/HistoryColumn.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            VBox historyBox = loader.load();
+
+
+
+            fxmlUrl = getClass().getResource("/layout/InfoColumn.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            VBox infoCol = loader.load();
+
+            root.setRight(new VBox(historyBox, infoCol));
 
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
@@ -95,3 +120,4 @@ public class MainFx extends Application {
         }
     }
 }
+

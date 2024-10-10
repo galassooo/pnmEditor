@@ -112,6 +112,7 @@
     -fx-pref-width: 0;
     -fx-pref-height: 0;
     -fx-opacity: 0;
+    -fx-background-color: transparent;
 }
 
 .scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
@@ -165,5 +166,10 @@
 }
 .pane-hand-hover:hover {
     -fx-cursor: open-hand;
+}
+/* History column */
+.history-vbox {
+    -fx-border-color: transparent transparent transparent #474747;
+    -fx-border-width: 0 0 0 2px;
 }
 

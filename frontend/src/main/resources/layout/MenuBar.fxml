@@ -17,54 +17,12 @@
     </Menu>
     <Menu mnemonicParsing="false" text="Edit">
         <items>
-            <MenuItem mnemonicParsing="false" text="Delete" onAction="#delete" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="View">
-        <items>
-            <MenuItem mnemonicParsing="false" text="About" onAction="#about" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Insert">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Rotation" onAction="#rotate" />
-            <MenuItem mnemonicParsing="false" text="Negative" onAction="#negative" />
-            <MenuItem mnemonicParsing="false" text="Mirror" onAction="#mirror"/>
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Format">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Styles">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Table">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Form">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Tools">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-        </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Window">
-        <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
+            <MenuItem mnemonicParsing="false" text="Preferences" onAction="#preferences" />
         </items>
     </Menu>
     <Menu mnemonicParsing="false" text="Help">
         <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
+            <MenuItem mnemonicParsing="false" text="About" onAction="#about" />
         </items>
     </Menu>
 </MenuBar>

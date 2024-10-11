@@ -1,6 +1,33 @@
 package ch.supsi.business.Image;
 
-public abstract class ImageBusiness{
+import ch.supsi.business.strategy.ArgbConvertStrategy;
+
+public class ImageBusiness{
+
+    private int[][] argbPixels;
+    private int width;
+    private int height;
+
+    public ImageBusiness(int[][] original, int width, int height, ArgbConvertStrategy strategy) {
+        this.argbPixels = strategy.toArgb(original);
+        this.width = width;
+        this.height = height;
+    }
+
+    public int[][] getPixels() {
+        return argbPixels;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+
+
 
     /*tutte le immagini hanno h,w e matrice di pixel PER FORZA.
     essendo che le immagini DEVONO essere per forza aperte dall'utente attraverso il

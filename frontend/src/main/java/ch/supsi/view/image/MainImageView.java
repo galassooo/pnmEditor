@@ -1,7 +1,11 @@
 package ch.supsi.view.image;
 
+import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.dataaccess.PBMDataAccess;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 
 import java.io.IOException;
 
@@ -12,9 +16,9 @@ public class MainImageView {
     @FXML
     void initialize() throws IOException {
 
-        /*
+
         //--------- PROVA CARICAMENTO ----- PASSA DAL MODEL E ELIMINA STA SCHIFEZZA :)
-        Image bmpImage = new BMPImageDataAccess().readBMP("/images/TEST IMAGES - To be removed/image.bmp");
+        ImageBusiness bmpImage = PBMDataAccess.getInstance().read("/images/TEST IMAGES - To be removed/prova.pbm");
         int width = bmpImage.getWidth();
         int height = bmpImage.getHeight();
         int[][] pixels = bmpImage.getPixels();
@@ -31,6 +35,6 @@ public class MainImageView {
 
         image.setImage(writableImage);
 
-         */
+
     }
 }

@@ -1,7 +1,7 @@
 package ch.supsi.view.image;
 
 import ch.supsi.business.Image.ImageBusiness;
-import ch.supsi.dataaccess.PBMDataAccess;
+import ch.supsi.dataaccess.PGMDataAccess;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -18,7 +18,7 @@ public class MainImageView {
 
 
         //--------- PROVA CARICAMENTO ----- PASSA DAL MODEL E ELIMINA STA SCHIFEZZA :)
-        ImageBusiness bmpImage = PBMDataAccess.getInstance().read("/images/TEST IMAGES - To be removed/prova.pbm");
+        ImageBusiness bmpImage = PGMDataAccess.getInstance().read("/images/TEST IMAGES - To be removed/16bit.ascii.pgm");
         int width = bmpImage.getWidth();
         int height = bmpImage.getHeight();
         int[][] pixels = bmpImage.getPixels();

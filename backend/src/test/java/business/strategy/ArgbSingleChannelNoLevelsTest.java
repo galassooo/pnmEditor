@@ -1,6 +1,6 @@
 package business.strategy;
 
-import ch.supsi.business.strategy.ArgbSingleChannelNoLevels;
+import ch.supsi.business.strategy.ArgbSingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,122 +8,43 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ArgbSingleChannelNoLevelsTest {
 
     /* instance field */
-    private ArgbSingleChannelNoLevels strategy;
+    private ArgbSingleBit strategy;
 
     /**
      * create an instance
      */
     @BeforeEach
     void setUp() {
-        strategy = new ArgbSingleChannelNoLevels();
+        strategy = new ArgbSingleBit();
     }
 
-    /* -------- conversion --------- */
+    /* -------- single pixel conversion -------- */
 
     /**
-     * test conversion with all ones (black expected)
+     * Test conversion of a pixel with minimum value (expected ARGB_WHITE)
      */
     @Test
-    void testToArgbWithAllOnes() {
-        int[][] inputMatrix = {
-                {1, 1},
-                {1, 1}
-        };
-
-        int[][] expectedOutput = {
-                {0xFF000000, 0xFF000000},
-                {0xFF000000, 0xFF000000}
-        };
-
-        assertArrayEquals(expectedOutput, strategy.toArgb(inputMatrix));
+    void testToArgbWithZero() {
+        int argbValue = strategy.toArgb(0, 1);  // 0 represents white
+        assertEquals(0xFFFFFFFF, argbValue, "expected white for a pixel value of 0");
     }
 
     /**
-     * test conversion with all zeros (white expected)
+     * Test conversion of a pixel with maximum value (expected ARGB_BLACK)
      */
     @Test
-    void testToArgbWithAllZeros() {
-        int[][] inputMatrix = {
-                {0, 0},
-                {0, 0}
-        };
-
-        int[][] expectedOutput = {
-                {0xFFFFFFFF, 0xFFFFFFFF},
-                {0xFFFFFFFF, 0xFFFFFFFF}
-        };
-
-        assertArrayEquals(expectedOutput, strategy.toArgb(inputMatrix));
+    void testToArgbWithMaxValue() {
+        int argbValue = strategy.toArgb(1, 1);  // Max value represents black
+        assertEquals(0xFF000000, argbValue, "expected black for a pixel value of 1");
     }
 
     /**
-     * test conversion with a matrix containing zeros and ones
+     * Test conversion of a pixel with half the max gray value (expected ARGB_WHITE)
      */
     @Test
-    void testToArgbWithMixedValues() {
-        int[][] inputMatrix = {
-                {1, 0},
-                {0, 1}
-        };
-
-        int[][] expectedOutput = {
-                {0xFF000000, 0xFFFFFFFF},
-                {0xFFFFFFFF, 0xFF000000}
-        };
-
-        assertArrayEquals(expectedOutput, strategy.toArgb(inputMatrix));
+    void testToArgbWithHalfMaxValue() {
+        int argbValue = strategy.toArgb(0, 2);  // Less than maxValue should be white
+        assertEquals(0xFFFFFFFF, argbValue, "expected white for a pixel with max value bigger than 1");
     }
-
-    /* --------- size --------- */
-
-    /**
-     * test conversion for an empty matrix
-     */
-    @Test
-    void testToArgbWithEmptyMatrix() {
-        int[][] inputMatrix = new int[0][0];
-        int[][] output = strategy.toArgb(inputMatrix);
-        assertEquals(0, output.length, "Expected an empty output matrix");
-    }
-
-    /**
-     * test conversion for a non-square matrix
-     */
-    @Test
-    void testToArgbWithNonSquareMatrix() {
-        int[][] inputMatrix = {
-                {1, 0, 1},
-                {0, 1, 0}
-        };
-
-        int[][] expectedOutput = {
-                {0xFF000000, 0xFFFFFFFF, 0xFF000000},
-                {0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF}
-        };
-
-        assertArrayEquals(expectedOutput, strategy.toArgb(inputMatrix));
-    }
-
-    /* -------- single pixel -------- */
-
-    /**
-     * Test conversion of a single pixel with value one.
-     * Expects the output to be ARGB_BLACK (opaque black) when input is 1.
-     */
-    @Test
-    void testConvertToArgbWithOne() {
-        int argbValue = strategy.toArgb(new int[][]{{1}})[0][0];
-        assertEquals(0xFF000000, argbValue, "Expected ARGB_BLACK for input 1");
-    }
-
-    /**
-     * Test conversion of a single pixel with value zero.
-     * Expects the output to be ARGB_WHITE (opaque white) when input is 0.
-     */
-    @Test
-    void testConvertToArgbWithZero() {
-        int argbValue = strategy.toArgb(new int[][]{{0}})[0][0];
-        assertEquals(0xFFFFFFFF, argbValue, "Expected ARGB_WHITE for input 0");
-    }
-
 }
+

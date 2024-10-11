@@ -22,10 +22,11 @@ class PNMDataAccessTest {
         pbmDataAccess = PBMDataAccess.getInstance();
     }
 
-    /* --------- Read Header - Valid Input --------- */
+
+    /* --------- read header - valid input --------- */
 
     /**
-     * test reading a valid binary header
+     * Test reading a valid binary header
      */
     @Test
     void testReadHeaderValidBinaryFormat() throws IOException {
@@ -40,7 +41,7 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test reading a valid non-binary header (ASCII)
+     * Test reading a valid non-binary header (ASCII)
      */
     @Test
     void testReadHeaderValidNonBinaryFormat() throws IOException {
@@ -54,10 +55,10 @@ class PNMDataAccessTest {
         assertFalse(pbmDataAccess.isBinaryFormat());
     }
 
-    /* --------- Read Header - Invalid Input --------- */
+    /* --------- read header - invalid input --------- */
 
     /**
-     * test invalid dimensions in the header
+     * Test invalid dimensions in the header
      */
     @Test
     void testReadHeaderInvalidDimensions() {
@@ -69,7 +70,7 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test negative width in header
+     * Test negative width in header
      */
     @Test
     void testReadHeaderNegativeWidth() {
@@ -80,7 +81,7 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test negative height in header
+     * Test negative height in header
      */
     @Test
     void testReadHeaderNegativeHeight() {
@@ -91,7 +92,7 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test invalid format in header
+     * Test invalid format in header
      */
     @Test
     void testInvalidFormat() {
@@ -101,7 +102,7 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test invalid comment format in header
+     * Test invalid comment format in header
      */
     @Test
     void testInvalidComment() {
@@ -114,11 +115,11 @@ class PNMDataAccessTest {
     /* --------- read - valid input --------- */
 
     /**
-     * test reading a valid binary file
+     * Test reading a valid binary file
      */
     @Test
     void testReadBinaryFormat() throws IOException {
-        String binaryFilePath = "/images/pnmBinary";
+        String binaryFilePath = "/images/pbm/pnmBinary";
         ImageBusiness result = pbmDataAccess.read(binaryFilePath);
         assertNotNull(result);
     }
@@ -128,7 +129,7 @@ class PNMDataAccessTest {
      */
     @Test
     void testReadAsciiFormat() throws IOException {
-        String asciiFilePath = "/images/pnmAscii";
+        String asciiFilePath = "/images/pbm/pnmAscii";
         ImageBusiness result = pbmDataAccess.read(asciiFilePath);
         assertNotNull(result);
     }
@@ -138,7 +139,7 @@ class PNMDataAccessTest {
      */
     @Test
     void testReadRealFile() {
-        String filePath = "/images/pnmBinary";
+        String filePath = "/images/pbm/pnmBinary";
 
         try (InputStream is = getClass().getResourceAsStream(filePath)) {
             assertNotNull(is, "file not found: " + filePath);
@@ -172,7 +173,7 @@ class PNMDataAccessTest {
     /* --------- read - invalid input --------- */
 
     /**
-     * test reading a non-existent file
+     * Test reading a non-existent file
      */
     @Test
     public void testReadFileNotFound() {
@@ -180,25 +181,25 @@ class PNMDataAccessTest {
     }
 
     /**
-     * test reading an invalid binary file
+     * Test reading an invalid binary file
      */
     @Test
     void testReadBinaryInvalidInput() {
-        assertThrows(IOException.class, () -> pbmDataAccess.read("/images/incompleteBin"));
+        assertThrows(IOException.class, () -> pbmDataAccess.read("/images/pbm/incompleteBin"));
     }
 
     /**
-     * test reading an invalid acii file
+     * Test reading an invalid acii file
      */
     @Test
     void testReadAsciiInvalidInput() {
-        assertThrows(IOException.class, () -> pbmDataAccess.read("/images/incompleteAscii"));
+        assertThrows(IOException.class, () -> pbmDataAccess.read("/images/pbm/incompleteAscii"));
     }
 
     /* --------- getters and setters --------- */
 
     /**
-     * test setter methods for width, height, and format
+     * Test setter methods for width, height, and format
      */
     @Test
     void testSetters() {
@@ -211,3 +212,4 @@ class PNMDataAccessTest {
         assertEquals("P4", pbmDataAccess.format);
     }
 }
+

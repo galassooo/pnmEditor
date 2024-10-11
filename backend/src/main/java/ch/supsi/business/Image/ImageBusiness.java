@@ -2,14 +2,14 @@ package ch.supsi.business.Image;
 
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 
-public class ImageBusiness{
+public class ImageBusiness {
 
     private int[][] argbPixels;
     private int width;
     private int height;
 
-    public ImageBusiness(int[][] original, int width, int height, ArgbConvertStrategy strategy) {
-        this.argbPixels = strategy.toArgb(original);
+    public ImageBusiness(int[][] original, int width, int height, int maxVal, ArgbConvertStrategy strategy) {
+        this.argbPixels = createArgbMatrix(original,maxVal, strategy);
         this.width = width;
         this.height = height;
     }
@@ -26,6 +26,24 @@ public class ImageBusiness{
         return height;
     }
 
+    private int[][] createArgbMatrix(int[][] original, int maxValue, ArgbConvertStrategy strategy) {
+        int height = original.length;
+        if (height == 0) {
+            return new int[0][0];
+        }
+        int width = original[0].length;
+
+        int[][] argbMatrix = new int[height][width];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                argbMatrix[y][x] = strategy.toArgb(original[y][x], maxValue);
+            }
+        }
+
+        return argbMatrix;
+    }
+}
 
 
 
@@ -77,4 +95,5 @@ public class ImageBusiness{
         quindi si occupa di costruire un immagine.
         new ImageBusiness(path, w, h, pixels[][], new BooleanToARGBConv());
      */
-}
+
+

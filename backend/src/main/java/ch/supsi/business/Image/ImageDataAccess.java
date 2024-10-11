@@ -7,3 +7,4 @@ public interface ImageDataAccess {
     ImageBusinessInterface readImage(String path);
     ImageBusinessInterface writeImage(String path);
 }
+

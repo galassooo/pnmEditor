@@ -1,5 +1,8 @@
 package dataaccess.image;
 
+import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ArgbSingleChannel;
+import ch.supsi.business.strategy.ArgbThreeChannel;
 import ch.supsi.dataaccess.PGMDataAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -140,7 +143,6 @@ class PGMDataAccessTest {
         ByteArrayInputStream dataStream = new ByteArrayInputStream(binaryData);
         //combined is
         InputStream is = new SequenceInputStream(headerStream, dataStream);
-        pgmDataAccess.processBinary(is);
 
         long[][] expectedMatrix = {
                 {10, 20, 30, 40},
@@ -149,7 +151,7 @@ class PGMDataAccessTest {
                 {130, 140, 150, 160}
         };
 
-        assertArrayEquals(expectedMatrix, pgmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pgmDataAccess.processBinary(is));
     }
 
     /**
@@ -172,8 +174,6 @@ class PGMDataAccessTest {
         //combined is
         InputStream is = new SequenceInputStream(headerStream, dataStream);
 
-        pgmDataAccess.processBinary(is);
-
         long[][] expectedMatrix = {
                 {10, 20, 30, 40},
                 {50, 60, 70, 80},
@@ -181,7 +181,7 @@ class PGMDataAccessTest {
                 {110, 110, 110, 110}
         };
 
-        assertArrayEquals(expectedMatrix, pgmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pgmDataAccess.processBinary(is));
     }
 
     /**
@@ -192,8 +192,6 @@ class PGMDataAccessTest {
         String asciiData = "255\n10 20 30 40\n50 60 70 80\n90 100 110 120\n130 140 150 160\n";
         InputStream is = new ByteArrayInputStream(asciiData.getBytes());
 
-        pgmDataAccess.processAscii(is);
-
         long[][] expectedMatrix = {
                 {10, 20, 30, 40},
                 {50, 60, 70, 80},
@@ -201,7 +199,7 @@ class PGMDataAccessTest {
                 {130, 140, 150, 160}
         };
 
-        assertArrayEquals(expectedMatrix, pgmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pgmDataAccess.processAscii(is));
     }
 
     /* --------- invalid input --------- */
@@ -263,14 +261,13 @@ class PGMDataAccessTest {
         };
 
         InputStream is = new ByteArrayInputStream((maxGrayValueHeader + new String(binaryData)).getBytes());
-        pgmDataAccess.processBinary(is);
 
         long[][] expectedMatrix = {
                 {10, 20, 30},
                 {40, 50, 60}
         };
 
-        assertArrayEquals(expectedMatrix, pgmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pgmDataAccess.processBinary(is));
     }
 
     /**
@@ -292,6 +289,27 @@ class PGMDataAccessTest {
 
         IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
         assertEquals("Insufficient data in binary pmg file for a 16 bit image", e.getMessage());
+    }
+
+    /* ---------- getters --------- */
+
+    /**
+     * test the return type of argb strategy
+     */
+    @Test
+    void testGetArgbStrategy(){
+        ArgbConvertStrategy expected = new ArgbSingleChannel();
+        //non è possibile fare equals -> classe senza stato
+        assertEquals(expected.getClass(), pgmDataAccess.getArgbConvertStrategy().getClass());
+    }
+    /**
+     * test the return type of maxValue strategy
+     */
+    @Test
+    void TestGetMaxValue() throws IOException {
+        InputStream is = new ByteArrayInputStream("24\n".getBytes());
+        pgmDataAccess.readMaxValue(is);
+        assertEquals(24, pgmDataAccess.getMaxPixelValue());
     }
 }
 

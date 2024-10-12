@@ -1,5 +1,8 @@
 package dataaccess.image;
 
+import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ArgbSingleBit;
+import ch.supsi.business.strategy.ArgbThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.supsi.dataaccess.PBMDataAccess;
@@ -48,7 +51,6 @@ class PBMDataAccessTest {
         };
 
         InputStream is = new ByteArrayInputStream(binaryData);
-        pbmDataAccess.processBinary(is);
 
         long[][] expectedMatrix = {
                 {1, 0, 1, 0},
@@ -57,7 +59,7 @@ class PBMDataAccessTest {
                 {0, 0, 1, 1}
         };
 
-        assertArrayEquals(expectedMatrix, pbmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pbmDataAccess.processBinary(is));
     }
 
     /**
@@ -68,8 +70,6 @@ class PBMDataAccessTest {
         String asciiData = "1 0 1 0\n0 1 0 1\n1 1 0 0\n0 0 1 1\n";
         InputStream is = new ByteArrayInputStream(asciiData.getBytes());
 
-        pbmDataAccess.processAscii(is);
-
         long[][] expectedMatrix = {
                 {1, 0, 1, 0},
                 {0, 1, 0, 1},
@@ -77,7 +77,7 @@ class PBMDataAccessTest {
                 {0, 0, 1, 1}
         };
 
-        assertArrayEquals(expectedMatrix, pbmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix,pbmDataAccess.processAscii(is) );
     }
 
     /* --------- invalid input --------- */
@@ -123,14 +123,32 @@ class PBMDataAccessTest {
         };
 
         InputStream is = new ByteArrayInputStream(binaryData);
-        pbmDataAccess.processBinary(is);
 
         long[][] expectedMatrix = {
                 {1, 0, 1, 0, 1, 0, 1, 0, 1},
                 {0, 1, 0, 1, 0, 1, 0, 1, 0}
         };
 
-        assertArrayEquals(expectedMatrix, pbmDataAccess.originalMatrix);
+        assertArrayEquals(expectedMatrix, pbmDataAccess.processBinary(is));
+    }
+
+    /* ---------- getters --------- */
+
+    /**
+     * test the return type of argb strategy
+     */
+    @Test
+    void testGetArgbStrategy(){
+        ArgbConvertStrategy expected = new ArgbSingleBit();
+        //non è possibile fare equals -> classe senza stato
+        assertEquals(expected.getClass(), pbmDataAccess.getArgbConvertStrategy().getClass());
+    }
+    /**
+     * test the return type of maxValue strategy
+     */
+    @Test
+    void TestGetMaxValue() {
+        assertEquals(1, pbmDataAccess.getMaxPixelValue());
     }
 }
 

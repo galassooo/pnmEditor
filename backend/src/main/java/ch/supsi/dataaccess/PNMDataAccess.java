@@ -1,13 +1,19 @@
 package ch.supsi.dataaccess;
 
+import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.Image.ImageDataAccess;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 // TEMPLATE PATTERN
-public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess, PGMDataAccess {
+public abstract sealed class PNMDataAccess
+        implements ImageDataAccess
+        permits PBMDataAccess, PPMDataAccess, PGMDataAccess
+{
 
     /* static fields */
     private static final List<String> ALL_ASCII_HEADERS = List.of("P1", "P2", "P3");
@@ -18,9 +24,13 @@ public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess,
     public int width;
     //ASDRUBALO da mettere a protected dopo test
     public int height;
-
     //ASDRUBALO da mettere a private dopo test
     public String format;
+
+    protected abstract long[] @NotNull [] processBinary(InputStream is) throws IOException;
+    protected abstract long[] @NotNull [] processAscii(InputStream is) throws IOException;
+    protected abstract int getMaxPixelValue();
+    protected abstract ArgbConvertStrategy getArgbConvertStrategy();
 
 
     /**
@@ -84,27 +94,26 @@ public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess,
      * @return an ImageBusiness object representing the processed image
      * @throws IOException if the file is not found or there is an error reading it
      */
-    public final @NotNull ImageBusiness read(String path) throws IOException {
+    public final @NotNull ImageBusinessInterface read(String path) throws IOException {
         try (InputStream is = getClass().getResourceAsStream(path)){
             if (is == null) {
                 throw new IOException("File not found: " + path);
             }
 
             readHeader(is);
+            long[][] processedMatrix;
             if (isBinaryFormat()) {
-                return processBinary(is);
+                processedMatrix = processBinary(is);
             } else {
-                return processAscii(is);
+                processedMatrix = processAscii(is);
             }
-        } //DARA' SEMPRE 2/4 BRANCH COPERTI PERCHE' SI ASPETTA CHE PROCESS BINARY O ASCII
-        // RITORNINO NULL MA E' IMPOSSIBILE E LE CLASSI SONO SEALD QUINDI NEANCHE CON UN ESTENSIONE
+            return new ImageBusiness(processedMatrix, path, format, getMaxPixelValue(), getArgbConvertStrategy());
+        } //DARA' SEMPRE 1/2 BRANCH COPERTI PERCHE' SI ASPETTA CHE RITORNI NULL MA E' IMPOSSIBILE
     }
 
-    @NotNull
-    protected abstract ImageBusiness processBinary(InputStream is) throws IOException;
-    @NotNull
-    protected abstract ImageBusiness processAscii(InputStream is) throws IOException;
-
+    public final ImageBusinessInterface write(String path){
+        return null;
+    }
     //ASDRUBALO da mettere a private dopo test
     public boolean isBinaryFormat() {
         return ALL_BINARY_HEADERS.contains(format);

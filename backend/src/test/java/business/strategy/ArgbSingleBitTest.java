@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ArgbSingleBit {
+public class ArgbSingleBitTest {
 
     /* instance field */
     private ch.supsi.business.strategy.ArgbSingleBit strategy;

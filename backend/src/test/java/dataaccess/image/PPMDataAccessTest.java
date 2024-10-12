@@ -1,15 +1,14 @@
 package dataaccess.image;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ArgbThreeChannel;
 import ch.supsi.dataaccess.PPMDataAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,14 +42,12 @@ class PPMDataAccessTest {
         };
         InputStream data = new ByteArrayInputStream(binaryData);
         InputStream is = new SequenceInputStream(header, data);
-        ImageBusiness result = ppmDataAccess.processBinary(is);
 
         long[][] expectedMatrix = {
                 {(255 << 16) | (128 << 8) | 64, (32 << 16) | (16 << 8) | 8},
                 {(200 << 16) | (100 << 8) | 50, (25 << 16) | (12 << 8) | 6}
         };
-        assertArrayEquals(expectedMatrix, ppmDataAccess.originalMatrix);
-        assertNotNull(result);
+        assertArrayEquals(expectedMatrix, ppmDataAccess.processBinary(is));
     }
 
     /**
@@ -69,17 +66,12 @@ class PPMDataAccessTest {
         InputStream data = new ByteArrayInputStream(binaryData);
         InputStream is = new SequenceInputStream(header, data);
 
-        ImageBusiness result = ppmDataAccess.processBinary(is);
-
         long[][] expectedMatrix = {
                 {((long) 255 << 32) | ((long) 128 << 16) | 64, ((long) 32 << 32) | ((long) 16 << 16) | 8},
                 {((long) 200 << 32) | ((long) 100 << 16) | 50, ((long) 25 << 32) | ((long) 12 << 16) | 6}
         };
 
-        System.out.println(Arrays.deepToString(ppmDataAccess.originalMatrix));
-
-        assertArrayEquals(expectedMatrix, ppmDataAccess.originalMatrix);
-        assertNotNull(result);
+        assertArrayEquals(expectedMatrix, ppmDataAccess.processBinary(is));
     }
 
 
@@ -93,15 +85,13 @@ class PPMDataAccessTest {
         InputStream data = new ByteArrayInputStream(asciiData.getBytes());
 
         InputStream is = new SequenceInputStream(header, data);
-        ImageBusiness result = ppmDataAccess.processAscii(is);
 
         long[][] expectedMatrix = {
                 {(255 << 16) | (128 << 8) | 64, (32 << 16) | (16 << 8) | 8},
                 {(200 << 16) | (100 << 8) | 50, (25 << 16) | (12 << 8) | 6}
         };
 
-        assertArrayEquals(expectedMatrix, ppmDataAccess.originalMatrix);
-        assertNotNull(result);
+        assertArrayEquals(expectedMatrix,  ppmDataAccess.processAscii(is));
     }
 
     @Test
@@ -111,15 +101,13 @@ class PPMDataAccessTest {
         InputStream data = new ByteArrayInputStream(asciiData.getBytes());
 
         InputStream is = new SequenceInputStream(header, data);
-        ImageBusiness result = ppmDataAccess.processAscii(is);
 
         long[][] expectedMatrix = {
                 {((long) 340 << 32) | ((long) 500 << 16) | 80, ((long) 32 << 32) | ((long) 16 << 16) | 340},
                 {((long) 200 << 32) | ((long) 430 << 16) | 50, ((long) 279 << 32) | ((long) 12 << 16) | 6}
         };
 
-        assertArrayEquals(expectedMatrix, ppmDataAccess.originalMatrix);
-        assertNotNull(result);
+        assertArrayEquals(expectedMatrix, ppmDataAccess.processAscii(is));
     }
 
 
@@ -233,5 +221,25 @@ class PPMDataAccessTest {
         InputStream is = new ByteArrayInputStream("ciao\n".getBytes());
         IOException e = assertThrows(IOException.class, () -> ppmDataAccess.readMaxValue(is));
         assertEquals("Max color value is missing or invalid in header", e.getMessage());
+    }
+    /* ---------- getters --------- */
+
+    /**
+     * test the return type of argb strategy
+     */
+    @Test
+    void testGetArgbStrategy(){
+        ArgbConvertStrategy expected = new ArgbThreeChannel();
+        //non è possibile fare equals -> classe senza stato
+        assertEquals(expected.getClass(), ppmDataAccess.getArgbConvertStrategy().getClass());
+    }
+    /**
+     * test the return type of maxValue strategy
+     */
+    @Test
+    void TestGetMaxValue() throws IOException {
+        InputStream is = new ByteArrayInputStream("24\n".getBytes());
+        ppmDataAccess.readMaxValue(is);
+        assertEquals(24, ppmDataAccess.getMaxPixelValue());
     }
 }

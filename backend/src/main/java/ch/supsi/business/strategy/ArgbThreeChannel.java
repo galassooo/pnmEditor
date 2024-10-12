@@ -27,5 +27,4 @@ public class ArgbThreeChannel implements ArgbConvertStrategy{
         return (0xFFL << 24) | (red << 16) | (green << 8) | blue;
 
     }
-
 }

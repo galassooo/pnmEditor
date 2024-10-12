@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbThreeChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
@@ -14,9 +14,6 @@ public final class PPMDataAccess extends PNMDataAccess {
 
     /* instance field */
     private int maxColorValue;
-
-    // ASDRUBALO da eliminare dopo testing
-    public long[][] originalMatrix;
 
 
     /* singleton */
@@ -36,6 +33,7 @@ public final class PPMDataAccess extends PNMDataAccess {
      * @param is inputStream
      * @throws IOException when the maxColorValue is missing or has a wrong format
      */
+    //ASDRUBALO private
     public void readMaxValue(InputStream is) throws IOException {
         String maxColorLine = readLine(is).trim();
 
@@ -57,8 +55,9 @@ public final class PPMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixel values are out of range or the file is corrupted
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processBinary(InputStream is) throws IOException {
+    public long[] @NotNull [] processBinary(InputStream is) throws IOException {
         readMaxValue(is);
         long[][] pixelMatrix = new long[height][width];
 
@@ -76,9 +75,7 @@ public final class PPMDataAccess extends PNMDataAccess {
                 pixelMatrix[y][x] = rgbValue;
             }
         }
-
-        originalMatrix = pixelMatrix;
-        return new ImageBusiness(pixelMatrix, width, height, maxColorValue, new ArgbThreeChannel());
+        return pixelMatrix;
     }
 
 
@@ -112,8 +109,9 @@ public final class PPMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixel values are out of range or the file is corrupted
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processAscii(InputStream is) throws IOException {
+    public long[] @NotNull [] processAscii(InputStream is) throws IOException {
         readMaxValue(is);
         long[][] pixelMatrix = new long[height][width];
 
@@ -126,9 +124,19 @@ public final class PPMDataAccess extends PNMDataAccess {
             }
         }
 
-        originalMatrix = pixelMatrix; // ASDRUBALO per testing
-        return new ImageBusiness(pixelMatrix, width, height, maxColorValue, new ArgbThreeChannel());
+        return pixelMatrix;
     }
+    //ASDRUBALO protected
+    @Override
+    public int getMaxPixelValue() {
+        return maxColorValue;
+    }
+    //ASDRUBALO protected
+    @Override
+    public ArgbConvertStrategy getArgbConvertStrategy() {
+        return new ArgbThreeChannel();
+    }
+
     /**
      * Legge e verifica i valori RGB da Scanner
      */

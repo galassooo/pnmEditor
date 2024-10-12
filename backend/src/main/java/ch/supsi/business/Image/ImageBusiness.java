@@ -1,17 +1,32 @@
 package ch.supsi.business.Image;
 
+import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 
-public class ImageBusiness {
+public class ImageBusiness implements ImageBusinessInterface {
 
+    /* instance field */
     private long[][] argbPixels;
     private int width;
     private int height;
 
-    public ImageBusiness(long[][] original, int width, int height, int maxVal, ArgbConvertStrategy strategy) {
+    private final String filePath;
+
+    // Tutti i formati di immagine
+    // (PNG, BMP, GIF, JPEG, TIFF, ICO, PPM, PGM, PBM etc...)
+    // hanno un magicNumber che permette al software di riconoscerne
+    // il tipo senza basarsi sull'estensione. Di conseguenza va incluso
+    // come attributo di un immagine generica
+    // P + valore nei PNM è semplicemente codificato in ascii e non in byte
+    private final String magicNumber;
+
+    public ImageBusiness(long[][] original, String path, String magicNumber, int maxVal, ArgbConvertStrategy strategy) {
         this.argbPixels = createArgbMatrix(original,maxVal, strategy);
-        this.width = width;
-        this.height = height;
+        this.height = original.length;
+        this.width = height == 0? 0 : original[0].length;
+        filePath = path;
+
+        this.magicNumber = magicNumber;
     }
 
     public long[][] getPixels() {
@@ -24,6 +39,14 @@ public class ImageBusiness {
 
     public int getHeight() {
         return height;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public String getMagicNumber() {
+        return magicNumber;
     }
 
     private long[][] createArgbMatrix(long[][] original, int maxValue, ArgbConvertStrategy strategy) {

@@ -4,7 +4,6 @@ package ch.supsi;
 
 
 public class BackendMain {
-    public static int TO_TEST_DEPENDENCY = 10;
     public static void main(String[] args) {
 
     }

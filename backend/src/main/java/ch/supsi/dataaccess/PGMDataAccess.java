@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbSingleChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
@@ -14,10 +14,6 @@ public final class PGMDataAccess extends PNMDataAccess {
 
     /* instance field */
     private int maxGrayValue;
-
-    //ASDRUBALO da eliminare dopo testing
-    public long[][] originalMatrix;
-
 
     /* singleton */
     public static PGMDataAccess getInstance() {
@@ -36,6 +32,7 @@ public final class PGMDataAccess extends PNMDataAccess {
      * @param is inputStream
      * @throws IOException when the maxValue is missing or has a wrong format
      */
+    //ASDRUBALO private
     public void readMaxValue(InputStream is) throws IOException {
         String maxGrayLine = readLine(is).trim(); //read maxVal riga
 
@@ -56,8 +53,9 @@ public final class PGMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixels value are out of range or the file is corrupted
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processBinary(InputStream is) throws IOException {
+    public long[] @NotNull [] processBinary(InputStream is) throws IOException {
         readMaxValue(is);
         long[][] pixelMatrix = new long[height][width];
 
@@ -92,11 +90,7 @@ public final class PGMDataAccess extends PNMDataAccess {
             }
         }
 
-        //ASDRUBALO da rimuovere dopo test
-        originalMatrix = pixelMatrix;
-
-        // Return an ImageBusiness instance with pixel data and ARGB conversion strategy
-        return new ImageBusiness(pixelMatrix, width, height, maxGrayValue, new ArgbSingleChannel());
+        return pixelMatrix;
     }
 
     /**
@@ -105,8 +99,9 @@ public final class PGMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixels value are out of range or the file is corrupted
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processAscii(InputStream is) throws IOException {
+    public long[] @NotNull [] processAscii(InputStream is) throws IOException {
         readMaxValue(is);
         long[][] pixelMatrix = new long[height][width];
 
@@ -132,11 +127,18 @@ public final class PGMDataAccess extends PNMDataAccess {
                 }
             }
         }
+        return pixelMatrix;
+    }
+    //ASDRUBALO protected
+    @Override
+    public int getMaxPixelValue() {
+        return maxGrayValue;
+    }
 
-        //ASDRUBALO da rimuovere dopo test
-        originalMatrix = pixelMatrix;
-
-        return new ImageBusiness(pixelMatrix, width, height, maxGrayValue, new ArgbSingleChannel());
+    //ASDRUBALO protected
+    @Override
+    public ArgbConvertStrategy getArgbConvertStrategy() {
+        return new ArgbSingleChannel();
     }
 }
 

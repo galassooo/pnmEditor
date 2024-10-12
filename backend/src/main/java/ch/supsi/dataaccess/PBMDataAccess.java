@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbSingleBit;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
@@ -14,9 +14,6 @@ public final class PBMDataAccess extends PNMDataAccess {
 
     /* static field */
     private static final int MAX_PIXEL_VALUE = 1;
-
-    //ASDRUBALO elimina questo campo serve per testing e basta
-    public long[][] originalMatrix;
 
     /* singleton */
     public static PBMDataAccess getInstance() {
@@ -38,8 +35,9 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException if the pixels don't match the width/height
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processBinary(InputStream is) throws IOException {
+    public long[] @NotNull [] processBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         int bytesPerRow = (width + 7) / 8;
 
@@ -57,10 +55,7 @@ public final class PBMDataAccess extends PNMDataAccess {
                 }
             }
         }
-        //ASDRUBALO
-        originalMatrix = pixelMatrix;
-
-        return new ImageBusiness(pixelMatrix, width, height, MAX_PIXEL_VALUE,  new ArgbSingleBit());
+        return pixelMatrix;
     }
 
     /**
@@ -70,8 +65,9 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException if there is an error in reading the ASCII data
      */
+    //ASDRUBALO protected
     @Override
-    public @NotNull ImageBusiness processAscii(InputStream is)throws IOException {
+    public long[] @NotNull [] processAscii(InputStream is)throws IOException {
         long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {
@@ -84,10 +80,17 @@ public final class PBMDataAccess extends PNMDataAccess {
                 }
             }
         }
+        return pixelMatrix;
 
-        //ASDRUBALO
-        originalMatrix = pixelMatrix;
-        return new ImageBusiness(pixelMatrix, width, height, MAX_PIXEL_VALUE, new ArgbSingleBit());
+    }
 
+    @Override
+    public int getMaxPixelValue() {
+        return MAX_PIXEL_VALUE;
+    }
+
+    @Override
+    public ArgbConvertStrategy getArgbConvertStrategy() {
+        return new ArgbSingleBit();
     }
 }

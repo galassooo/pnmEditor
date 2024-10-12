@@ -37,7 +37,7 @@ class ImageBusinessTest {
      */
     @Test
     void testConstructorAndPixelConversion() {
-        ImageBusiness image = new ImageBusiness(sampleMatrix, width, height, 1, strategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, "null", "P4", 1, strategy);
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL},
@@ -47,6 +47,8 @@ class ImageBusinessTest {
         assertArrayEquals(expectedArgbPixels, image.getPixels(), "wrong pixel conversion");
         assertEquals(width, image.getWidth(), "wrong width");
         assertEquals(height, image.getHeight(), "wrong height");
+        assertEquals("null", image.getFilePath());
+        assertEquals("P4", image.getMagicNumber());
     }
 
 
@@ -59,7 +61,7 @@ class ImageBusinessTest {
                 {1, 0, 1},
                 {0, 1, 0}
         };
-        ImageBusiness image = new ImageBusiness(nonSquareMatrix, 3, 2,1, strategy);
+        ImageBusiness image = new ImageBusiness(nonSquareMatrix, null,"P3",1, strategy);
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L},
@@ -77,7 +79,7 @@ class ImageBusinessTest {
     @Test
     void testEmptyMatrix() {
         long[][] emptyMatrix = new long[0][0];
-        ImageBusiness image = new ImageBusiness(emptyMatrix, 0, 0,1, strategy);
+        ImageBusiness image = new ImageBusiness(emptyMatrix, null, "P3",1, strategy);
 
         assertEquals(0, image.getPixels().length, "empty matrix expected");
         assertEquals(0, image.getWidth(), "wrong width for empty matrix");
@@ -96,7 +98,7 @@ class ImageBusinessTest {
         };
 
         //construct a new matrix with the given strategy
-        ImageBusiness image = new ImageBusiness(sampleMatrix, width, height,1, customStrategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, null, "P8",1, customStrategy);
 
         long[][] expectedCustomPixels = {
                 {0xFF123456L, 0xFF123456L},

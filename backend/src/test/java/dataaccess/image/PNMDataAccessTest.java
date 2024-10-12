@@ -1,5 +1,6 @@
 package dataaccess.image;
 
+import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.Image.ImageBusiness;
 import ch.supsi.dataaccess.PBMDataAccess;
 import ch.supsi.dataaccess.PNMDataAccess;
@@ -124,7 +125,7 @@ class PNMDataAccessTest {
     @Test
     void testReadBinaryFormat() throws IOException {
         String binaryFilePath = "/images/pbm/pnmBinary";
-        ImageBusiness result = pbmDataAccess.read(binaryFilePath);
+        ImageBusinessInterface result = pbmDataAccess.read(binaryFilePath);
         assertNotNull(result);
     }
 
@@ -134,7 +135,7 @@ class PNMDataAccessTest {
     @Test
     void testReadAsciiFormat() throws IOException {
         String asciiFilePath = "/images/pbm/pnmAscii";
-        ImageBusiness result = pbmDataAccess.read(asciiFilePath);
+        ImageBusinessInterface result = pbmDataAccess.read(asciiFilePath);
         assertNotNull(result);
     }
 

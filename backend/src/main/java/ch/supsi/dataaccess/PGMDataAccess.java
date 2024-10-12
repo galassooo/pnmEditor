@@ -16,7 +16,7 @@ public final class PGMDataAccess extends PNMDataAccess {
     private int maxGrayValue;
 
     //ASDRUBALO da eliminare dopo testing
-    public int[][] originalMatrix;
+    public long[][] originalMatrix;
 
 
     /* singleton */
@@ -43,10 +43,10 @@ public final class PGMDataAccess extends PNMDataAccess {
             //parse and check the value (non differenzia 8-16 bit per ora)
             maxGrayValue = Integer.parseInt(maxGrayLine);
             if (maxGrayValue <= 0 || maxGrayValue > 65535) {
-                throw new IOException("Invalid max gray value in header.");
+                throw new IOException("Invalid max gray value in header");
             }
         } catch (NumberFormatException e) {
-            throw new IOException("Max gray value is missing or invalid in header.");
+            throw new IOException("Max gray value is missing or invalid in header");
         }
     }
 
@@ -59,7 +59,7 @@ public final class PGMDataAccess extends PNMDataAccess {
     @Override
     public @NotNull ImageBusiness processBinary(InputStream is) throws IOException {
         readMaxValue(is);
-        int[][] pixelMatrix = new int[height][width];
+        long[][] pixelMatrix = new long[height][width];
 
         //loop on pixels
         for (int y = 0; y < height; y++) {
@@ -85,7 +85,7 @@ public final class PGMDataAccess extends PNMDataAccess {
                 }
 
                 if (grayValue > maxGrayValue) { //value check
-                    throw new IOException("gray value out of range in binary pmg file");
+                    throw new IOException("gray pixel value out of range in binary pmg file");
                 }
 
                 pixelMatrix[y][x] = grayValue;
@@ -108,7 +108,7 @@ public final class PGMDataAccess extends PNMDataAccess {
     @Override
     public @NotNull ImageBusiness processAscii(InputStream is) throws IOException {
         readMaxValue(is);
-        int[][] pixelMatrix = new int[height][width];
+        long[][] pixelMatrix = new long[height][width];
 
         try (Scanner scanner = new Scanner(is)) {
             //loop on pixels
@@ -123,11 +123,11 @@ public final class PGMDataAccess extends PNMDataAccess {
                         int grayValue = scanner.nextInt();
                         //valid value check
                         if (grayValue < 0 || grayValue > maxGrayValue) {
-                            throw new IOException("Gray value out of range in ASCII PGM file.");
+                            throw new IOException("gray pixel value out of range in binary pmg file");
                         }
                         pixelMatrix[y][x] = grayValue;
                     } else {
-                        throw new IOException("Invalid or missing data in ASCII PGM file.");
+                        throw new IOException("Invalid or missing data in ascii PGM file");
                     }
                 }
             }

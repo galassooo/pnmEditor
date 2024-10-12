@@ -16,7 +16,7 @@ public final class PBMDataAccess extends PNMDataAccess {
     private static final int MAX_PIXEL_VALUE = 1;
 
     //ASDRUBALO elimina questo campo serve per testing e basta
-    public int[][] originalMatrix;
+    public long[][] originalMatrix;
 
     /* singleton */
     public static PBMDataAccess getInstance() {
@@ -40,14 +40,14 @@ public final class PBMDataAccess extends PNMDataAccess {
      */
     @Override
     public @NotNull ImageBusiness processBinary(InputStream is) throws IOException {
-        int[][] pixelMatrix = new int[height][width];
+        long[][] pixelMatrix = new long[height][width];
         int bytesPerRow = (width + 7) / 8;
 
         for (int y = 0; y < height; y++) {
             for (int byteIndex = 0; byteIndex < bytesPerRow; byteIndex++) {
                 int byteValue = is.read();
                 if (byteValue == -1) {
-                    throw new IOException("Dati insufficienti nel file PBM.");
+                    throw new IOException("Insufficient data in pbm binary file");
                 }
 
                 //splitta il byte in bit e assegna il valore
@@ -72,14 +72,14 @@ public final class PBMDataAccess extends PNMDataAccess {
      */
     @Override
     public @NotNull ImageBusiness processAscii(InputStream is)throws IOException {
-        int[][] pixelMatrix = new int[height][width];
+        long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (scanner.hasNextInt()) {
                         pixelMatrix[y][x] = scanner.nextInt();
                     } else {
-                        throw new IOException("Formato del file PBM ASCII non valido o dati mancanti.");
+                        throw new IOException("Insufficient data in pbm ascii file");
                     }
                 }
             }

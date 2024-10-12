@@ -66,7 +66,7 @@ class PNMDataAccessTest {
         InputStream is = new ByteArrayInputStream(invalidHeader.getBytes());
 
         IOException exception = assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
-        assertEquals("L'header non contiene larghezza e altezza valide.", exception.getMessage());
+        assertEquals("width or height is missing", exception.getMessage());
     }
 
     /**
@@ -77,7 +77,9 @@ class PNMDataAccessTest {
         String invalidHeader = "P4\n-1 0\n";
         InputStream is = new ByteArrayInputStream(invalidHeader.getBytes());
 
-        assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        assertEquals("Invalid or missing dimension in header", e.getMessage());
+
     }
 
     /**
@@ -88,7 +90,8 @@ class PNMDataAccessTest {
         String invalidHeader = "P4\n7 -1\n";
         InputStream is = new ByteArrayInputStream(invalidHeader.getBytes());
 
-        assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        assertEquals("Invalid or missing dimension in header", e.getMessage());
     }
 
     /**
@@ -98,7 +101,8 @@ class PNMDataAccessTest {
     void testInvalidFormat() {
         String header = "P9";
         InputStream is = new ByteArrayInputStream(header.getBytes());
-        assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.readHeader(is));
+        assertEquals("Invalid format" ,e.getMessage());
     }
 
     /**
@@ -177,7 +181,8 @@ class PNMDataAccessTest {
      */
     @Test
     public void testReadFileNotFound() {
-        assertThrows(IOException.class, () -> pbmDataAccess.read("nonexistent_file_path"));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.read("nonexistent_file_path"));
+        assertEquals("File not found: nonexistent_file_path", e.getMessage());
     }
 
     /**

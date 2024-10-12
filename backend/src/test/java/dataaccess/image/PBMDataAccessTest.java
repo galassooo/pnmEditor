@@ -50,7 +50,7 @@ class PBMDataAccessTest {
         InputStream is = new ByteArrayInputStream(binaryData);
         pbmDataAccess.processBinary(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {1, 0, 1, 0},
                 {0, 1, 0, 1},
                 {1, 1, 0, 0},
@@ -70,7 +70,7 @@ class PBMDataAccessTest {
 
         pbmDataAccess.processAscii(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {1, 0, 1, 0},
                 {0, 1, 0, 1},
                 {1, 1, 0, 0},
@@ -90,7 +90,8 @@ class PBMDataAccessTest {
         byte[] incompleteData = new byte[]{(byte) 0b10100000};
         InputStream is = new ByteArrayInputStream(incompleteData);
 
-        assertThrows(IOException.class, () -> pbmDataAccess.processBinary(is));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.processBinary(is));
+        assertEquals("Insufficient data in pbm binary file",e.getMessage());
     }
 
     /**
@@ -101,7 +102,8 @@ class PBMDataAccessTest {
         String incompleteAsciiData = "1 0 1\n0 1 0\n";
         InputStream is = new ByteArrayInputStream(incompleteAsciiData.getBytes());
 
-        assertThrows(IOException.class, () -> pbmDataAccess.processAscii(is));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.processAscii(is));
+        assertEquals("Insufficient data in pbm ascii file",e.getMessage());
     }
 
     /**
@@ -123,7 +125,7 @@ class PBMDataAccessTest {
         InputStream is = new ByteArrayInputStream(binaryData);
         pbmDataAccess.processBinary(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {1, 0, 1, 0, 1, 0, 1, 0, 1},
                 {0, 1, 0, 1, 0, 1, 0, 1, 0}
         };

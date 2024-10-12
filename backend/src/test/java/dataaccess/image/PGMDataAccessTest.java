@@ -43,7 +43,8 @@ class PGMDataAccessTest {
         String maxGrayValue = "-2";
         ByteArrayInputStream headerStream = new ByteArrayInputStream(maxGrayValue.getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        assertEquals("Invalid max gray value in header", e.getMessage());
     }
 
     /**
@@ -54,7 +55,8 @@ class PGMDataAccessTest {
         String maxGrayValue = "65536";
         ByteArrayInputStream headerStream = new ByteArrayInputStream(maxGrayValue.getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        assertEquals("Invalid max gray value in header", e.getMessage());
     }
 
     /**
@@ -65,7 +67,8 @@ class PGMDataAccessTest {
         String maxGrayValue = "";
         ByteArrayInputStream headerStream = new ByteArrayInputStream(maxGrayValue.getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.readMaxValue(headerStream));
+        assertEquals("Max gray value is missing or invalid in header", e.getMessage());
     }
 
     /* --------- invalid pixel value ---------- */
@@ -89,8 +92,8 @@ class PGMDataAccessTest {
         ByteArrayInputStream dataStream = new ByteArrayInputStream(binaryData);
         //combined is
         InputStream is = new SequenceInputStream(headerStream, dataStream);
-        assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
-
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        assertEquals("gray pixel value out of range in binary pmg file", e.getMessage());
     }
 
     /**
@@ -100,7 +103,8 @@ class PGMDataAccessTest {
     void testPixelOverflowAscii() {
         String asciiData = "150\n10 20 30 40\n50 60 70 80\n90 100 110 120\n130 140 150 160\n";
         InputStream is = new ByteArrayInputStream(asciiData.getBytes());
-        assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
+        assertEquals("gray pixel value out of range in binary pmg file", e.getMessage());
 
     }
 
@@ -111,8 +115,8 @@ class PGMDataAccessTest {
     void testNegativePixelAscii() {
         String asciiData = "255\n10 -20 30 40\n50 60 70 80\n90 100 110 120\n130 140 150 160\n";
         InputStream is = new ByteArrayInputStream(asciiData.getBytes());
-        assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
-
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
+        assertEquals("gray pixel value out of range in binary pmg file", e.getMessage());
     }
 
     /* --------- valid input --------- */
@@ -138,7 +142,7 @@ class PGMDataAccessTest {
         InputStream is = new SequenceInputStream(headerStream, dataStream);
         pgmDataAccess.processBinary(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {10, 20, 30, 40},
                 {50, 60, 70, 80},
                 {90, 100, 110, 120},
@@ -170,7 +174,7 @@ class PGMDataAccessTest {
 
         pgmDataAccess.processBinary(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {10, 20, 30, 40},
                 {50, 60, 70, 80},
                 {90, 100, 110, 120},
@@ -190,7 +194,7 @@ class PGMDataAccessTest {
 
         pgmDataAccess.processAscii(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {10, 20, 30, 40},
                 {50, 60, 70, 80},
                 {90, 100, 110, 120},
@@ -211,7 +215,8 @@ class PGMDataAccessTest {
         byte[] incompleteData = new byte[]{10, 20}; //incomplete data
         InputStream is = new ByteArrayInputStream((maxGrayValueHeader + new String(incompleteData)).getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        assertEquals("Insufficient data in binary pmg file",e.getMessage());
     }
 
     /**
@@ -223,7 +228,8 @@ class PGMDataAccessTest {
         byte[] incompleteData = new byte[]{0, 10, 0}; //incomplete data for 16 bit
         InputStream is = new ByteArrayInputStream((maxGrayValueHeader + new String(incompleteData)).getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        assertEquals("Insufficient data in binary pmg file for a 16 bit image",e.getMessage());
     }
 
     /**
@@ -234,7 +240,8 @@ class PGMDataAccessTest {
         String incompleteAsciiData = "255\n10 20\n30"; // incomplete data (expected 4x4)
         InputStream is = new ByteArrayInputStream(incompleteAsciiData.getBytes());
 
-        assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processAscii(is));
+        assertEquals("Invalid or missing data in ascii PGM file",e.getMessage());
     }
 
 
@@ -258,7 +265,7 @@ class PGMDataAccessTest {
         InputStream is = new ByteArrayInputStream((maxGrayValueHeader + new String(binaryData)).getBytes());
         pgmDataAccess.processBinary(is);
 
-        int[][] expectedMatrix = {
+        long[][] expectedMatrix = {
                 {10, 20, 30},
                 {40, 50, 60}
         };
@@ -283,7 +290,8 @@ class PGMDataAccessTest {
         InputStream dataStream = new ByteArrayInputStream(binaryData);
         InputStream is = new SequenceInputStream(headerStream, dataStream);
 
-        assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.processBinary(is));
+        assertEquals("Insufficient data in binary pmg file for a 16 bit image", e.getMessage());
     }
 }
 

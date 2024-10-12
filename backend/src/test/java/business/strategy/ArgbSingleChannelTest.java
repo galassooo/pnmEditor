@@ -29,10 +29,10 @@ class ArgbSingleChannelTest {
             int maxValue = random.nextInt(65535) + 1;
 
             //calcolo valore atteso
-            int normalizedGray = (int) ((grayValue / (double) maxValue) * 255);
-            int expectedArgb = (0xFF << 24) | (normalizedGray << 16) | (normalizedGray << 8) | normalizedGray;
+            long normalizedGray = (int) ((grayValue / (double) maxValue) * 255);
+            long expectedArgb = (0xFFL << 24) | (normalizedGray << 16) | (normalizedGray << 8) | normalizedGray;
 
-            int resultArgb = strategy.toArgb(grayValue, maxValue);
+            long resultArgb = strategy.toArgb(grayValue, maxValue);
 
             assertEquals(expectedArgb, resultArgb, "Failed for grayValue: " + grayValue + " and maxValue: " + maxValue);
         }

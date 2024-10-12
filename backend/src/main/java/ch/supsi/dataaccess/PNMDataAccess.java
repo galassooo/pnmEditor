@@ -49,7 +49,7 @@ public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess,
         //read dimensions
         String[] dimensions = dimensionLine.split("\\s+");
         if (dimensions.length != 2) {
-            throw new IOException("L'header non contiene larghezza e altezza valide.");
+            throw new IOException("width or height is missing");
         }
 
         //save width and height
@@ -58,7 +58,7 @@ public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess,
 
         //dimension validity check
         if (width <= 0 || height <= 0) {
-            throw new IOException("Dimensioni non valide o non trovate nell'header del file.");
+            throw new IOException("Invalid or missing dimension in header");
         }
     }
 
@@ -87,7 +87,7 @@ public abstract sealed class PNMDataAccess permits PBMDataAccess, PPMDataAccess,
     public final @NotNull ImageBusiness read(String path) throws IOException {
         try (InputStream is = getClass().getResourceAsStream(path)){
             if (is == null) {
-                throw new IOException("File non trovato: " + path);
+                throw new IOException("File not found: " + path);
             }
 
             readHeader(is);

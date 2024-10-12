@@ -4,17 +4,17 @@ import ch.supsi.business.strategy.ArgbConvertStrategy;
 
 public class ImageBusiness {
 
-    private int[][] argbPixels;
+    private long[][] argbPixels;
     private int width;
     private int height;
 
-    public ImageBusiness(int[][] original, int width, int height, int maxVal, ArgbConvertStrategy strategy) {
+    public ImageBusiness(long[][] original, int width, int height, int maxVal, ArgbConvertStrategy strategy) {
         this.argbPixels = createArgbMatrix(original,maxVal, strategy);
         this.width = width;
         this.height = height;
     }
 
-    public int[][] getPixels() {
+    public long[][] getPixels() {
         return argbPixels;
     }
 
@@ -26,14 +26,14 @@ public class ImageBusiness {
         return height;
     }
 
-    private int[][] createArgbMatrix(int[][] original, int maxValue, ArgbConvertStrategy strategy) {
+    private long[][] createArgbMatrix(long[][] original, int maxValue, ArgbConvertStrategy strategy) {
         int height = original.length;
         if (height == 0) {
-            return new int[0][0];
+            return new long[0][0];
         }
         int width = original[0].length;
 
-        int[][] argbMatrix = new int[height][width];
+        long[][] argbMatrix = new long[height][width];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImageBusinessTest {
 
     /* instance fields */
-    private int[][] sampleMatrix;
+    private long[][] sampleMatrix;
     private int width;
     private int height;
     private ArgbConvertStrategy strategy;
@@ -21,7 +21,7 @@ class ImageBusinessTest {
     @BeforeEach
     void setUp() {
 
-        sampleMatrix = new int[][]{
+        sampleMatrix = new long[][]{
                 {1, 0},
                 {0, 1}
         };
@@ -39,9 +39,9 @@ class ImageBusinessTest {
     void testConstructorAndPixelConversion() {
         ImageBusiness image = new ImageBusiness(sampleMatrix, width, height, 1, strategy);
 
-        int[][] expectedArgbPixels = {
-                {0xFF000000, 0xFFFFFFFF},
-                {0xFFFFFFFF, 0xFF000000}
+        long[][] expectedArgbPixels = {
+                {0xFF000000L, 0xFFFFFFFFL},
+                {0xFFFFFFFFL, 0xFF000000L}
         };
 
         assertArrayEquals(expectedArgbPixels, image.getPixels(), "wrong pixel conversion");
@@ -55,15 +55,15 @@ class ImageBusinessTest {
      */
     @Test
     void testNonSquareImage() {
-        int[][] nonSquareMatrix = {
+        long[][] nonSquareMatrix = {
                 {1, 0, 1},
                 {0, 1, 0}
         };
         ImageBusiness image = new ImageBusiness(nonSquareMatrix, 3, 2,1, strategy);
 
-        int[][] expectedArgbPixels = {
-                {0xFF000000, 0xFFFFFFFF, 0xFF000000},
-                {0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF}
+        long[][] expectedArgbPixels = {
+                {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L},
+                {0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL}
         };
 
         assertArrayEquals(expectedArgbPixels, image.getPixels(), "wrong pixel conversion for non-squared image");
@@ -76,7 +76,7 @@ class ImageBusinessTest {
      */
     @Test
     void testEmptyMatrix() {
-        int[][] emptyMatrix = new int[0][0];
+        long[][] emptyMatrix = new long[0][0];
         ImageBusiness image = new ImageBusiness(emptyMatrix, 0, 0,1, strategy);
 
         assertEquals(0, image.getPixels().length, "empty matrix expected");
@@ -90,17 +90,17 @@ class ImageBusinessTest {
     void testDifferentStrategy() {
         ArgbConvertStrategy customStrategy = new ArgbConvertStrategy() {
             @Override
-            public int toArgb(int pixel, int maxValue) {
-                return 0xFF123456;
+            public long toArgb(long pixel, int maxValue) {
+                return 0xFF123456L;
             }
         };
 
         //construct a new matrix with the given strategy
         ImageBusiness image = new ImageBusiness(sampleMatrix, width, height,1, customStrategy);
 
-        int[][] expectedCustomPixels = {
-                {0xFF123456, 0xFF123456},
-                {0xFF123456, 0xFF123456}
+        long[][] expectedCustomPixels = {
+                {0xFF123456L, 0xFF123456L},
+                {0xFF123456L, 0xFF123456L}
         };
 
         assertArrayEquals(expectedCustomPixels, image.getPixels(), "Pixel conversione errata con strategia personalizzata");

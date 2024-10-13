@@ -3,6 +3,8 @@ package business.image;
 import ch.supsi.business.Image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbSingleBit;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ArgbSingleChannel;
+import ch.supsi.business.strategy.ArgbThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +22,6 @@ class ImageBusinessTest {
      */
     @BeforeEach
     void setUp() {
-
         sampleMatrix = new long[][]{
                 {1, 0},
                 {0, 1}
@@ -37,7 +38,7 @@ class ImageBusinessTest {
      */
     @Test
     void testConstructorAndPixelConversion() {
-        ImageBusiness image = new ImageBusiness(sampleMatrix, "null", "P4", 1, strategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, "null", "P4",  strategy);
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL},
@@ -61,7 +62,7 @@ class ImageBusinessTest {
                 {1, 0, 1},
                 {0, 1, 0}
         };
-        ImageBusiness image = new ImageBusiness(nonSquareMatrix, null,"P3",1, strategy);
+        ImageBusiness image = new ImageBusiness(nonSquareMatrix, null,"P3", strategy);
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L},
@@ -79,7 +80,7 @@ class ImageBusinessTest {
     @Test
     void testEmptyMatrix() {
         long[][] emptyMatrix = new long[0][0];
-        ImageBusiness image = new ImageBusiness(emptyMatrix, null, "P3",1, strategy);
+        ImageBusiness image = new ImageBusiness(emptyMatrix, null, "P3", strategy);
 
         assertEquals(0, image.getPixels().length, "empty matrix expected");
         assertEquals(0, image.getWidth(), "wrong width for empty matrix");
@@ -92,20 +93,65 @@ class ImageBusinessTest {
     void testDifferentStrategy() {
         ArgbConvertStrategy customStrategy = new ArgbConvertStrategy() {
             @Override
-            public long toArgb(long pixel, int maxValue) {
-                return 0xFF123456L;
+            public long toArgb(long pixel) {
+                return pixel*2;
+            }
+
+            @Override
+            public long toOriginal(long pixel) {
+                return pixel/2;
             }
         };
 
         //construct a new matrix with the given strategy
-        ImageBusiness image = new ImageBusiness(sampleMatrix, null, "P8",1, customStrategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, null, "P8", customStrategy);
 
         long[][] expectedCustomPixels = {
-                {0xFF123456L, 0xFF123456L},
-                {0xFF123456L, 0xFF123456L}
+                {2, 0},
+                {0, 2}
         };
 
         assertArrayEquals(expectedCustomPixels, image.getPixels(), "Pixel conversione errata con strategia personalizzata");
+    }
+
+    @Test
+    void testReturnOriginalMatrixWithSingleChannelStrategy() {
+        long[][] originalMatrix = {
+                {0, 128, 255},
+                {255, 128, 0}
+        };
+        ArgbSingleChannel strategy = new ArgbSingleChannel(255);
+
+        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.pgm", "P5", strategy);
+
+        long[][] result = img.returnOriginalMatrix(strategy);
+        assertArrayEquals(originalMatrix, result);
+    }
+
+    @Test
+    void testReturnOriginalMatrixWithThreeChannelStrategy() {
+        long[][] originalMatrix = {
+                {(65535L << 32), (65535L << 16), 65535L},
+                {(65535L << 32) | (65535L << 16) | 65535L, 0, 0}
+        };
+        ArgbThreeChannel strategy = new ArgbThreeChannel(65535);
+
+        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.ppm", "P6", strategy);
+
+        long[][] result = img.returnOriginalMatrix(strategy);
+        assertArrayEquals(originalMatrix, result);
+    }
+
+    @Test
+    void testEmptyOriginalMatrix() {
+        long[][] emptyMatrix = new long[0][0];
+        ArgbSingleChannel strategy = new ArgbSingleChannel(255);
+
+        ImageBusiness img = new ImageBusiness(emptyMatrix, "emptyImage.pgm", "P5", strategy);
+
+        assertEquals(0, img.getHeight());
+        assertEquals(0, img.getWidth());
+        assertArrayEquals(new long[0][0], img.returnOriginalMatrix(strategy));
     }
 }
 

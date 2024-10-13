@@ -1,6 +1,8 @@
 package ch.supsi.view.image;
 
+import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.Image.ImageDataAccess;
 import ch.supsi.dataaccess.PGMDataAccess;
 import ch.supsi.dataaccess.PPMDataAccess;
 import javafx.fxml.FXML;
@@ -19,7 +21,7 @@ public class MainImageView {
 
 
         //--------- PROVA CARICAMENTO ----- PASSA DAL MODEL E ELIMINA STA SCHIFEZZA :)
-        ImageBusiness bmpImage = PPMDataAccess.getInstance().read("/images/TEST IMAGES - To be removed/16bit.ascii.ppm");
+        ImageBusinessInterface bmpImage = PPMDataAccess.getInstance().read("/Users/marti/Desktop/16bit.byte.ppm");
         int width = bmpImage.getWidth();
         int height = bmpImage.getHeight();
         long[][] pixels = bmpImage.getPixels();
@@ -36,6 +38,6 @@ public class MainImageView {
 
         image.setImage(writableImage);
 
-
+        PPMDataAccess.getInstance().write(bmpImage, "/Users/marti/Desktop/prova.ppm");
     }
 }

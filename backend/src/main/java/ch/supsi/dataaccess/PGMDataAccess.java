@@ -5,15 +5,15 @@ import ch.supsi.business.strategy.ArgbSingleChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 
-public final class PGMDataAccess extends PNMDataAccess {
+public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
 
     /* self reference */
     private static PGMDataAccess myself;
 
-    /* instance field */
-    private int maxGrayValue;
 
     /* singleton */
     public static PGMDataAccess getInstance() {
@@ -24,28 +24,7 @@ public final class PGMDataAccess extends PNMDataAccess {
     }
 
     /* constructor */
-    private PGMDataAccess() {
-    }
-
-    /**
-     * Reads the max gray value from the PGM file header
-     * @param is inputStream
-     * @throws IOException when the maxValue is missing or has a wrong format
-     */
-    //ASDRUBALO private
-    public void readMaxValue(InputStream is) throws IOException {
-        String maxGrayLine = readLine(is).trim(); //read maxVal riga
-
-        try {
-            //parse and check the value (non differenzia 8-16 bit per ora)
-            maxGrayValue = Integer.parseInt(maxGrayLine);
-            if (maxGrayValue <= 0 || maxGrayValue > 65535) {
-                throw new IOException("Invalid max gray value in header");
-            }
-        } catch (NumberFormatException e) {
-            throw new IOException("Max gray value is missing or invalid in header");
-        }
-    }
+    private PGMDataAccess() {}
 
     /**
      * Reads a binary PGM image supporting both 8-bit and 16-bit pixel formats.
@@ -53,10 +32,8 @@ public final class PGMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixels value are out of range or the file is corrupted
      */
-    //ASDRUBALO protected
     @Override
-    public long[] @NotNull [] processBinary(InputStream is) throws IOException {
-        readMaxValue(is);
+    protected long[] @NotNull [] readBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
 
         //loop on pixels
@@ -65,7 +42,7 @@ public final class PGMDataAccess extends PNMDataAccess {
                 int grayValue;
 
                 //check if the image is 8-bit or 16-bit based on maxGrayValue
-                if (maxGrayValue <= 255) { // 8 bit
+                if (super.getMaxValue() <= 255) { // 8 bit
 
                     grayValue = is.read(); //read 8 bit value
                     if (grayValue == -1) { //EOF before all pixels
@@ -82,7 +59,7 @@ public final class PGMDataAccess extends PNMDataAccess {
                     grayValue = (highByte << 8) | lowByte;
                 }
 
-                if (grayValue > maxGrayValue) { //value check
+                if (grayValue > super.getMaxValue()) { //value check
                     throw new IOException("gray pixel value out of range in binary pmg file");
                 }
 
@@ -99,10 +76,8 @@ public final class PGMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException when pixels value are out of range or the file is corrupted
      */
-    //ASDRUBALO protected
     @Override
-    public long[] @NotNull [] processAscii(InputStream is) throws IOException {
-        readMaxValue(is);
+    protected long[] @NotNull [] readAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
 
         try (Scanner scanner = new Scanner(is)) {
@@ -117,7 +92,7 @@ public final class PGMDataAccess extends PNMDataAccess {
                     if (scanner.hasNextInt()) {
                         int grayValue = scanner.nextInt();
                         //valid value check
-                        if (grayValue < 0 || grayValue > maxGrayValue) {
+                        if (grayValue < 0 || grayValue > super.getMaxValue()) {
                             throw new IOException("gray pixel value out of range in binary pmg file");
                         }
                         pixelMatrix[y][x] = grayValue;
@@ -129,16 +104,20 @@ public final class PGMDataAccess extends PNMDataAccess {
         }
         return pixelMatrix;
     }
-    //ASDRUBALO protected
+
     @Override
-    public int getMaxPixelValue() {
-        return maxGrayValue;
+    protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+
     }
 
-    //ASDRUBALO protected
     @Override
-    public ArgbConvertStrategy getArgbConvertStrategy() {
-        return new ArgbSingleChannel();
+    protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+
+    }
+
+    @Override
+    protected ArgbConvertStrategy getArgbConvertStrategy() {
+        return new ArgbSingleChannel(getMaxValue());
     }
 }
 

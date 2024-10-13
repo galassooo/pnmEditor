@@ -1,14 +1,14 @@
 package dataaccess.image;
 
-import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.business.strategy.ArgbSingleBit;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.application.Image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.supsi.dataaccess.PBMDataAccess;
-import java.io.ByteArrayInputStream;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,19 +17,15 @@ class PBMDataAccessTest {
     /* instance field */
     private PBMDataAccess pbmDataAccess;
 
-    /**
-     * Initializes an instance with preset width and height
-     */
+    @TempDir
+    Path tempDir;
+
     @BeforeEach
     void setUp() {
         pbmDataAccess = PBMDataAccess.getInstance();
-        pbmDataAccess.setWidth(4);
-        pbmDataAccess.setHeight(4);
     }
 
-    /**
-     * Tests singleton pattern
-     */
+    /* --------- singleton --------- */
     @Test
     void testSingleton() {
         PBMDataAccess pbmDataAccess2 = PBMDataAccess.getInstance();
@@ -38,11 +34,11 @@ class PBMDataAccessTest {
 
     /* --------- valid input --------- */
 
-    /**
-     * Tests processBinary with valid binary input
-     */
     @Test
     void testProcessBinaryValidInput() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+
+        byte[] header = "P4\n4 4\n".getBytes();
         byte[] binaryData = new byte[]{
                 (byte) 0b10100000,
                 (byte) 0b01010000,
@@ -50,105 +46,196 @@ class PBMDataAccessTest {
                 (byte) 0b00110000
         };
 
-        InputStream is = new ByteArrayInputStream(binaryData);
-
         long[][] expectedMatrix = {
-                {1, 0, 1, 0},
-                {0, 1, 0, 1},
-                {1, 1, 0, 0},
-                {0, 0, 1, 1}
+                {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL},
+                {0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L},
+                {0xFF000000L, 0xFF000000L, 0xFFFFFFFFL, 0xFFFFFFFFL},
+                {0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L, 0xFF000000L}
         };
 
-        assertArrayEquals(expectedMatrix, pbmDataAccess.processBinary(is));
+        byte[] fileContent = new byte[header.length + binaryData.length];
+        System.arraycopy(header, 0, fileContent, 0, header.length);
+        System.arraycopy(binaryData, 0, fileContent, header.length, binaryData.length);
+
+        Files.write(tempFile, fileContent);
+
+        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
-    /**
-     * Tests processAscii with valid ASCII input
-     */
     @Test
-    void testProcessAsciiValidInput() throws IOException {
-        String asciiData = "1 0 1 0\n0 1 0 1\n1 1 0 0\n0 0 1 1\n";
-        InputStream is = new ByteArrayInputStream(asciiData.getBytes());
+    void testProcessBinaryWithPadding() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
 
-        long[][] expectedMatrix = {
-                {1, 0, 1, 0},
-                {0, 1, 0, 1},
-                {1, 1, 0, 0},
-                {0, 0, 1, 1}
-        };
-
-        assertArrayEquals(expectedMatrix,pbmDataAccess.processAscii(is) );
-    }
-
-    /* --------- invalid input --------- */
-
-    /**
-     * Tests processBinary with incomplete binary data
-     */
-    @Test
-    void testProcessBinaryInvalidInput() {
-        byte[] incompleteData = new byte[]{(byte) 0b10100000};
-        InputStream is = new ByteArrayInputStream(incompleteData);
-
-        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.processBinary(is));
-        assertEquals("Insufficient data in pbm binary file",e.getMessage());
-    }
-
-    /**
-     * Tests processAscii with incomplete ASCII data
-     */
-    @Test
-    void testProcessAsciiInvalidInput() {
-        String incompleteAsciiData = "1 0 1\n0 1 0\n";
-        InputStream is = new ByteArrayInputStream(incompleteAsciiData.getBytes());
-
-        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.processAscii(is));
-        assertEquals("Insufficient data in pbm ascii file",e.getMessage());
-    }
-
-    /**
-     * Tests processBinary with an incomplete byte and padding
-     */
-    @Test
-    void testProcessBinaryWithIncompleteByte() throws IOException {
-        pbmDataAccess.setWidth(9);
-        pbmDataAccess.setHeight(2);
-        pbmDataAccess.setFormat("P4");
-
+        byte[] header = "P4\n10 4\n".getBytes();
         byte[] binaryData = new byte[]{
                 (byte) 0b10101010,
                 (byte) 0b10000000,
                 (byte) 0b01010101,
-                (byte) 0b00000000
+                (byte) 0b11000000,
+                (byte) 0b11111111,
+                (byte) 0b00000000,
+                (byte) 0b00000000,
+                (byte) 0b11111111
         };
 
-        InputStream is = new ByteArrayInputStream(binaryData);
+        byte[] fileContent = new byte[header.length + binaryData.length];
+        System.arraycopy(header, 0, fileContent, 0, header.length);
+        System.arraycopy(binaryData, 0, fileContent, header.length, binaryData.length);
+
+        Files.write(tempFile, fileContent);
 
         long[][] expectedMatrix = {
-                {1, 0, 1, 0, 1, 0, 1, 0, 1},
-                {0, 1, 0, 1, 0, 1, 0, 1, 0}
+                {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL},
+                {0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L, 0xFF000000L, 0xFF000000L},
+                {0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFFFFFFFFL, 0xFFFFFFFFL},
+                {0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L, 0xFF000000L}
         };
 
-        assertArrayEquals(expectedMatrix, pbmDataAccess.processBinary(is));
+        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+
+        long[][] actualMatrix = img.getPixels();
+        assertArrayEquals(expectedMatrix, actualMatrix);
     }
 
-    /* ---------- getters --------- */
+    @Test
+    void testProcessAsciiValidInput() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P1\n4 4\n";
 
-    /**
-     * test the return type of argb strategy
-     */
-    @Test
-    void testGetArgbStrategy(){
-        ArgbConvertStrategy expected = new ArgbSingleBit();
-        //non è possibile fare equals -> classe senza stato
-        assertEquals(expected.getClass(), pbmDataAccess.getArgbConvertStrategy().getClass());
+        String asciiData =
+                """
+                        0 1 1 0
+                        1 0 0 1
+                        0 1 1 0
+                        1 0 0 1
+                        """;
+        Files.write(tempFile, (header + asciiData).getBytes());
+
+        long[][] expectedMatrix = {
+                {0xFFFFFFFFL, 0xFF000000L, 0xFF000000L, 0xFFFFFFFFL},
+                {0xFF000000L, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L},
+                {0xFFFFFFFFL, 0xFF000000L, 0xFF000000L, 0xFFFFFFFFL},
+                {0xFF000000L, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L}
+        };
+
+        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+
+        long[][] actualMatrix = img.getPixels();
+
+        assertArrayEquals(expectedMatrix, actualMatrix);
+
     }
-    /**
-     * test the return type of maxValue strategy
-     */
+
+    /* --------- invalid input --------- */
+
     @Test
-    void TestGetMaxValue() {
-        assertEquals(1, pbmDataAccess.getMaxPixelValue());
+    void testProcessBinaryInvalidInput() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+
+        byte[] header = "P4\n4 4\n".getBytes();
+        byte[] binaryData = new byte[]{
+                (byte) 0b10100000,
+                (byte) 0b01010000,
+                (byte) 0b11000000,
+        };
+
+        byte[] fileContent = new byte[header.length + binaryData.length];
+        System.arraycopy(header, 0, fileContent, 0, header.length);
+        System.arraycopy(binaryData, 0, fileContent, header.length, binaryData.length);
+
+        Files.write(tempFile, fileContent);
+
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Insufficient data in pbm binary file", e.getMessage());
+    }
+
+    @Test
+    void testProcessAsciiInvalidInput() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P1\n4 4\n";
+
+        String asciiData =
+                """
+                        0 1 1 0
+                        1 0 0 1
+                        0 1 1 0
+                        1 0 0
+                        """;
+
+        Files.write(tempFile, (header + asciiData).getBytes());
+
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Insufficient data in pbm ascii file", e.getMessage());
+    }
+
+    /* ---------- invalid header ---------- */
+
+    @Test
+    void testNoDimensionHeader() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P1\n4\n";
+
+        Files.write(tempFile, (header).getBytes());
+
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Width or height is missing", e.getMessage());
+    }
+
+    @Test
+    void testNegativeWidthDimensionHeader() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P1\n-4 8\n";
+
+        Files.write(tempFile, (header).getBytes());
+
+        IOException e =assertThrows(IOException.class, () -> pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Invalid dimension in header", e.getMessage());
+    }
+
+    @Test
+    void testNegativeHeightDimensionHeader() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P1\n4 -8\n";
+
+        Files.write(tempFile, (header).getBytes());
+
+        IOException e =assertThrows(IOException.class, () -> pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Invalid dimension in header", e.getMessage());
+    }
+
+    @Test
+    void testInvalidFormat() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P9\n \n1 1\n";
+
+        Files.write(tempFile, (header).getBytes());
+
+        IOException e = assertThrows(IOException.class, ()->pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Invalid format", e.getMessage());
+    }
+
+    /* ---------- valid header ---------- */
+    @Test
+    void testBlankLineHeader() throws IOException {
+        Path tempFile = tempDir.resolve("asciiImage.pbm");
+        String header = "P1\n \n1 1\n";
+        String data = "1";
+
+        Files.write(tempFile, (header + data).getBytes());
+
+        assertDoesNotThrow(()->pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
+    }
+
+    @Test
+    void testHeaderComment() throws IOException {
+        Path tempFile = tempDir.resolve("asciiImage.pbm");
+        String header = "P1\n#comment \n1 1\n";
+        String data = "1";
+
+        Files.write(tempFile, (header + data).getBytes());
+
+        assertDoesNotThrow(()->pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
     }
 }
 

@@ -1,6 +1,7 @@
 package ch.supsi.business.strategy;
 
 public interface ArgbConvertStrategy {
-    long toArgb(long pixel, int maxValue);
+    long toArgb(long pixel);
+    long toOriginal(long pixel);
 }
 

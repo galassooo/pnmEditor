@@ -5,15 +5,15 @@ import ch.supsi.business.strategy.ArgbSingleBit;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 
 public final class PBMDataAccess extends PNMDataAccess {
 
     /* self reference */
     private static PBMDataAccess myself;
 
-    /* static field */
-    private static final int MAX_PIXEL_VALUE = 1;
 
     /* singleton */
     public static PBMDataAccess getInstance() {
@@ -24,9 +24,7 @@ public final class PBMDataAccess extends PNMDataAccess {
     }
 
     /* constructor */
-    private PBMDataAccess() {
-
-    }
+    private PBMDataAccess() {}
 
     /**
      * Processes binary PBM image data
@@ -35,9 +33,8 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException if the pixels don't match the width/height
      */
-    //ASDRUBALO protected
     @Override
-    public long[] @NotNull [] processBinary(InputStream is) throws IOException {
+    protected long[] @NotNull [] processBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         int bytesPerRow = (width + 7) / 8;
 
@@ -65,9 +62,8 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @return ImageBusiness instance representing the decoded image
      * @throws IOException if there is an error in reading the ASCII data
      */
-    //ASDRUBALO protected
     @Override
-    public long[] @NotNull [] processAscii(InputStream is)throws IOException {
+    protected long[] @NotNull [] processAscii(InputStream is)throws IOException {
         long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {
@@ -85,12 +81,17 @@ public final class PBMDataAccess extends PNMDataAccess {
     }
 
     @Override
-    public int getMaxPixelValue() {
-        return MAX_PIXEL_VALUE;
+    protected void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+
     }
 
     @Override
-    public ArgbConvertStrategy getArgbConvertStrategy() {
+    protected void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+
+    }
+
+    @Override
+    protected ArgbConvertStrategy getArgbConvertStrategy() {
         return new ArgbSingleBit();
     }
 }

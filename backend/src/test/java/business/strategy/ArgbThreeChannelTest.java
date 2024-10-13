@@ -8,50 +8,51 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ArgbThreeChannelTest {
 
     @Test
-    public void testToArgbWith8BitImage() {
-        ArgbThreeChannel converter = new ArgbThreeChannel();
-        int maxValue = 255; // 8-bit image
-
-        long pixel = (120L << 16) | (200L << 8) | 150L; // R=120, G=200, B=150
-        long expectedArgb = (0xFFL << 24) | (120L << 16) | (200L << 8) | 150L;
-
-        assertEquals(expectedArgb, converter.toArgb(pixel, maxValue));
+    void testToArgbWith8BitMaxValue() {
+        ArgbThreeChannel converter = new ArgbThreeChannel(255);
+        assertEquals(0xFF000000L, converter.toArgb(0x000000));
+        assertEquals(0xFFFFFFFFL, converter.toArgb(0xFFFFFF));
+        assertEquals(0xFFFF0000L, converter.toArgb(0xFF0000));
+        assertEquals(0xFF00FF00L, converter.toArgb(0x00FF00));
+        assertEquals(0xFF0000FFL, converter.toArgb(0x0000FF));
     }
 
     @Test
-    public void testToArgbWith16BitImage() {
-        ArgbThreeChannel converter = new ArgbThreeChannel();
-        int maxValue = 65535; // 16-bit image
-
-        // Original 16-bit color values (not normalized)
-        long red16 = 30000L;
-        long green16 = 45000L;
-        long blue16 = 25000L;
-
-        // Construct the pixel with the original 16-bit values
-        long pixel = (red16 << 32) | (green16 << 16) | blue16;
-
-        // Normalize expected colors to 8-bit and calculate ARGB
-        long expectedRed = (long) ((red16 / (double) maxValue) * 255);
-        long expectedGreen = (long) ((green16 / (double) maxValue) * 255);
-        long expectedBlue = (long) ((blue16 / (double) maxValue) * 255);
-
-        // Expected ARGB value with 0xFF alpha
-        long expectedArgb = (0xFFL << 24) | (expectedRed << 16) | (expectedGreen << 8) | expectedBlue;
-
-        // Assert that the converted ARGB matches the expected value
-        assertEquals(expectedArgb, converter.toArgb(pixel, maxValue));
+    void testToOriginalWith8BitMaxValue() {
+        ArgbThreeChannel converter = new ArgbThreeChannel(255);
+        assertEquals(0x000000, converter.toOriginal(0xFF000000L));
+        assertEquals(0xFFFFFF, converter.toOriginal(0xFFFFFFFFL));
+        assertEquals(0xFF0000, converter.toOriginal(0xFFFF0000L));
+        assertEquals(0x00FF00, converter.toOriginal(0xFF00FF00L));
+        assertEquals(0x0000FF, converter.toOriginal(0xFF0000FFL));
     }
 
+    @Test
+    void testToArgbWith16BitMaxValue() {
+        ArgbThreeChannel converter = new ArgbThreeChannel(65535);
+        long pixel = (65535L << 32) | (65535L << 16) | 65535L;
+        assertEquals(0xFFFFFFFFL, converter.toArgb(pixel));
+
+        pixel = (32767L << 32) | (32767L << 16) | 32767L;
+        assertEquals(0xFF7F7F7FL, converter.toArgb(pixel));
+
+        pixel = (65535L << 32);
+        assertEquals(0xFFFF0000L, converter.toArgb(pixel));
+
+        pixel = (65535L << 16);
+        assertEquals(0xFF00FF00L, converter.toArgb(pixel));
+
+        pixel = 65535L;
+        assertEquals(0xFF0000FFL, converter.toArgb(pixel));
+    }
 
     @Test
-    public void testToArgbWithMaxColorValues() {
-        ArgbThreeChannel converter = new ArgbThreeChannel();
-        int maxValue = 255; // Test for 8-bit max color values
-
-        long pixel = (255L << 16) | (255L << 8) | 255L; // R=255, G=255, B=255 (white)
-        long expectedArgb = (0xFFL << 24) | (255L << 16) | (255L << 8) | 255L;
-
-        assertEquals(expectedArgb, converter.toArgb(pixel, maxValue));
+    void testToOriginalWith16BitMaxValue() {
+        ArgbThreeChannel converter = new ArgbThreeChannel(65535);
+        assertEquals((65535L << 32) | (65535L << 16) | 65535L, converter.toOriginal(0xFFFFFFFFL));
+        assertEquals(0, converter.toOriginal(0xFF000000L));
+        assertEquals((65535L << 32), converter.toOriginal(0xFFFF0000L));
+        assertEquals((65535L << 16), converter.toOriginal(0xFF00FF00L));
+        assertEquals(65535L, converter.toOriginal(0xFF0000FFL));
     }
 }

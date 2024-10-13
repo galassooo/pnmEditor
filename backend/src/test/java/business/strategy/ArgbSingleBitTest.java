@@ -1,47 +1,26 @@
 package business.strategy;
 
-import org.junit.jupiter.api.BeforeEach;
+import ch.supsi.business.strategy.ArgbSingleBit;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArgbSingleBitTest {
 
-    /* instance field */
-    private ch.supsi.business.strategy.ArgbSingleBit strategy;
 
-    /**
-     * create an instance
-     */
-    @BeforeEach
-    void setUp() {
-        strategy = new ch.supsi.business.strategy.ArgbSingleBit();
+    private final ArgbSingleBit argbSingleBit = new ArgbSingleBit();
+
+    @Test
+    void testToArgb() {
+        assertEquals(0xFF000000L, argbSingleBit.toArgb(1), "Expected black for pixel value 1");
+
+        assertEquals(0xFFFFFFFFL, argbSingleBit.toArgb(0), "Expected white for pixel value 0");
     }
 
-    /**
-     * Test conversion of a pixel with minimum value (expected ARGB_WHITE)
-     */
     @Test
-    void testToArgbWithZero() {
-        long argbValue = strategy.toArgb(0, 1);  // 0 represents white
-        assertEquals(0xFFFFFFFFL, argbValue, "expected white for a pixel value of 0");
-    }
+    void testToOriginal() {
+        assertEquals(1, argbSingleBit.toOriginal(0xFF000000L), "Expected 1 for black pixel");
 
-    /**
-     * Test conversion of a pixel with maximum value (expected ARGB_BLACK)
-     */
-    @Test
-    void testToArgbWithMaxValue() {
-        long argbValue = strategy.toArgb(1, 1);  // Max value represents black
-        assertEquals(0xFF000000L, argbValue, "expected black for a pixel value of 1");
-    }
-
-    /**
-     * Test conversion of a pixel with half the max gray value (expected ARGB_WHITE)
-     */
-    @Test
-    void testToArgbWithHalfMaxValue() {
-        long argbValue = strategy.toArgb(0, 2);  // Less than maxValue should be white
-        assertEquals(0xFFFFFFFFL, argbValue, "expected white for a pixel with max value bigger than 1");
+        assertEquals(0, argbSingleBit.toOriginal(0xFFFFFFFFL), "Expected 0 for white pixel");
     }
 }
 

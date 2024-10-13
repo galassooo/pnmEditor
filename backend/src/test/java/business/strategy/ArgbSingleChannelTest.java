@@ -7,35 +7,36 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArgbSingleChannelTest {
+    @Test
+    void testToArgb() {
+        ArgbSingleChannel converter = new ArgbSingleChannel(65535);
+        //lowest
+        assertEquals(0xFF000000L, converter.toArgb(0));
 
-    /* instance fields */
-    private ArgbSingleChannel strategy;
-    private Random random;
+        //max
+        assertEquals(0xFFFFFFFFL, converter.toArgb(65535));
 
-    @BeforeEach
-    void setUp() {
-        strategy = new ArgbSingleChannel();
-        random = new Random();
+        //mid
+        assertEquals(0xFF7F7F7FL, converter.toArgb(32767));
     }
 
-    /**
-     * Generates and test 20 random gray values
-     */
     @Test
-    void testRandomGrayValues() {
-        for (int i = 0; i < 20; i++) {
-            //genero valori random 20 volte e li testo
-            int grayValue = random.nextInt(65536);
-            int maxValue = random.nextInt(65535) + 1;
+    void testToOriginal() {
+        ArgbSingleChannel converter = new ArgbSingleChannel(65535);
 
-            //calcolo valore atteso
-            long normalizedGray = (int) ((grayValue / (double) maxValue) * 255);
-            long expectedArgb = (0xFFL << 24) | (normalizedGray << 16) | (normalizedGray << 8) | normalizedGray;
+        assertEquals(0, converter.toOriginal(0xFF000000L));
 
-            long resultArgb = strategy.toArgb(grayValue, maxValue);
+        assertEquals(65535, converter.toOriginal(0xFFFFFFFFL));
+        //la conversione inversa arrotonda i valori intermedi -> not equal to original
+    }
 
-            assertEquals(expectedArgb, resultArgb, "Failed for grayValue: " + grayValue + " and maxValue: " + maxValue);
-        }
+    @Test
+    void testWithDifferentMaxValue() {
+        ArgbSingleChannel converter = new ArgbSingleChannel(255);
+
+        assertEquals(0xFFFFFFFFL, converter.toArgb(255), "Expected white for max grayscale value 255");
+
+        assertEquals(128, converter.toOriginal(0xFF808080L), "Expected 128 for mid-gray ARGB with maxValue 255");
     }
 }
 

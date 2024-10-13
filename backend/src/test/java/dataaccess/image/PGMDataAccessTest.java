@@ -1,5 +1,8 @@
 package dataaccess.image;
 
+import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ArgbSingleChannel;
 import ch.supsi.dataaccess.PGMDataAccess;
 import ch.supsi.application.Image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
@@ -217,6 +220,30 @@ class PGMDataAccessTest {
     }
 
     @Test
+    void testProcessBinary16BitEOFOnHighByte() throws IOException {
+        Path tempFile = tempDir.resolve("image.pgm");
+        String header = "P5\n4 4\n65535\n";
+
+        // Construct binary data where the last 16-bit pixel is missing the high byte
+        byte[] incompleteBinaryData = new byte[]{
+                0, 10, 0, 20, 0, 30, 0, 40,
+                0, 50, 0, 60, 0, 70, 0, 80,
+                0, 90, 0, 100,
+        };
+
+        // Combine header and incomplete binary data
+        byte[] fileContent = new byte[header.getBytes().length + incompleteBinaryData.length];
+        System.arraycopy(header.getBytes(), 0, fileContent, 0, header.getBytes().length);
+        System.arraycopy(incompleteBinaryData, 0, fileContent, header.getBytes().length, incompleteBinaryData.length);
+        Files.write(tempFile, fileContent);
+
+        // Assert that the read method throws an IOException with the expected message
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.read(tempFile.toAbsolutePath().toString()));
+        assertEquals("Insufficient data in binary pmg file for a 16 bit image", e.getMessage());
+    }
+
+
+    @Test
     void testProcessAsciiInvalidInput() throws IOException {
         Path tempFile = tempDir.resolve("image.pgm");
         String asciiData = "P2\n4 4\n255\n10 20\n30";
@@ -358,5 +385,113 @@ class PGMDataAccessTest {
 
         ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expected, img.getPixels());
+    }
+
+    @Test
+    void testWrite8bitBinary() {
+        Path tmpFile = tempDir.resolve("image.pgm");
+        long[][] data = new long[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P5",
+                new ArgbSingleChannel(255));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+    }
+
+    @Test
+    void testWrite16bitBinary() throws IOException {
+        Path tempFile = tempDir.resolve("image.pgm");
+        String header = "P5\n2 2\n65535\n";
+        byte[] binaryData = new byte[]{
+                (byte) 255, (byte) 255, 0, 0,
+                0, 0, (byte) 255, (byte) 255
+        };
+
+        byte[] fileContent = new byte[header.getBytes().length + binaryData.length];
+        System.arraycopy(header.getBytes(), 0, fileContent, 0, header.getBytes().length);
+        System.arraycopy(binaryData, 0, fileContent, header.getBytes().length, binaryData.length);
+        Files.write(tempFile, fileContent);
+
+        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        assertDoesNotThrow(() -> pgmDataAccess.write(img, tempFile.toAbsolutePath().toString()));
+
+        byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
+        assertArrayEquals(fileContent, actualFileContent);
+    }
+
+    @Test
+    void testWrite8bitAscii() {
+        Path tmpFile = tempDir.resolve("image.pgm");
+        long[][] data = new long[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P2",
+                new ArgbSingleChannel(255));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+    }
+
+    @Test
+    void testWrite16bitAscii() throws IOException {
+        Path tempFile = tempDir.resolve("image.pgm");
+        String asciiData = "P2\n2 2\n65535\n65535 0\n0 65535\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        Path outputFile = tempDir.resolve("output_image.pgm");
+        assertDoesNotThrow(() -> pgmDataAccess.write(img, outputFile.toAbsolutePath().toString()));
+
+        String expectedContent = new String(Files.readAllBytes(tempFile));
+        String actualContent = new String(Files.readAllBytes(outputFile));
+
+        String normalizedExpected = normalizeAsciiContent(expectedContent);
+        String normalizedActual = normalizeAsciiContent(actualContent);
+
+        assertEquals(normalizedExpected, normalizedActual);
+    }
+
+    // Helper method to normalize ASCII content by removing excess whitespace and standardizing line endings
+    private String normalizeAsciiContent(String content) {
+        return content
+                .replaceAll("\\s+", " ")
+                .replaceAll(" \n", "\n")
+                .trim();
+    }
+
+    @Test
+    void testNullPath() {
+        Path tmpFile = tempDir.resolve("image.pgm");
+        long[][] data = new long[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P2",
+                new ArgbSingleChannel(255));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img, null));
+    }
+
+    /* --------- invalid write -------- */
+
+    @Test
+    void testWriteToNonWritableFile() throws IOException {
+        Path nonWritablePath = tempDir.resolve("image.pgm");
+        Files.createFile(nonWritablePath);
+        nonWritablePath.toFile().setWritable(false);
+
+        long[][] data = new long[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, nonWritablePath.toAbsolutePath().toString(), "P2",
+                new ArgbSingleChannel(255));
+
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img, nonWritablePath.toAbsolutePath().toString()));
+        assertTrue(e.getMessage().contains("Unable to write to file: "));
+        nonWritablePath.toFile().setWritable(true);
     }
 }

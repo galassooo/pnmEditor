@@ -6,33 +6,26 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
 
-    /* self reference */
-    private static PGMDataAccess myself;
+    private static PGMDataAccess instance;
 
-
-    /* singleton */
-    public static PGMDataAccess getInstance() {
-        if (myself == null) {
-            myself = new PGMDataAccess();
-        }
-        return myself;
-    }
-
-    /* constructor */
     private PGMDataAccess() {}
 
-    /**
-     * Reads a binary PGM image supporting both 8-bit and 16-bit pixel formats.
-     * @param is InputStream
-     * @return ImageBusiness instance representing the decoded image
-     * @throws IOException when pixels value are out of range or the file is corrupted
-     */
-    @Override
+    public static PGMDataAccess getInstance() {
+        if (instance == null) {
+            instance = new PGMDataAccess();
+        }
+        return instance;
+    }
+
     protected long[] @NotNull [] readBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
 
@@ -70,35 +63,20 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return pixelMatrix;
     }
 
-    /**
-     * Reads an ASCII PGM image, supporting both 8-bit and 16-bit pixel formats.
-     * @param is InputStream
-     * @return ImageBusiness instance representing the decoded image
-     * @throws IOException when pixels value are out of range or the file is corrupted
-     */
     @Override
-    protected long[] @NotNull [] readAscii(InputStream is) throws IOException {
+    protected long[][] readAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
-
         try (Scanner scanner = new Scanner(is)) {
-            //loop on pixels
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-
-                    //retrieve an int
-                    //con questa implementazione non serve differenziare 8 e 16 bit perchè
-                    // nel file sono separati con uno spazio e quindi vengo letti e interpretati
-                    //correttamente entrambi i valori
-                    if (scanner.hasNextInt()) {
-                        int grayValue = scanner.nextInt();
-                        //valid value check
-                        if (grayValue < 0 || grayValue > super.getMaxValue()) {
-                            throw new IOException("gray pixel value out of range in binary pmg file");
-                        }
-                        pixelMatrix[y][x] = grayValue;
-                    } else {
+                    if (!scanner.hasNextInt()) {
                         throw new IOException("Invalid or missing data in ascii PGM file");
                     }
+                    int grayValue = scanner.nextInt();
+                    if (grayValue < 0 || grayValue > getMaxValue()) {
+                        throw new IOException("gray pixel value out of range in binary pmg file");
+                    }
+                    pixelMatrix[y][x] = grayValue;
                 }
             }
         }
@@ -106,13 +84,57 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
     }
 
     @Override
-    protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
-
+    protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+        writePixels(os, pixels, executor, this::generateBinaryRowBufferPgm);
     }
 
     @Override
-    protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+    protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+        writePixels(os, pixels, executor, this::generateAsciiRowBufferPgm);
+    }
 
+    private byte[] generateBinaryRowBufferPgm(long[][] pixels, int row, int width) {
+        boolean is16bit = getMaxValue() > 255;
+        byte[] rowBuffer = new byte[width * (is16bit ? 2 : 1)];
+        int index = 0;
+
+        for (int x = 0; x < width; x++) {
+            int grayscale = (int) pixels[row][x];
+            if (is16bit) rowBuffer[index++] = (byte) (grayscale >> 8);
+            rowBuffer[index++] = (byte) grayscale;
+        }
+
+        return rowBuffer;
+    }
+
+    private byte[] generateAsciiRowBufferPgm(long[][] pixels, int row, int width) {
+        StringBuilder rowContent = new StringBuilder();
+        for (int x = 0; x < width; x++) {
+            rowContent.append(pixels[row][x]).append(" ");
+        }
+        rowContent.append("\n");
+        return rowContent.toString().getBytes();
+    }
+
+    private void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
+        List<Future<byte[]>> futures = new ArrayList<>();
+        for (int y = 0; y < pixels.length; y++) {
+            final int row = y;
+            futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
+        }
+
+        for (Future<byte[]> future : futures) {
+            try {
+                os.write(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FunctionalInterface
+    private interface RowGenerator {
+        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
     }
 
     @Override
@@ -120,4 +142,3 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return new ArgbSingleChannel(getMaxValue());
     }
 }
-

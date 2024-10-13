@@ -1,7 +1,11 @@
 package ch.supsi.view.image;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.business.Image.ImageDataAccess;
+import ch.supsi.business.filter.NegativeFilter;
+import ch.supsi.dataaccess.PBMDataAccess;
 import ch.supsi.dataaccess.PGMDataAccess;
+import ch.supsi.dataaccess.PPMDataAccess;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -14,11 +18,15 @@ public class MainImageView {
     private ImageView image;
 
     @FXML
-    void initialize() throws IOException {
+    void initialize() throws IOException, InterruptedException {
 
 
         //--------- PROVA CARICAMENTO ----- PASSA DAL MODEL E ELIMINA STA SCHIFEZZA :)
-        ImageBusinessInterface bmpImage = PGMDataAccess.getInstance().read("/Users/marti/Desktop/16bit.ascii.pgm");
+
+        ImageDataAccess dac = PPMDataAccess.getInstance();
+
+        ImageBusinessInterface bmpImage = dac.read("/Users/marti/Desktop/image.ppm");
+        new NegativeFilter().applyFilter(bmpImage);
         int width = bmpImage.getWidth();
         int height = bmpImage.getHeight();
         long[][] pixels = bmpImage.getPixels();
@@ -34,7 +42,6 @@ public class MainImageView {
         }
 
         image.setImage(writableImage);
-
-        PGMDataAccess.getInstance().write(bmpImage, "/Users/marti/Desktop/prova.pgm");
+        dac.write(bmpImage, "/Users/marti/Desktop/prova.pgm");
     }
 }

@@ -28,6 +28,15 @@ public class ImageBusiness implements ImageBusinessInterface {
         this.magicNumber = magicNumber;
     }
 
+    public ImageBusiness(long[][] original, String path, String magicNumber) {
+        this.argbPixels = original;
+        this.height = original.length;
+        this.width = height == 0? 0 : original[0].length;
+        filePath = path;
+
+        this.magicNumber = magicNumber;
+    }
+
     public long[][] getPixels() {
         return argbPixels;
     }

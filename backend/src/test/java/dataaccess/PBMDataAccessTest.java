@@ -1,6 +1,8 @@
-package dataaccess.image;
+package dataaccess;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.strategy.ArgbSingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.supsi.dataaccess.PBMDataAccess;
@@ -161,7 +163,7 @@ class PBMDataAccessTest {
                         1 0 0 1
                         0 1 1 0
                         1 0 0
-                        """;
+                         """;
 
         Files.write(tempFile, (header + asciiData).getBytes());
 
@@ -237,5 +239,116 @@ class PBMDataAccessTest {
 
         assertDoesNotThrow(()->pbmDataAccess.read(tempFile.toAbsolutePath().toString()));
     }
+
+    //++++++++++++Write ++++++++++++
+    @Test
+    void testWriteBinary() {
+        Path tmpFile = tempDir.resolve("image.pbm");
+        long[][] data = new long[][]{
+                {1, 0, 1},
+                {0, 1, 0},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P4",
+                new ArgbSingleBit());
+        assertDoesNotThrow(() -> pbmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+    }
+
+    @Test
+    void testWriteAscii() {
+        Path tmpFile = tempDir.resolve("image.pbm");
+        long[][] data = new long[][]{
+                {1, 0, 1},
+                {0, 1, 0},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P1",
+                new ArgbSingleBit());
+        assertDoesNotThrow(() -> pbmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+    }
+    @Test
+    void testWriteBinaryContentNoPadding() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String header = "P4\n8 2\n";
+
+        byte[] expectedBinaryData = new byte[]{
+                (byte) 0b10101010,
+                (byte) 0b01010101
+        };
+
+        byte[] fileContent = new byte[header.getBytes().length + expectedBinaryData.length];
+        System.arraycopy(header.getBytes(), 0, fileContent, 0, header.getBytes().length);
+        System.arraycopy(expectedBinaryData, 0, fileContent, header.getBytes().length, expectedBinaryData.length);
+
+        Files.write(tempFile, fileContent);
+
+        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        assertDoesNotThrow(() -> pbmDataAccess.write(img, tempFile.toAbsolutePath().toString()));
+
+        byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
+        assertArrayEquals(fileContent, actualFileContent);
+    }
+
+
+    @Test
+    void testWriteAsciiContent() throws IOException {
+        Path tempFile = tempDir.resolve("image.pbm");
+        String asciiData = "P1\n2 2\n1 0\n0 1\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        Path outputFile = tempDir.resolve("output_image.pbm");
+        assertDoesNotThrow(() -> pbmDataAccess.write(img, outputFile.toAbsolutePath().toString()));
+
+        String expectedContent = new String(Files.readAllBytes(tempFile));
+        String actualContent = new String(Files.readAllBytes(outputFile));
+
+        String normalizedExpected = normalizeAsciiContent(expectedContent);
+        String normalizedActual = normalizeAsciiContent(actualContent);
+
+        assertEquals(normalizedExpected, normalizedActual);
+    }
+
+    private String normalizeAsciiContent(String content) {
+        return content
+                .replaceAll("\\s+", " ")
+                .replaceAll(" \n", "\n")
+                .trim();
+    }
+
+    @Test
+    void testNullPath() {
+        Path tmpFile = tempDir.resolve("image.pbm");
+        long[][] data = new long[][]{
+                {1, 0, 1},
+                {0, 1, 0},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, tmpFile.toAbsolutePath().toString(), "P1",
+                new ArgbSingleBit());
+        assertDoesNotThrow(() -> pbmDataAccess.write(img, null));
+    }
+
+    /* --------- invalid write -------- */
+
+    @Test
+    void testWriteToNonWritableFile() throws IOException {
+        Path nonWritablePath = tempDir.resolve("image.pbm");
+        Files.createFile(nonWritablePath);
+        nonWritablePath.toFile().setWritable(false);
+
+        long[][] data = new long[][]{
+                {1, 0, 1},
+                {0, 1, 0},
+        };
+        ImageBusinessInterface img = new ImageBusiness(
+                data, nonWritablePath.toAbsolutePath().toString(), "P1",
+                new ArgbSingleBit());
+
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.write(img, nonWritablePath.toAbsolutePath().toString()));
+        assertTrue(e.getMessage().contains("Unable to write to file: "));
+        nonWritablePath.toFile().setWritable(true);
+    }
 }
+
 

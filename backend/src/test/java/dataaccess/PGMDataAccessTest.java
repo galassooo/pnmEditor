@@ -1,4 +1,4 @@
-package dataaccess.image;
+package dataaccess;
 
 import ch.supsi.business.Image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbConvertStrategy;

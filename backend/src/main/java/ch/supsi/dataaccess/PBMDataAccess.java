@@ -6,8 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public final class PBMDataAccess extends PNMDataAccess {
 
@@ -81,13 +85,59 @@ public final class PBMDataAccess extends PNMDataAccess {
     }
 
     @Override
-    protected void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
-
+    protected void writeBinary(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+        writePixels(os, pixels, executor, this::generateBinaryRowBuffer);
     }
 
     @Override
-    protected void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+    protected void writeAscii(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+        writePixels(os, pixels, executor, this::generateAsciiRowBufferPbm);
+    }
 
+    private byte[] generateAsciiRowBufferPbm(long[][] pixels, int row, int width) {
+        StringBuilder rowContent = new StringBuilder();
+        for (int x = 0; x < width; x++) {
+            rowContent.append(pixels[row][x]).append(" ");
+        }
+        rowContent.append("\n");
+        return rowContent.toString().getBytes();
+    }
+
+    private void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
+        List<Future<byte[]>> futures = new ArrayList<>();
+        for (int y = 0; y < pixels.length; y++) {
+            final int row = y;
+            futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
+        }
+
+        for (Future<byte[]> future : futures) {
+            try {
+                os.write(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
+        int byteWidth = (width + 7) / 8;
+        byte[] rowBuffer = new byte[byteWidth];
+        int index = 0;
+
+        for (int x = 0; x < width; x++) {
+            int bitPosition = 7 - (x % 8);
+            if (pixels[row][x] == 1) {
+                rowBuffer[index] |= (byte) (1 << bitPosition); //posiziona il bit nella posizione corretta
+            }
+            if (bitPosition == 0) index++; //se abbiamo scritto il byte andiamo al prox
+        }
+
+        return rowBuffer;
+    }
+
+    @FunctionalInterface
+    private interface RowGenerator {
+        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
     }
 
     @Override
@@ -95,3 +145,4 @@ public final class PBMDataAccess extends PNMDataAccess {
         return new ArgbSingleBit();
     }
 }
+

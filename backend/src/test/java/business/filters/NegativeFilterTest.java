@@ -80,5 +80,40 @@ class NegativeFilterTest {
 
         assertArrayEquals(expectedPixels, img.getPixels());
     }
+
+    @Test
+    void testMirrorOnEmptySecondDimensionMatrix() {
+        // Matrice vuota
+        long[][] original = new long[1][0];
+
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        filter.applyFilter(img);
+
+        assertEquals(0, img.getPixels()[0].length);
+    }
+
+    @Test
+    void testMirrorOnEmptyMatrix() {
+        // Matrice vuota
+        long[][] original = new long[0][0];
+
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        filter.applyFilter(img);
+
+        assertEquals(0, img.getPixels().length);
+    }
+
+
+    @Test
+    void testMirrorOnNullMatrix() {
+        // Matrice vuota
+        long[][] original = new long[0][0];
+
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        img.setPixels(null);
+        filter.applyFilter(img);
+
+        assertNull(img.getPixels());
+    }
 }
 

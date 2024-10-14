@@ -7,8 +7,6 @@ import ch.supsi.business.strategy.ArgbThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Rotate90Test {
@@ -95,13 +93,6 @@ public class Rotate90Test {
         assertArrayEquals(expected, originalArgb);
     }
 
-
-    @Test
-    void testNullMatrix(){
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, ()->rotateRight.applyFilter(null));
-        assertEquals("Cannot rotate a null image", e.getMessage());
-    }
-
     @Test
     void testEmptyImage(){
         ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ArgbThreeChannel(255));
@@ -109,14 +100,35 @@ public class Rotate90Test {
 
         assertArrayEquals(new long[0][0], img.getPixels());
     }
-
     @Test
-    void testNullPixels(){
-        ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ArgbThreeChannel(255));
-        img.setPixels(null);
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, ()->rotateRight.applyFilter(img));
-        assertEquals("Cannot rotate an empty image", e.getMessage());
+    void testMirrorOnEmptySecondDimensionMatrix() {
+        long[][] original = new long[1][0];
 
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        rotateLeft.applyFilter(img);
+
+        assertEquals(0, img.getPixels()[0].length);
     }
 
+    @Test
+    void testMirrorOnEmptyMatrix() {
+        long[][] original = new long[0][0];
+
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        rotateLeft.applyFilter(img);
+
+        assertEquals(0, img.getPixels().length);
+    }
+
+
+    @Test
+    void testMirrorOnNullMatrix() {
+        long[][] original = new long[0][0];
+
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        img.setPixels(null);
+        rotateLeft.applyFilter(img);
+
+        assertNull(img.getPixels());
+    }
 }

@@ -11,22 +11,15 @@ public class Rotate90 implements FilterStrategy {
 
     @Override
     public void applyFilter(ImageBusinessInterface img) {
-        if (img == null) {
-            throw new IllegalArgumentException("Cannot rotate a null image");
-        }
         long[][] pixels = img.getPixels();
+        if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {
+            return;
+        }
         long[][] rotatedPixels = rotate(pixels, right);
         img.setPixels(rotatedPixels);
     }
 
     private long[][] rotate(long[][] pixels, boolean isRight) {
-        if (pixels == null) {
-            throw new IllegalArgumentException("Cannot rotate an empty image");
-        }
-
-        if(pixels.length == 0){
-            return new long[0][0];
-        }
 
         int width = pixels.length;
         int height = pixels[0].length;

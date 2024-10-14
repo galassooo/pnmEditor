@@ -40,6 +40,24 @@ public class Rotate90Test {
         long[][] originalArgb = img.getPixels();
         assertArrayEquals(expected, originalArgb);
     }
+    @Test
+    void testRotate90LeftNonSquare() {
+        long[][] original = {
+                {1, 2, 3},
+                {4, 5,  6},
+        };
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+
+        long[][] expected ={
+                {0xFF000003L, 0xFF000006L},
+                {0xFF000002L, 0xFF000005L},
+                {0xFF000001L, 0xFF000004L}
+        };
+
+        rotateLeft.applyFilter(img);
+        long[][] originalArgb = img.getPixels();
+        assertArrayEquals(expected, originalArgb);
+    }
 
     @Test
     void testRotate90Right() {
@@ -58,6 +76,26 @@ public class Rotate90Test {
         long[][] originalArgb = img.getPixels();
         assertArrayEquals(expected, originalArgb);
     }
+    @Test
+    void testRotate90RightNonSquare() {
+        long[][] original = {
+                {1, 2, 3},
+                {4, 5,  6},
+        };
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+
+        long[][] expected ={
+                {0xFF000004L, 0xFF000001L},
+                {0xFF000005L, 0xFF000002L},
+                {0xFF000006L, 0xFF000003L}
+        };
+
+        rotateRight.applyFilter(img);
+        long[][] originalArgb = img.getPixels();
+        assertArrayEquals(expected, originalArgb);
+    }
+
+
     @Test
     void testNullMatrix(){
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, ()->rotateRight.applyFilter(null));

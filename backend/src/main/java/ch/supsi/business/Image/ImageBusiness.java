@@ -7,8 +7,6 @@ public class ImageBusiness implements ImageBusinessInterface {
 
     /* instance field */
     private long[][] argbPixels;
-    private int width;
-    private int height;
     private final String filePath;
 
     // Tutti i formati di immagine
@@ -21,31 +19,30 @@ public class ImageBusiness implements ImageBusinessInterface {
 
     public ImageBusiness(long[][] original, String path, String magicNumber, ArgbConvertStrategy strategy) {
         this.argbPixels = createArgbMatrix(original, strategy);
-        this.height = original.length;
-        this.width = height == 0? 0 : original[0].length;
         filePath = path;
 
         this.magicNumber = magicNumber;
     }
 
-    public ImageBusiness(long[][] original, String path, String magicNumber) {
-        this.argbPixels = original;
-        this.height = original.length;
-        this.width = height == 0? 0 : original[0].length;
-        filePath = path;
-
-        this.magicNumber = magicNumber;
-    }
 
     public long[][] getPixels() {
         return argbPixels;
     }
 
+
+    @Override
+    public void setPixels(long[][] rotatedPixels) {
+        argbPixels = rotatedPixels;
+    }
+
     @Override
     public long[][] returnOriginalMatrix(ArgbConvertStrategy strategy) {
-        if (height == 0) {
+        int height = argbPixels.length;
+        if (argbPixels.length == 0) {
             return new long[0][0];
         }
+
+        int width = argbPixels[0].length;
 
         long[][] pixels = new long[height][width];
 
@@ -61,11 +58,14 @@ public class ImageBusiness implements ImageBusinessInterface {
 
 
     public int getWidth() {
-        return width;
+        //argbPixels sempre diverso da null perchè viene convertito in long[0][0]
+        //dal costruttore in caso sia null
+        return  argbPixels.length > 0  ? argbPixels[0].length : 0;
     }
 
+
     public int getHeight() {
-        return height;
+        return argbPixels.length;
     }
 
     public String getFilePath() {
@@ -77,6 +77,8 @@ public class ImageBusiness implements ImageBusinessInterface {
     }
 
     private long[][] createArgbMatrix(long[][] original, ArgbConvertStrategy strategy) {
+        if(original == null)
+            return new long[0][0];
         int height = original.length;
         if (height == 0) {
             return new long[0][0];

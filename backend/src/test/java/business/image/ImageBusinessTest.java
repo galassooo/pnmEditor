@@ -153,5 +153,26 @@ class ImageBusinessTest {
         assertEquals(0, img.getWidth());
         assertArrayEquals(new long[0][0], img.returnOriginalMatrix(strategy));
     }
+
+    @Test
+    void testSetPixels(){
+        long[][] expected = {{1,2}, {3,4}};
+
+        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5", strategy);
+        img.setPixels(expected);
+
+        assertArrayEquals(expected, img.getPixels());
+
+    }
+
+
+    @Test
+    void testGetWidthNullMatrix(){
+
+        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5", strategy);
+        int width = img.getWidth();
+        assertEquals(0, width);
+
+    }
 }
 

@@ -3,6 +3,7 @@ package ch.supsi.view.image;
 import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.Image.ImageDataAccess;
 import ch.supsi.business.filter.NegativeFilter;
+import ch.supsi.business.filter.Rotate90;
 import ch.supsi.dataaccess.PBMDataAccess;
 import ch.supsi.dataaccess.PGMDataAccess;
 import ch.supsi.dataaccess.PPMDataAccess;
@@ -26,7 +27,7 @@ public class MainImageView {
         ImageDataAccess dac = PPMDataAccess.getInstance();
 
         ImageBusinessInterface bmpImage = dac.read("/Users/marti/Desktop/image.ppm");
-        new NegativeFilter().applyFilter(bmpImage);
+        new Rotate90(false).applyFilter(bmpImage);
         int width = bmpImage.getWidth();
         int height = bmpImage.getHeight();
         long[][] pixels = bmpImage.getPixels();

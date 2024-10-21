@@ -251,7 +251,7 @@ class PBMDataAccessTest {
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P4",
                 new ArgbSingleBit());
-        assertDoesNotThrow(() -> pbmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pbmDataAccess.write(img));
     }
 
     @Test
@@ -264,7 +264,7 @@ class PBMDataAccessTest {
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P1",
                 new ArgbSingleBit());
-        assertDoesNotThrow(() -> pbmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pbmDataAccess.write(img));
     }
     @Test
     void testWriteBinaryContentNoPadding() throws IOException {
@@ -283,7 +283,7 @@ class PBMDataAccessTest {
         Files.write(tempFile, fileContent);
 
         ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
-        assertDoesNotThrow(() -> pbmDataAccess.write(img, tempFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pbmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
         assertArrayEquals(fileContent, actualFileContent);
@@ -297,13 +297,11 @@ class PBMDataAccessTest {
         Files.write(tempFile, asciiData.getBytes());
 
         ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
-        Path outputFile = tempDir.resolve("output_image.pbm");
-        assertDoesNotThrow(() -> pbmDataAccess.write(img, outputFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pbmDataAccess.write(img));
 
-        String expectedContent = new String(Files.readAllBytes(tempFile));
-        String actualContent = new String(Files.readAllBytes(outputFile));
+        String actualContent = new String(Files.readAllBytes(tempFile));
 
-        String normalizedExpected = normalizeAsciiContent(expectedContent);
+        String normalizedExpected = normalizeAsciiContent(asciiData);
         String normalizedActual = normalizeAsciiContent(actualContent);
 
         assertEquals(normalizedExpected, normalizedActual);
@@ -314,19 +312,6 @@ class PBMDataAccessTest {
                 .replaceAll("\\s+", " ")
                 .replaceAll(" \n", "\n")
                 .trim();
-    }
-
-    @Test
-    void testNullPath() {
-        Path tmpFile = tempDir.resolve("image.pbm");
-        long[][] data = new long[][]{
-                {1, 0, 1},
-                {0, 1, 0},
-        };
-        ImageBusinessInterface img = new ImageBusiness(
-                data, tmpFile.toAbsolutePath().toString(), "P1",
-                new ArgbSingleBit());
-        assertDoesNotThrow(() -> pbmDataAccess.write(img, null));
     }
 
     /* --------- invalid write -------- */
@@ -345,7 +330,7 @@ class PBMDataAccessTest {
                 data, nonWritablePath.toAbsolutePath().toString(), "P1",
                 new ArgbSingleBit());
 
-        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.write(img, nonWritablePath.toAbsolutePath().toString()));
+        IOException e = assertThrows(IOException.class, () -> pbmDataAccess.write(img));
         assertTrue(e.getMessage().contains("Unable to write to file: "));
         nonWritablePath.toFile().setWritable(true);
     }

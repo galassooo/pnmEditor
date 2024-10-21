@@ -396,7 +396,7 @@ class PGMDataAccessTest {
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P5",
                 new ArgbSingleChannel(255));
-        assertDoesNotThrow(() -> pgmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
     @Test
@@ -414,7 +414,7 @@ class PGMDataAccessTest {
         Files.write(tempFile, fileContent);
 
         ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
-        assertDoesNotThrow(() -> pgmDataAccess.write(img, tempFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
         assertArrayEquals(fileContent, actualFileContent);
@@ -430,7 +430,7 @@ class PGMDataAccessTest {
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P2",
                 new ArgbSingleChannel(255));
-        assertDoesNotThrow(() -> pgmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
     @Test
@@ -440,13 +440,11 @@ class PGMDataAccessTest {
         Files.write(tempFile, asciiData.getBytes());
 
         ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
-        Path outputFile = tempDir.resolve("output_image.pgm");
-        assertDoesNotThrow(() -> pgmDataAccess.write(img, outputFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
 
-        String expectedContent = new String(Files.readAllBytes(tempFile));
-        String actualContent = new String(Files.readAllBytes(outputFile));
+        String actualContent = new String(Files.readAllBytes(tempFile));
 
-        String normalizedExpected = normalizeAsciiContent(expectedContent);
+        String normalizedExpected = normalizeAsciiContent(asciiData);
         String normalizedActual = normalizeAsciiContent(actualContent);
 
         assertEquals(normalizedExpected, normalizedActual);
@@ -458,19 +456,6 @@ class PGMDataAccessTest {
                 .replaceAll("\\s+", " ")
                 .replaceAll(" \n", "\n")
                 .trim();
-    }
-
-    @Test
-    void testNullPath() {
-        Path tmpFile = tempDir.resolve("image.pgm");
-        long[][] data = new long[][]{
-                {1, 2, 3},
-                {4, 5, 6},
-        };
-        ImageBusinessInterface img = new ImageBusiness(
-                data, tmpFile.toAbsolutePath().toString(), "P2",
-                new ArgbSingleChannel(255));
-        assertDoesNotThrow(() -> pgmDataAccess.write(img, null));
     }
 
     /* --------- invalid write -------- */
@@ -489,7 +474,7 @@ class PGMDataAccessTest {
                 data, nonWritablePath.toAbsolutePath().toString(), "P2",
                 new ArgbSingleChannel(255));
 
-        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img, nonWritablePath.toAbsolutePath().toString()));
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img));
         assertTrue(e.getMessage().contains("Unable to write to file: "));
         nonWritablePath.toFile().setWritable(true);
     }

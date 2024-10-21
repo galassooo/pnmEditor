@@ -62,7 +62,7 @@ public class ImageBusiness implements ImageBusinessInterface {
     public ImageBusinessInterface persist(String path) throws IOException {
         filePath = !path.equals(filePath) ? path : filePath;
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
-        return dac.write(this, path); // ELIMINA L'USO DI PATH COME PARAM
+        return dac.write(this);
 
     }
 

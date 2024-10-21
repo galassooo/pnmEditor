@@ -99,12 +99,11 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     /**
      * Writes the PNM image (header and pixel data) to the specified path.
      * @param image The image to be written
-     * @param path  The output path
      * @return The ImageBusinessInterface instance of the image written
      * @throws IOException if there's an error writing to the file
      */
-    public final ImageBusinessInterface write(ImageBusinessInterface image, String path) throws IOException {
-        String outputPath = path == null ? image.getFilePath() : path;
+    public final ImageBusinessInterface write(ImageBusinessInterface image) throws IOException {
+        String outputPath =image.getFilePath();
         File outputFile = new File(outputPath);
 
         if (!outputFile.exists()) {

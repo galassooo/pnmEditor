@@ -331,7 +331,7 @@ class PPMDataAccessTest {
         ImageBusiness img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(),"P6",
                 new ArgbThreeChannel(255));
-        assertDoesNotThrow(()->ppmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(()->ppmDataAccess.write(img));
     }
     @Test
     void testWrite16bitBinary() throws IOException {
@@ -352,7 +352,7 @@ class PPMDataAccessTest {
         //devo leggere e scrivere nel caso del test write 16 bit perche la variabile maxvalue rimane scritta
         //nella classe dopo la lettura e viene usata nella scrittura
         ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
-        assertDoesNotThrow(()->ppmDataAccess.write(img, tempFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(()->ppmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
 
@@ -370,7 +370,7 @@ class PPMDataAccessTest {
         ImageBusiness img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(),"P3",
                 new ArgbThreeChannel(255));
-        assertDoesNotThrow(()->ppmDataAccess.write(img, tmpFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(()->ppmDataAccess.write(img));
     }
 
     @Test
@@ -381,13 +381,11 @@ class PPMDataAccessTest {
         Files.write(tempFile, asciiData.getBytes());
 
         ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
-        Path outputFile = tempDir.resolve("output_image.ppm");
-        assertDoesNotThrow(() -> ppmDataAccess.write(img, outputFile.toAbsolutePath().toString()));
+        assertDoesNotThrow(() -> ppmDataAccess.write(img));
 
-        String expectedContent = new String(Files.readAllBytes(tempFile));
-        String actualContent = new String(Files.readAllBytes(outputFile));
+        String actualContent = new String(Files.readAllBytes(tempFile));
 
-        String normalizedExpected = normalizeAsciiContent(expectedContent);
+        String normalizedExpected = normalizeAsciiContent(asciiData);
         String normalizedActual = normalizeAsciiContent(actualContent);
 
         assertEquals(normalizedExpected, normalizedActual);
@@ -399,19 +397,6 @@ class PPMDataAccessTest {
                 .replaceAll("\\s+", " ")
                 .replaceAll(" \n", "\n")
                 .trim();
-    }
-
-    @Test
-    void testNullPath() {
-        Path tmpFile = tempDir.resolve("image.ppm");
-        long[][] data = new long[][]{
-                {1, 2, 3},
-                {4, 5, 6},
-        };
-        ImageBusiness img = new ImageBusiness(
-                data, tmpFile.toAbsolutePath().toString(),"P3",
-                new ArgbThreeChannel(255));
-        assertDoesNotThrow(()->ppmDataAccess.write(img, null));
     }
 
     /* --------- invalid write -------- */
@@ -430,7 +415,7 @@ class PPMDataAccessTest {
                 data, nonWritablePath.toAbsolutePath().toString(), "P3",
                 new ArgbThreeChannel(255));
 
-        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img, nonWritablePath.toAbsolutePath().toString()));
+        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));
         assertTrue(e.getMessage().contains("Unable to write to file: "));
         nonWritablePath.toFile().setWritable(true);
     }

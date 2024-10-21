@@ -1,6 +1,6 @@
 package ch.supsi.business.filter;
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 
 public class Rotate90 implements FilterStrategy {
     private final boolean right;

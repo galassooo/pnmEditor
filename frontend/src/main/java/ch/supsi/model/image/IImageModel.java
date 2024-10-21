@@ -1,6 +1,6 @@
 package ch.supsi.model.image;
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 
 import java.io.IOException;
 

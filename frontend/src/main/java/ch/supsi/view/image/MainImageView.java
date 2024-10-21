@@ -1,6 +1,6 @@
 package ch.supsi.view.image;
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.filter.MirrorFilter;
 import ch.supsi.model.image.IImageModel;
 import ch.supsi.model.image.ImageModel;

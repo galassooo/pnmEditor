@@ -1,4 +1,4 @@
-package ch.supsi.application.Image;
+package ch.supsi.application.image;
 
 import ch.supsi.business.image.ImageBusiness;
 
@@ -19,12 +19,12 @@ public class ImageApplication {
 
     private ImageBusinessInterface currentImage;
 
-    public ImageBusinessInterface read(String path) throws IOException {
+    public ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         currentImage =  ImageBusiness.read(path);
         return currentImage;
     }
 
-    public ImageBusinessInterface persist(String path) throws IOException {
+    public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
         return currentImage.persist(path);
 
     }

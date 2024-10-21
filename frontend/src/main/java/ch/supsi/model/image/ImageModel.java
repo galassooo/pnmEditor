@@ -1,7 +1,7 @@
 package ch.supsi.model.image;
 
-import ch.supsi.application.Image.ImageApplication;
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageApplication;
+import ch.supsi.application.image.ImageBusinessInterface;
 
 import java.io.IOException;
 
@@ -28,7 +28,11 @@ public class ImageModel implements IImageModel{
     }
 
     public void readImage(String path) throws IOException {
-        imageBusiness = backendController.read(path);
+        try {
+            imageBusiness = backendController.read(path);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace(); //to be changed
+        }
     }
     public  ImageBusinessInterface getImage(){
         return imageBusiness;

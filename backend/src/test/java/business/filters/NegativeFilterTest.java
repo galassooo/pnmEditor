@@ -1,7 +1,7 @@
 package business.filters;
 
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.NegativeFilter;
 import ch.supsi.business.strategy.ArgbSingleChannel;

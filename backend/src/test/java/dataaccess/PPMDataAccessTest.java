@@ -3,7 +3,7 @@ package dataaccess;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbThreeChannel;
 import ch.supsi.dataaccess.image.PPMDataAccess;
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

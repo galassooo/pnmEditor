@@ -1,4 +1,4 @@
-package ch.supsi.application.Image;
+package ch.supsi.application.image;
 
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 
@@ -12,7 +12,7 @@ public interface ImageBusinessInterface {
     long[][] getPixels();
     long[][] returnOriginalMatrix(ArgbConvertStrategy strategy);
     String getMagicNumber();
-    ImageBusinessInterface persist(String path) throws IOException;
+    ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
     /* modifiable image */ //-> crea nuova interface
     void setPixels(long[][] rotatedPixels);
 }

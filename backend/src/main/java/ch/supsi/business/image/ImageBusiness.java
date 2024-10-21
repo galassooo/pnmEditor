@@ -1,8 +1,7 @@
 package ch.supsi.business.image;
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.dataaccess.image.DataAccessFactory;
 
 import java.io.IOException;
 
@@ -59,14 +58,14 @@ public class ImageBusiness implements ImageBusinessInterface {
         return pixels;
     }
     @Override
-    public ImageBusinessInterface persist(String path) throws IOException {
+    public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
         filePath = !path.equals(filePath) ? path : filePath;
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
         return dac.write(this);
 
     }
 
-    public static ImageBusinessInterface read(String path) throws IOException {
+    public static ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
         return dac.read(path);
     }

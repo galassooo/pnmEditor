@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.application.Image.ImageBusinessInterface;
+import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.image.ImageDataAccess;
 import ch.supsi.business.strategy.ArgbConvertStrategy;

@@ -1,11 +1,8 @@
 package ch.supsi.dispatcher;
 
-import ch.supsi.controller.FilterController;
-import ch.supsi.controller.IFilterController;
+import ch.supsi.controller.filter.FilterController;
+import ch.supsi.controller.filter.IFilterController;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 
 public class FilterDispatcher {
 

@@ -1,4 +1,4 @@
-package ch.supsi.business.Image;
+package ch.supsi.business.image;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
 

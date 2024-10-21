@@ -1,9 +1,8 @@
 package dataaccess;
 
-import ch.supsi.business.Image.ImageBusiness;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbSingleChannel;
-import ch.supsi.dataaccess.PGMDataAccess;
+import ch.supsi.dataaccess.image.PGMDataAccess;
 import ch.supsi.application.Image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

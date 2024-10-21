@@ -1,5 +1,6 @@
-package ch.supsi.dataaccess;
+package ch.supsi.dataaccess.image;
 
+import ch.supsi.business.image.ImageAccess;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbThreeChannel;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
+@ImageAccess(magicNumber = {"P3", "P6"})
 public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
 
     private static PPMDataAccess instance;

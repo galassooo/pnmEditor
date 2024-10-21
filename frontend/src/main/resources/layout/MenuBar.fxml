@@ -7,7 +7,7 @@
          BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
     <Menu mnemonicParsing="false" text="File">
         <items>
-            <MenuItem mnemonicParsing="false" text="Open..." disable="true" onAction="#open"/>
+            <MenuItem mnemonicParsing="false" text="Open..." disable="false" onAction="#open"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" text="Save" onAction="#save" />
             <MenuItem mnemonicParsing="false" text="Save As" onAction="#saveAs" />

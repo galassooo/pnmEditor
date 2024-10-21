@@ -1,6 +1,6 @@
 package business.image;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbSingleBit;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbSingleChannel;

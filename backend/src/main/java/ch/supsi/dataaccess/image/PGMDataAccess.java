@@ -1,5 +1,6 @@
-package ch.supsi.dataaccess;
+package ch.supsi.dataaccess.image;
 
+import ch.supsi.business.image.ImageAccess;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 import ch.supsi.business.strategy.ArgbSingleChannel;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+@ImageAccess(magicNumber = {"P2", "P5"})
 public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
 
     private static PGMDataAccess instance;

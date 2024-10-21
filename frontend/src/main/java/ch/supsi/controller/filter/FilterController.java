@@ -1,4 +1,4 @@
-package ch.supsi.controller;
+package ch.supsi.controller.filter;
 
 import ch.supsi.model.filters.FilterModel;
 import ch.supsi.model.filters.IFilterModel;

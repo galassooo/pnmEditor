@@ -1,6 +1,6 @@
 package business.filters;
 
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.FilterStrategy;
 import ch.supsi.business.filter.Rotate90;
 import ch.supsi.business.strategy.ArgbThreeChannel;

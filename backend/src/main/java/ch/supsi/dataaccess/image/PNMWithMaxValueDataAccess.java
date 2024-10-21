@@ -1,4 +1,4 @@
-package ch.supsi.dataaccess;
+package ch.supsi.dataaccess.image;
 
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;

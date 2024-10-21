@@ -1,7 +1,11 @@
 package ch.supsi;
 
-import ch.supsi.controller.FilterController;
-import ch.supsi.controller.IFilterController;
+import ch.supsi.controller.errors.ErrorController;
+import ch.supsi.controller.errors.IErrorController;
+import ch.supsi.controller.filter.FilterController;
+import ch.supsi.controller.filter.IFilterController;
+import ch.supsi.controller.image.IImageController;
+import ch.supsi.controller.image.ImageController;
 import ch.supsi.view.filter.IFilteredListView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +35,8 @@ public class MainFx extends Application {
     @Override
     public void start(Stage primaryStage) {
         IFilterController filterController = FilterController.getInstance();
+        IImageController imageController = ImageController.getInstance();
+        IErrorController errorController = ErrorController.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
@@ -92,6 +98,10 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl);
             ImageView image = loader.load();
             root.setCenter(image);
+
+            imageController.setImage(loader.getController());
+            imageController.setStage(primaryStage);
+            errorController.setStage(primaryStage);
 
             fxmlUrl = getClass().getResource("/layout/HistoryColumn.fxml");
             if (fxmlUrl == null) {

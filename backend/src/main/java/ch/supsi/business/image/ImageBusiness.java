@@ -1,13 +1,16 @@
-package ch.supsi.business.Image;
+package ch.supsi.business.image;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.dataaccess.image.DataAccessFactory;
+
+import java.io.IOException;
 
 public class ImageBusiness implements ImageBusinessInterface {
 
     /* instance field */
     private long[][] argbPixels;
-    private final String filePath;
+    private String filePath;
 
     // Tutti i formati di immagine
     // (PNG, BMP, GIF, JPEG, TIFF, ICO, PPM, PGM, PBM etc...)
@@ -24,7 +27,7 @@ public class ImageBusiness implements ImageBusinessInterface {
         this.magicNumber = magicNumber;
     }
 
-
+    @Override
     public long[][] getPixels() {
         return argbPixels;
     }
@@ -55,8 +58,20 @@ public class ImageBusiness implements ImageBusinessInterface {
 
         return pixels;
     }
+    @Override
+    public ImageBusinessInterface persist(String path) throws IOException {
+        filePath = !path.equals(filePath) ? path : filePath;
+        ImageDataAccess dac = DataAccessFactory.getInstance(path);
+        return dac.write(this, path); // ELIMINA L'USO DI PATH COME PARAM
 
+    }
 
+    public static ImageBusinessInterface read(String path) throws IOException {
+        ImageDataAccess dac = DataAccessFactory.getInstance(path);
+        return dac.read(path);
+    }
+
+    @Override
     public int getWidth() {
         //argbPixels sempre diverso da null perchè viene convertito in long[0][0]
         //dal costruttore in caso sia null
@@ -64,14 +79,17 @@ public class ImageBusiness implements ImageBusinessInterface {
     }
 
 
+    @Override
     public int getHeight() {
         return argbPixels.length;
     }
 
+    @Override
     public String getFilePath() {
         return filePath;
     }
 
+    @Override
     public String getMagicNumber() {
         return magicNumber;
     }

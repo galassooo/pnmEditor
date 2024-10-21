@@ -1,11 +1,11 @@
 package dataaccess;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
-import ch.supsi.business.Image.ImageBusiness;
+import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.ArgbSingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ch.supsi.dataaccess.PBMDataAccess;
+import ch.supsi.dataaccess.image.PBMDataAccess;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;

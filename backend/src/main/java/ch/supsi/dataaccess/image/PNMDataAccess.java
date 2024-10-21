@@ -1,8 +1,8 @@
-package ch.supsi.dataaccess;
+package ch.supsi.dataaccess.image;
 
 import ch.supsi.application.Image.ImageBusinessInterface;
-import ch.supsi.business.Image.ImageBusiness;
-import ch.supsi.business.Image.ImageDataAccess;
+import ch.supsi.business.image.ImageBusiness;
+import ch.supsi.business.image.ImageDataAccess;
 import ch.supsi.business.strategy.ArgbConvertStrategy;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;

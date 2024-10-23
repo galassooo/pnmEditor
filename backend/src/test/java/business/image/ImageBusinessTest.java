@@ -1,10 +1,10 @@
 package business.image;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.ArgbSingleBit;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.business.strategy.ArgbSingleChannel;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.SingleBit;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.SingleChannel;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +15,7 @@ class ImageBusinessTest {
     private long[][] sampleMatrix;
     private int width;
     private int height;
-    private ArgbConvertStrategy strategy;
+    private ConvertStrategy strategy;
 
     /**
      * initialize a 2x2 matrix
@@ -28,7 +28,7 @@ class ImageBusinessTest {
         };
         width = 2;
         height = 2;
-        strategy = new ArgbSingleBit();
+        strategy = new SingleBit();
     }
 
     /* -------- constructor tests -------- */
@@ -91,14 +91,14 @@ class ImageBusinessTest {
 
     @Test
     void testDifferentStrategy() {
-        ArgbConvertStrategy customStrategy = new ArgbConvertStrategy() {
+        ConvertStrategy customStrategy = new ConvertStrategy() {
             @Override
             public long toArgb(long pixel) {
                 return pixel*2;
             }
 
             @Override
-            public long toOriginal(long pixel) {
+            public long ArgbToOriginal(long pixel) {
                 return pixel/2;
             }
         };
@@ -120,7 +120,7 @@ class ImageBusinessTest {
                 {0, 128, 255},
                 {255, 128, 0}
         };
-        ArgbSingleChannel strategy = new ArgbSingleChannel(255);
+        SingleChannel strategy = new SingleChannel(255);
 
         ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.pgm", "P5", strategy);
 
@@ -134,7 +134,7 @@ class ImageBusinessTest {
                 {(65535L << 32), (65535L << 16), 65535L},
                 {(65535L << 32) | (65535L << 16) | 65535L, 0, 0}
         };
-        ArgbThreeChannel strategy = new ArgbThreeChannel(65535);
+        ThreeChannel strategy = new ThreeChannel(65535);
 
         ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.ppm", "P6", strategy);
 
@@ -145,7 +145,7 @@ class ImageBusinessTest {
     @Test
     void testEmptyOriginalMatrix() {
         long[][] emptyMatrix = new long[0][0];
-        ArgbSingleChannel strategy = new ArgbSingleChannel(255);
+        SingleChannel strategy = new SingleChannel(255);
 
         ImageBusiness img = new ImageBusiness(emptyMatrix, "emptyImage.pgm", "P5", strategy);
 

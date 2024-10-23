@@ -1,6 +1,6 @@
 package ch.supsi.business.strategy;
 
-public class ArgbSingleBit implements ArgbConvertStrategy {
+public class SingleBit implements ConvertStrategy {
 
     private static final long ARGB_WHITE = 0xFFFFFFFFL; // Bianco opaco
     private static final long ARGB_BLACK = 0xFF000000L; // Nero opaco
@@ -11,7 +11,7 @@ public class ArgbSingleBit implements ArgbConvertStrategy {
     }
 
     @Override
-    public long toOriginal(long pixel) {
+    public long ArgbToOriginal(long pixel) {
         return pixel == ARGB_BLACK ? 1 : 0;
     }
 

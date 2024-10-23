@@ -3,7 +3,7 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.image.ImageDataAccess;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ConvertStrategy;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.util.List;
@@ -25,7 +25,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     protected abstract long[] @NotNull [] processAscii(InputStream is) throws IOException;
     protected abstract void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
     protected abstract void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
-    protected abstract ArgbConvertStrategy getArgbConvertStrategy();
+    protected abstract ConvertStrategy getArgbConvertStrategy();
 
     /**
      * Reads the header of a generic PNM image.

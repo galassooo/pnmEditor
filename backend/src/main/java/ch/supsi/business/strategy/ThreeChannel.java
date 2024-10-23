@@ -1,10 +1,10 @@
 package ch.supsi.business.strategy;
 
-public class ArgbThreeChannel implements ArgbConvertStrategy{
+public class ThreeChannel implements ConvertStrategy {
 
     private final int maxValue;
 
-    public ArgbThreeChannel(int maxValue) {
+    public ThreeChannel(int maxValue) {
         this.maxValue = maxValue;
     }
 
@@ -36,7 +36,7 @@ public class ArgbThreeChannel implements ArgbConvertStrategy{
     }
 
     @Override
-    public long toOriginal(long pixel) {
+    public long ArgbToOriginal(long pixel) {
         long red = (pixel >> 16) & 0xFF;
         long green = (pixel >> 8) & 0xFF;
         long blue = pixel & 0xFF;

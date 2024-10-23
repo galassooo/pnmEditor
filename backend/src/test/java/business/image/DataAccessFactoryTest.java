@@ -1,6 +1,6 @@
 package business.image;
 
-import ch.supsi.business.image.DataAccessFactory;
+import ch.supsi.dataaccess.image.DataAccessFactory;
 import ch.supsi.business.image.ImageDataAccess;
 import ch.supsi.dataaccess.image.PBMDataAccess;
 import ch.supsi.dataaccess.image.PGMDataAccess;
@@ -30,7 +30,7 @@ public class DataAccessFactoryTest {
         String magicNumber = "TEST";
         //crate temporary file with TEST magicNumber
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         // !!!!!!!!!!             ATTENZIONE             !!!!!!!!!!
@@ -222,7 +222,20 @@ public class DataAccessFactoryTest {
 
         assertEquals(dac, PGMDataAccess.getInstance());
     }
+
+    @Test
+    void testMagicNumber() throws IOException, IllegalAccessException {
+
+        ImageDataAccess dac = DataAccessFactory.getInstanceFromMagicNumber("P3");
+        assertEquals(dac, PPMDataAccess.getInstance());
+    }
     /* ----------- various input -------------*/
+
+    @Test
+    void testWrongMagicNumber() throws IOException, IllegalAccessException {
+        IOException e = assertThrows(IOException.class, () -> DataAccessFactory.getInstanceFromMagicNumber("LOL"));
+        assertEquals("Unsupported file type", e.getMessage());
+    }
 
     @Test
     void testEmptyLines() throws IOException, IllegalAccessException {
@@ -253,7 +266,7 @@ public class DataAccessFactoryTest {
         String magicNumber = "TEST1";
 
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         ClassPool pool = ClassPool.getDefault();
@@ -294,7 +307,7 @@ public class DataAccessFactoryTest {
         String magicNumber = "TEST2";
 
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         ClassPool pool = ClassPool.getDefault();
@@ -341,7 +354,7 @@ public class DataAccessFactoryTest {
         String magicNumber = "TEST3";
 
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         ClassPool pool = ClassPool.getDefault();
@@ -361,7 +374,7 @@ public class DataAccessFactoryTest {
             dynamicClass.defrost();
         }
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
-        assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance)"));
+        assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
     }
 
     private CtClass writeNonStaticSingleton(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {
@@ -384,12 +397,13 @@ public class DataAccessFactoryTest {
         dynamicClass.defrost();
         return dynamicClass;
     }
+
     @Test
     public void testExceptionSingleton() throws Exception {
         String magicNumber = "TEST4";
 
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         ClassPool pool = ClassPool.getDefault();
@@ -440,7 +454,7 @@ public class DataAccessFactoryTest {
         String magicNumber = "TEST5";
 
         Path tempFile = tempDir.resolve("image.pgm");
-        String asciiData = "\n"+magicNumber+"\n";
+        String asciiData = "\n" + magicNumber + "\n";
         Files.write(tempFile, asciiData.getBytes());
 
         ClassPool pool = ClassPool.getDefault();
@@ -482,5 +496,213 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-}
+    @Test
+    public void testWrongReturnSingleton() throws Exception {
+        String magicNumber = "TEST6";
 
+        Path tempFile = tempDir.resolve("image.pgm");
+        String asciiData = "\n" + magicNumber + "\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ClassPool pool = ClassPool.getDefault();
+        pool.importPackage("ch.supsi.dataaccess.image");
+        pool.importPackage("ch.supsi.business.image");
+        pool.importPackage("ch.supsi.application.image");
+
+
+        try { //safety check per quando si fa run all
+            Class.forName("ch.supsi.dataaccess.image.WrongReturnSingleton");
+            System.out.println("Dynamic test class found in VM");
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("Dynamic test class not found in VM... Creating an instance...");
+            CtClass dynamicClass = writeWrongReturnTypeSingleton(pool, magicNumber);
+            Class<?> clazz = dynamicClass.toClass();
+            dynamicClass.defrost();
+        }
+        IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
+        assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
+    }
+
+    private CtClass writeWrongReturnTypeSingleton(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {
+        CtClass dynamicClass = pool.makeClass("ch.supsi.dataaccess.image.WrongReturnSingleton");
+
+        addConstructorToDynClass(dynamicClass);
+        addInterfaceToDynClass(dynamicClass, pool);
+
+        CtMethod getInstanceMethod = CtMethod.make(
+                "public static String getInstance(){ return \"\"; }",
+                dynamicClass
+        );
+        dynamicClass.addMethod(getInstanceMethod);
+        addAnnotationToDynClass(dynamicClass, magicNumber);
+
+        String outputDirectory = "target/classes";
+        dynamicClass.writeFile(outputDirectory);
+        dynamicClass.defrost();
+        return dynamicClass;
+    }
+
+    @Test
+    public void testPrivateSingleton() throws Exception {
+        String magicNumber = "TEST7";
+
+        Path tempFile = tempDir.resolve("image.pgm");
+        String asciiData = "\n" + magicNumber + "\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ClassPool pool = ClassPool.getDefault();
+        pool.importPackage("ch.supsi.dataaccess.image");
+        pool.importPackage("ch.supsi.business.image");
+        pool.importPackage("ch.supsi.application.image");
+
+
+        try { //safety check per quando si fa run all
+            Class.forName("ch.supsi.dataaccess.image.PrivateSingletonAccessClass");
+            System.out.println("Dynamic test class found in VM");
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("Dynamic test class not found in VM... Creating an instance...");
+            CtClass dynamicClass = writePrivateSingleton(pool, magicNumber);
+            Class<?> clazz = dynamicClass.toClass();
+            dynamicClass.defrost();
+        }
+        assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
+    }
+
+    private CtClass writePrivateSingleton(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {
+        CtClass dynamicClass = pool.makeClass("ch.supsi.dataaccess.image.PrivateSingletonAccessClass");
+
+        addConstructorToDynClass(dynamicClass);
+        addInterfaceToDynClass(dynamicClass, pool);
+
+        CtMethod getInstanceMethod = CtMethod.make(
+                "private static PrivateSingletonAccessClass getInstance(){ return new PrivateSingletonAccessClass(); }",
+                dynamicClass
+        );
+        dynamicClass.addMethod(getInstanceMethod);
+        addAnnotationToDynClass(dynamicClass, magicNumber);
+
+        String outputDirectory = "target/classes";
+        dynamicClass.writeFile(outputDirectory);
+        dynamicClass.defrost();
+        return dynamicClass;
+    }
+
+    @Test
+    public void testAbstractReturnSingleton() throws Exception {
+        String magicNumber = "TEST8";
+
+        Path tempFile = tempDir.resolve("image.pgm");
+        String asciiData = "\n" + magicNumber + "\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ClassPool pool = ClassPool.getDefault();
+        pool.importPackage("ch.supsi.dataaccess.image");
+        pool.importPackage("ch.supsi.business.image");
+        pool.importPackage("ch.supsi.application.image");
+
+        try {
+
+            Class.forName("ch.supsi.dataaccess.image.AbstractSingleton");
+            System.out.println("Dynamic test class found in VM");
+        } catch (ClassNotFoundException e) {
+
+            System.out.println("Dynamic test class not found in VM... Creating an instance...");
+            CtClass dynamicClass = writeAbstractReturn(pool, magicNumber);
+            Class<?> clazz = dynamicClass.toClass();
+            dynamicClass.defrost();
+        }
+
+        assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
+    }
+
+    private CtClass writeAbstractReturn(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {
+        CtClass dynamicClass = pool.makeClass("ch.supsi.dataaccess.image.AbstractSingleton");
+
+        addConstructorToDynClass(dynamicClass);
+        addInterfaceToDynClass(dynamicClass, pool);
+
+        try {
+            Class.forName("ch.supsi.dataaccess.image.AbstractParentClass");
+            System.out.println("AbstractClass class found in VM");
+        } catch (ClassNotFoundException e) {
+            CtClass abstractClass = pool.makeClass("ch.supsi.dataaccess.image.AbstractParentClass");
+            abstractClass.setModifiers(Modifier.ABSTRACT);
+            abstractClass.addInterface(pool.get(ImageDataAccess.class.getName()));
+
+            String outputDirectory = "target/classes";
+            abstractClass.writeFile(outputDirectory);
+            abstractClass.toClass();
+
+            CtClass subclass = pool.makeClass("ch.supsi.dataaccess.image.ConcreteImageDataAccess", abstractClass);
+
+            CtConstructor defaultConstructor = new CtConstructor(new CtClass[]{}, subclass);
+            defaultConstructor.setBody("{}");
+            subclass.addConstructor(defaultConstructor);
+
+            subclass.writeFile(outputDirectory);
+            subclass.toClass();
+        }
+        CtMethod getInstanceMethod = CtMethod.make(
+                "public static AbstractParentClass getInstance() { return new ConcreteImageDataAccess(); }",
+                dynamicClass
+        );
+        dynamicClass.addMethod(getInstanceMethod);
+
+        addAnnotationToDynClass(dynamicClass, magicNumber);
+
+        String outputDirectory = "target/classes";
+        dynamicClass.writeFile(outputDirectory);
+        dynamicClass.defrost();
+
+        return dynamicClass;
+    }
+
+    @Test
+    public void testNullSingleton() throws Exception {
+        String magicNumber = "TEST9";
+
+        Path tempFile = tempDir.resolve("image.pgm");
+        String asciiData = "\n" + magicNumber + "\n";
+        Files.write(tempFile, asciiData.getBytes());
+
+        ClassPool pool = ClassPool.getDefault();
+        pool.importPackage("ch.supsi.dataaccess.image");
+        pool.importPackage("ch.supsi.business.image");
+        pool.importPackage("ch.supsi.application.image");
+
+
+        try { //safety check per quando si fa run all
+            Class.forName("ch.supsi.dataaccess.image.NullSingleton");
+            System.out.println("Dynamic test class found in VM");
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("Dynamic test class not found in VM... Creating an instance...");
+            CtClass dynamicClass = writeNullSingleton(pool, magicNumber);
+            Class<?> clazz = dynamicClass.toClass();
+            dynamicClass.defrost();
+        }
+        IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
+        assertEquals("Cannot access a null class",e.getMessage());
+    }
+
+    private CtClass writeNullSingleton(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {
+        CtClass dynamicClass = pool.makeClass("ch.supsi.dataaccess.image.NullSingleton");
+
+        addConstructorToDynClass(dynamicClass);
+        addInterfaceToDynClass(dynamicClass, pool);
+
+        CtMethod getInstanceMethod = CtMethod.make(
+                "private static NullSingleton getInstance(){ return null; }",
+                dynamicClass
+        );
+        dynamicClass.addMethod(getInstanceMethod);
+        addAnnotationToDynClass(dynamicClass, magicNumber);
+
+        String outputDirectory = "target/classes";
+        dynamicClass.writeFile(outputDirectory);
+        dynamicClass.defrost();
+        return dynamicClass;
+    }
+}

@@ -2,7 +2,7 @@ package dataaccess;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.ArgbSingleBit;
+import ch.supsi.business.strategy.SingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.supsi.dataaccess.image.PBMDataAccess;
@@ -250,7 +250,7 @@ class PBMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P4",
-                new ArgbSingleBit());
+                new SingleBit());
         assertDoesNotThrow(() -> pbmDataAccess.write(img));
     }
 
@@ -263,7 +263,7 @@ class PBMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P1",
-                new ArgbSingleBit());
+                new SingleBit());
         assertDoesNotThrow(() -> pbmDataAccess.write(img));
     }
     @Test
@@ -328,7 +328,7 @@ class PBMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, nonWritablePath.toAbsolutePath().toString(), "P1",
-                new ArgbSingleBit());
+                new SingleBit());
 
         IOException e = assertThrows(IOException.class, () -> pbmDataAccess.write(img));
         assertTrue(e.getMessage().contains("Unable to write to file: "));

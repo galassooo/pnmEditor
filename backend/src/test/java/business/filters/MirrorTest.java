@@ -2,7 +2,7 @@ package business.filters;
 
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.MirrorFilter;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class MirrorTest {
                 {0xFF000009L, 0xFF000008L, 0xFF000007L}
         };
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         mirrorFilter.applyFilter(img);
 
         assertArrayEquals(expected, img.getPixels());
@@ -50,7 +50,7 @@ public class MirrorTest {
                 {0xFF000006L, 0xFF000005L, 0xFF000004L}
         };
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         mirrorFilter.applyFilter(img);
 
         assertArrayEquals(expected, img.getPixels());
@@ -61,7 +61,7 @@ public class MirrorTest {
         // Matrice vuota
         long[][] original = new long[1][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         mirrorFilter.applyFilter(img);
 
         assertEquals(0, img.getPixels()[0].length);
@@ -72,7 +72,7 @@ public class MirrorTest {
         // Matrice vuota
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         mirrorFilter.applyFilter(img);
 
         assertEquals(0, img.getPixels().length);
@@ -84,7 +84,7 @@ public class MirrorTest {
         // Matrice vuota
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         img.setPixels(null);
         mirrorFilter.applyFilter(img);
 

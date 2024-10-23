@@ -3,7 +3,7 @@ package business.filters;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.FilterStrategy;
 import ch.supsi.business.filter.Rotate90;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ public class Rotate90Test {
                 {1, 2},
                 {3, 4},
         };
-        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
                 {0xFF000002L, 0xFF000004L},
@@ -44,7 +44,7 @@ public class Rotate90Test {
                 {1, 2, 3},
                 {4, 5,  6},
         };
-        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
                 {0xFF000003L, 0xFF000006L},
@@ -63,7 +63,7 @@ public class Rotate90Test {
                 {1, 2},
                 {3, 4},
         };
-        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
                 {0xFF000003L, 0xFF000001L},
@@ -80,7 +80,7 @@ public class Rotate90Test {
                 {1, 2, 3},
                 {4, 5,  6},
         };
-        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
                 {0xFF000004L, 0xFF000001L},
@@ -95,7 +95,7 @@ public class Rotate90Test {
 
     @Test
     void testEmptyImage(){
-        ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ThreeChannel(255));
         rotateRight.applyFilter(img);
 
         assertArrayEquals(new long[0][0], img.getPixels());
@@ -104,7 +104,7 @@ public class Rotate90Test {
     void testMirrorOnEmptySecondDimensionMatrix() {
         long[][] original = new long[1][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         rotateLeft.applyFilter(img);
 
         assertEquals(0, img.getPixels()[0].length);
@@ -114,7 +114,7 @@ public class Rotate90Test {
     void testMirrorOnEmptyMatrix() {
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         rotateLeft.applyFilter(img);
 
         assertEquals(0, img.getPixels().length);
@@ -125,7 +125,7 @@ public class Rotate90Test {
     void testMirrorOnNullMatrix() {
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         img.setPixels(null);
         rotateLeft.applyFilter(img);
 

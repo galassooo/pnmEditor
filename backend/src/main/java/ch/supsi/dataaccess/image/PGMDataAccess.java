@@ -1,8 +1,8 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.business.image.ImageAccess;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.business.strategy.ArgbSingleChannel;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.SingleChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,7 +140,7 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
     }
 
     @Override
-    protected ArgbConvertStrategy getArgbConvertStrategy() {
-        return new ArgbSingleChannel(getMaxValue());
+    protected ConvertStrategy getArgbConvertStrategy() {
+        return new SingleChannel(getMaxValue());
     }
 }

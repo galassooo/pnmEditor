@@ -1,8 +1,8 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.business.image.ImageAccess;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
@@ -169,7 +169,7 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
     }
 
     @Override
-    protected ArgbConvertStrategy getArgbConvertStrategy() {
-        return new ArgbThreeChannel(super.getMaxValue());
+    protected ConvertStrategy getArgbConvertStrategy() {
+        return new ThreeChannel(super.getMaxValue());
     }
 }

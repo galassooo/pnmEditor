@@ -1,7 +1,8 @@
 package ch.supsi.business.image;
 
 import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.dataaccess.image.DataAccessFactory;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class ImageBusiness implements ImageBusinessInterface {
     // P + valore nei PNM è semplicemente codificato in ascii e non in byte
     private final String magicNumber;
 
-    public ImageBusiness(long[][] original, String path, String magicNumber, ArgbConvertStrategy strategy) {
+    public ImageBusiness(long[][] original, String path, String magicNumber, ConvertStrategy strategy) {
         this.argbPixels = createArgbMatrix(original, strategy);
         filePath = path;
 
@@ -38,7 +39,7 @@ public class ImageBusiness implements ImageBusinessInterface {
     }
 
     @Override
-    public long[][] returnOriginalMatrix(ArgbConvertStrategy strategy) {
+    public long[][] returnOriginalMatrix(ConvertStrategy strategy) {
         int height = argbPixels.length;
         if (argbPixels.length == 0) {
             return new long[0][0];
@@ -51,7 +52,7 @@ public class ImageBusiness implements ImageBusinessInterface {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x ++) {
                 //estrae i valori originali dei canali
-                pixels[y][x] = strategy.toOriginal(this.argbPixels[y][x]);
+                pixels[y][x] = strategy.ArgbToOriginal(this.argbPixels[y][x]);
             }
         }
 
@@ -93,7 +94,7 @@ public class ImageBusiness implements ImageBusinessInterface {
         return magicNumber;
     }
 
-    private long[][] createArgbMatrix(long[][] original, ArgbConvertStrategy strategy) {
+    private long[][] createArgbMatrix(long[][] original, ConvertStrategy strategy) {
         if(original == null)
             return new long[0][0];
         int height = original.length;

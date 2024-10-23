@@ -1,6 +1,6 @@
 package ch.supsi.application.image;
 
-import ch.supsi.business.strategy.ArgbConvertStrategy;
+import ch.supsi.business.strategy.ConvertStrategy;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ public interface ImageBusinessInterface {
     int getWidth();
     int getHeight();
     long[][] getPixels();
-    long[][] returnOriginalMatrix(ArgbConvertStrategy strategy);
+    long[][] returnOriginalMatrix(ConvertStrategy strategy);
     String getMagicNumber();
     ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
     /* modifiable image */ //-> crea nuova interface

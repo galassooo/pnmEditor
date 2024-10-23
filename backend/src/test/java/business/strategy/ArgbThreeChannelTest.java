@@ -1,6 +1,6 @@
 package business.strategy;
 
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +9,7 @@ public class ArgbThreeChannelTest {
 
     @Test
     void testToArgbWith8BitMaxValue() {
-        ArgbThreeChannel converter = new ArgbThreeChannel(255);
+        ThreeChannel converter = new ThreeChannel(255);
         assertEquals(0xFF000000L, converter.toArgb(0x000000));
         assertEquals(0xFFFFFFFFL, converter.toArgb(0xFFFFFF));
         assertEquals(0xFFFF0000L, converter.toArgb(0xFF0000));
@@ -18,18 +18,18 @@ public class ArgbThreeChannelTest {
     }
 
     @Test
-    void testToOriginalWith8BitMaxValue() {
-        ArgbThreeChannel converter = new ArgbThreeChannel(255);
-        assertEquals(0x000000, converter.toOriginal(0xFF000000L));
-        assertEquals(0xFFFFFF, converter.toOriginal(0xFFFFFFFFL));
-        assertEquals(0xFF0000, converter.toOriginal(0xFFFF0000L));
-        assertEquals(0x00FF00, converter.toOriginal(0xFF00FF00L));
-        assertEquals(0x0000FF, converter.toOriginal(0xFF0000FFL));
+    void testArgbToOriginalWith8BitMaxValue() {
+        ThreeChannel converter = new ThreeChannel(255);
+        assertEquals(0x000000, converter.ArgbToOriginal(0xFF000000L));
+        assertEquals(0xFFFFFF, converter.ArgbToOriginal(0xFFFFFFFFL));
+        assertEquals(0xFF0000, converter.ArgbToOriginal(0xFFFF0000L));
+        assertEquals(0x00FF00, converter.ArgbToOriginal(0xFF00FF00L));
+        assertEquals(0x0000FF, converter.ArgbToOriginal(0xFF0000FFL));
     }
 
     @Test
     void testToArgbWith16BitMaxValue() {
-        ArgbThreeChannel converter = new ArgbThreeChannel(65535);
+        ThreeChannel converter = new ThreeChannel(65535);
         long pixel = (65535L << 32) | (65535L << 16) | 65535L;
         assertEquals(0xFFFFFFFFL, converter.toArgb(pixel));
 
@@ -47,12 +47,12 @@ public class ArgbThreeChannelTest {
     }
 
     @Test
-    void testToOriginalWith16BitMaxValue() {
-        ArgbThreeChannel converter = new ArgbThreeChannel(65535);
-        assertEquals((65535L << 32) | (65535L << 16) | 65535L, converter.toOriginal(0xFFFFFFFFL));
-        assertEquals(0, converter.toOriginal(0xFF000000L));
-        assertEquals((65535L << 32), converter.toOriginal(0xFFFF0000L));
-        assertEquals((65535L << 16), converter.toOriginal(0xFF00FF00L));
-        assertEquals(65535L, converter.toOriginal(0xFF0000FFL));
+    void testArgbToOriginalWith16BitMaxValue() {
+        ThreeChannel converter = new ThreeChannel(65535);
+        assertEquals((65535L << 32) | (65535L << 16) | 65535L, converter.ArgbToOriginal(0xFFFFFFFFL));
+        assertEquals(0, converter.ArgbToOriginal(0xFF000000L));
+        assertEquals((65535L << 32), converter.ArgbToOriginal(0xFFFF0000L));
+        assertEquals((65535L << 16), converter.ArgbToOriginal(0xFF00FF00L));
+        assertEquals(65535L, converter.ArgbToOriginal(0xFF0000FFL));
     }
 }

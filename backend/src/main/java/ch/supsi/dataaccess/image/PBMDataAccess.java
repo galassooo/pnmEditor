@@ -1,8 +1,8 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.business.image.ImageAccess;
-import ch.supsi.business.strategy.ArgbConvertStrategy;
-import ch.supsi.business.strategy.ArgbSingleBit;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.SingleBit;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,8 +143,8 @@ public final class PBMDataAccess extends PNMDataAccess {
     }
 
     @Override
-    protected ArgbConvertStrategy getArgbConvertStrategy() {
-        return new ArgbSingleBit();
+    protected ConvertStrategy getArgbConvertStrategy() {
+        return new SingleBit();
     }
 }
 

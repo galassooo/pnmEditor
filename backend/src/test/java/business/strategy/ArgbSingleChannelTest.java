@@ -1,15 +1,14 @@
 package business.strategy;
 
-import ch.supsi.business.strategy.ArgbSingleChannel;
-import org.junit.jupiter.api.BeforeEach;
+import ch.supsi.business.strategy.SingleChannel;
 import org.junit.jupiter.api.Test;
-import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArgbSingleChannelTest {
     @Test
     void testToArgb() {
-        ArgbSingleChannel converter = new ArgbSingleChannel(65535);
+        SingleChannel converter = new SingleChannel(65535);
         //lowest
         assertEquals(0xFF000000L, converter.toArgb(0));
 
@@ -21,22 +20,22 @@ class ArgbSingleChannelTest {
     }
 
     @Test
-    void testToOriginal() {
-        ArgbSingleChannel converter = new ArgbSingleChannel(65535);
+    void testArgbToOriginal() {
+        SingleChannel converter = new SingleChannel(65535);
 
-        assertEquals(0, converter.toOriginal(0xFF000000L));
+        assertEquals(0, converter.ArgbToOriginal(0xFF000000L));
 
-        assertEquals(65535, converter.toOriginal(0xFFFFFFFFL));
+        assertEquals(65535, converter.ArgbToOriginal(0xFFFFFFFFL));
         //la conversione inversa arrotonda i valori intermedi -> not equal to original
     }
 
     @Test
     void testWithDifferentMaxValue() {
-        ArgbSingleChannel converter = new ArgbSingleChannel(255);
+        SingleChannel converter = new SingleChannel(255);
 
         assertEquals(0xFFFFFFFFL, converter.toArgb(255), "Expected white for max grayscale value 255");
 
-        assertEquals(128, converter.toOriginal(0xFF808080L), "Expected 128 for mid-gray ARGB with maxValue 255");
+        assertEquals(128, converter.ArgbToOriginal(0xFF808080L), "Expected 128 for mid-gray ARGB with maxValue 255");
     }
 }
 

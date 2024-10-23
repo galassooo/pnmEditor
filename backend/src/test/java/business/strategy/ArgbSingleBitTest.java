@@ -1,13 +1,13 @@
 package business.strategy;
 
-import ch.supsi.business.strategy.ArgbSingleBit;
+import ch.supsi.business.strategy.SingleBit;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArgbSingleBitTest {
 
 
-    private final ArgbSingleBit argbSingleBit = new ArgbSingleBit();
+    private final SingleBit argbSingleBit = new SingleBit();
 
     @Test
     void testToArgb() {
@@ -17,10 +17,10 @@ public class ArgbSingleBitTest {
     }
 
     @Test
-    void testToOriginal() {
-        assertEquals(1, argbSingleBit.toOriginal(0xFF000000L), "Expected 1 for black pixel");
+    void testArgbToOriginal() {
+        assertEquals(1, argbSingleBit.ArgbToOriginal(0xFF000000L), "Expected 1 for black pixel");
 
-        assertEquals(0, argbSingleBit.toOriginal(0xFFFFFFFFL), "Expected 0 for white pixel");
+        assertEquals(0, argbSingleBit.ArgbToOriginal(0xFFFFFFFFL), "Expected 0 for white pixel");
     }
 }
 

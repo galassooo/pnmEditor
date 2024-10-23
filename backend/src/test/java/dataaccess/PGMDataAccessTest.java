@@ -1,7 +1,7 @@
 package dataaccess;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.ArgbSingleChannel;
+import ch.supsi.business.strategy.SingleChannel;
 import ch.supsi.dataaccess.image.PGMDataAccess;
 import ch.supsi.application.image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
@@ -395,7 +395,7 @@ class PGMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P5",
-                new ArgbSingleChannel(255));
+                new SingleChannel(255));
         assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
@@ -429,7 +429,7 @@ class PGMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, tmpFile.toAbsolutePath().toString(), "P2",
-                new ArgbSingleChannel(255));
+                new SingleChannel(255));
         assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
@@ -472,7 +472,7 @@ class PGMDataAccessTest {
         };
         ImageBusinessInterface img = new ImageBusiness(
                 data, nonWritablePath.toAbsolutePath().toString(), "P2",
-                new ArgbSingleChannel(255));
+                new SingleChannel(255));
 
         IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img));
         assertTrue(e.getMessage().contains("Unable to write to file: "));

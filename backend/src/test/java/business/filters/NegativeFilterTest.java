@@ -4,9 +4,9 @@ package business.filters;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.NegativeFilter;
-import ch.supsi.business.strategy.ArgbSingleChannel;
-import ch.supsi.business.strategy.ArgbSingleBit;
-import ch.supsi.business.strategy.ArgbThreeChannel;
+import ch.supsi.business.strategy.SingleChannel;
+import ch.supsi.business.strategy.SingleBit;
+import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ class NegativeFilterTest {
                 {0xFF333333L, 0xFFCCCCCCL, 0xFF666666L}
         };
 
-        ImageBusinessInterface img = new ImageBusiness(argbPixels, "test-path", "P3", new ArgbThreeChannel(255));
+        ImageBusinessInterface img = new ImageBusiness(argbPixels, "test-path", "P3", new ThreeChannel(255));
         filter.applyFilter(img);
 
         assertArrayEquals(expectedPixels, img.getPixels());
@@ -59,7 +59,7 @@ class NegativeFilterTest {
                 {0xFFFFFFFFL, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = new ImageBusiness(binaryPixels, "test-path", "P4", new ArgbSingleBit());
+        ImageBusinessInterface img = new ImageBusiness(binaryPixels, "test-path", "P4", new SingleBit());
         filter.applyFilter(img);
 
         assertArrayEquals(expectedPixels, img.getPixels());
@@ -75,7 +75,7 @@ class NegativeFilterTest {
                 {0xFFFFFFFFL, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = new ImageBusiness(edgeCasePixels, "test-path", "P2", new ArgbSingleChannel(255));
+        ImageBusinessInterface img = new ImageBusiness(edgeCasePixels, "test-path", "P2", new SingleChannel(255));
         filter.applyFilter(img);
 
         assertArrayEquals(expectedPixels, img.getPixels());
@@ -86,7 +86,7 @@ class NegativeFilterTest {
         // Matrice vuota
         long[][] original = new long[1][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         filter.applyFilter(img);
 
         assertEquals(0, img.getPixels()[0].length);
@@ -97,7 +97,7 @@ class NegativeFilterTest {
         // Matrice vuota
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         filter.applyFilter(img);
 
         assertEquals(0, img.getPixels().length);
@@ -109,7 +109,7 @@ class NegativeFilterTest {
         // Matrice vuota
         long[][] original = new long[0][0];
 
-        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ArgbThreeChannel(255));
+        ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         img.setPixels(null);
         filter.applyFilter(img);
 

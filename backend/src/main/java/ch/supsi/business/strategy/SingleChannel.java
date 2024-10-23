@@ -1,10 +1,10 @@
 package ch.supsi.business.strategy;
 
-public class ArgbSingleChannel implements ArgbConvertStrategy {
+public class SingleChannel implements ConvertStrategy {
 
     private final int maxValue;
 
-    public ArgbSingleChannel(int maxValue) {
+    public SingleChannel(int maxValue) {
         this.maxValue = maxValue;
     }
 
@@ -15,7 +15,7 @@ public class ArgbSingleChannel implements ArgbConvertStrategy {
     }
 
     @Override
-    public long toOriginal(long pixel) {
+    public long ArgbToOriginal(long pixel) {
         long gray = pixel & 0xFF;
         return (long) ((gray / 255.0) * maxValue);
     }

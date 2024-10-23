@@ -116,7 +116,7 @@ public class DataAccessFactoryTest {
         }
 
 
-
+        DataAccessFactory.reload();
         assertDoesNotThrow(() -> {
             ImageDataAccess instance = DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString());
             assertNotNull(instance);

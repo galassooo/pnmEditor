@@ -139,4 +139,7 @@ public class DataAccessFactory {
         }
         return instance;
     }
+    public static void reload(){
+        load();
+    }
 }

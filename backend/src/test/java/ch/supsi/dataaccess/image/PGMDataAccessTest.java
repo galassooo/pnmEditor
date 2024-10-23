@@ -465,6 +465,8 @@ class PGMDataAccessTest {
         Files.createFile(nonWritablePath);
         nonWritablePath.toFile().setWritable(false);
 
+        System.out.println("------------------PGM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
+
         long[][] data = new long[][]{
                 {1, 2, 3},
                 {4, 5, 6},

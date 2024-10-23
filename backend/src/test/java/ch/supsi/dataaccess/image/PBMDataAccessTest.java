@@ -321,6 +321,9 @@ class PBMDataAccessTest {
         Files.createFile(nonWritablePath);
         nonWritablePath.toFile().setWritable(false);
 
+        System.out.println("------------------PBM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
+
+
         long[][] data = new long[][]{
                 {1, 0, 1},
                 {0, 1, 0},

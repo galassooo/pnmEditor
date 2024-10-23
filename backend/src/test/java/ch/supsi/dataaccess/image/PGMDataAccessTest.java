@@ -1,8 +1,7 @@
-package dataaccess;
+package ch.supsi.dataaccess.image;
 
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleChannel;
-import ch.supsi.dataaccess.image.PGMDataAccess;
 import ch.supsi.application.image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

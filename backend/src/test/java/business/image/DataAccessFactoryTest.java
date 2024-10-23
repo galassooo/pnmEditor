@@ -33,6 +33,52 @@ public class DataAccessFactoryTest {
         String asciiData = "\n"+magicNumber+"\n";
         Files.write(tempFile, asciiData.getBytes());
 
+        // !!!!!!!!!!             ATTENZIONE             !!!!!!!!!!
+        /*
+         * La CTClass che creo RESTA NEL CLASS POOL *PER SEMPRE*, significa
+         * che anche se stoppo l'esecuzione o killo tutti i processi di java in esecuzione
+         * e la faccio ripartire, indipendentemente da tutto avrò ancora la mia
+         * "dynamicClass" presente nel classPool creata dalla run di prima.
+         *
+         * Essendo che le CT class vanno in frost dopo essere create bisogna assicurarsi
+         * che DOPO AVER CREATO LA CLASSE si chiami il metodo defrost, per permettere alla
+         * run successiva di poterla modificare a piacere altrimenti -> Runtime EX con qualcosa
+         * del tipo "cannot edit a frozen class".
+         *
+         *
+         * Un'alternativa che funzionerebbe sarebbe quella di assegnare un UUID a ciascuna
+         * dynamic class che creo, facendo si che sia diverso dall' UUID della classe presente
+         * alla run precedente e quindi forzerei la creazione di una nuova classe.
+         * Il problema è che si rischia un out of memory perché le classi esisterebbero per
+         * sempre nella JVM riempiendola di "classi spazzatura"
+         *
+         * Per forzare l'eliminazione della classe si puo usare dynclass.detetch(), il problema
+         * di questo metodo è che ELIMINA la classe fisicamente, ma rimane tipo "cashata"
+         * nel classLoader.
+         *
+         * Dato che dal CLassLoader di java è possibile SOLO fare il 'load' e non l'operazione
+         * inversa, ovvero fare l' unload della classe, un metodo possibile per gestire la creazione
+         * e l'eliminazione in modo sicuro sarebbe creare un loader personalizzato che estenda il
+         * ClassLoader di java, ma è decisamente una soluzione TROPPO complicata (anche se funzionerebbe)
+         *
+         * Dunque, in sostanza quello che faccio è:
+         * - creo un istanza di classe dinamica per ogni test in cui mi serve
+         * - uso il metodo defrost per permetterne la modifica (che ora non è necessario,
+         * ma mentre modificavo i test per farli funzionare era cruciale)
+         * - Aggiungo la classe al ClassPool
+         * - Eseguo i test
+         * - * run successiva *
+         * - controllo che la classe sia presente nel classPool, (sempre vero tranne la prima run)
+         * - carico la classe se è presente
+         * - eseguo i test
+         *
+         * In questo modo evito di creare classi inutili, miglioro le prestazioni in quanto
+         * le classi dinamiche vengono create solamente alla prima run ed evito di creare
+         * classloader personalizzati complicando troppo il codice
+         *
+         * Link alla doc: https://www.javassist.org/tutorial/tutorial.html#pool
+         *
+         */
 
         //retrieve the default classPool (dalla javadoc):
         /*
@@ -47,7 +93,7 @@ public class DataAccessFactoryTest {
         pool.importPackage("ch.supsi.application.image");
 
 
-        try { //safety check per quando si fa run all
+        try { //safety check
             Class.forName("ch.supsi.dataaccess.image.WorkingClass");
             System.out.println("Dynamic test class found in VM");
 
@@ -56,7 +102,7 @@ public class DataAccessFactoryTest {
             CtClass dynamicClass = writeWorkingClass(pool, magicNumber);
             //converto in una classe java e la carico: da questo momento non posso modificare il codice!
             Class<?> clazz = dynamicClass.toClass();
-            dynamicClass.defrost();
+            dynamicClass.defrost(); //per permettere modifica del codice
         }
 
         assertDoesNotThrow(() -> {
@@ -113,6 +159,10 @@ public class DataAccessFactoryTest {
         //per qualche strana ragione compila anche se non
         //implemento i metodi dell'interfaccia, ma li lascio comunque qui
         //sia mai che fixano sto bug
+
+        //okay non è un bug, è che la classe viene creata direttamente in bytecode e quindi non
+        // mi fa il 'compiler check', controlla solo la sintassi e i riferimenti presenti
+        // ad esempio la coerenza degli import o dei metodi chiamati. (Trovato nella doc)
         dynamicClass.addInterface(pool.get(ImageDataAccess.class.getName()));
 
         //overridden method

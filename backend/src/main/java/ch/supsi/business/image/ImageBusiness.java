@@ -3,6 +3,7 @@ package ch.supsi.business.image;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.dataaccess.image.DataAccessFactory;
+import ch.supsi.dataaccess.image.PGMDataAccess;
 
 import java.io.IOException;
 
@@ -110,7 +111,6 @@ public class ImageBusiness implements ImageBusinessInterface {
                 argbMatrix[y][x] = strategy.toArgb(original[y][x]);
             }
         }
-
         return argbMatrix;
     }
 }

@@ -1,4 +1,4 @@
-package business.image;
+package ch.supsi.business.image;
 
 import ch.supsi.dataaccess.image.DataAccessFactory;
 import ch.supsi.business.image.ImageDataAccess;
@@ -8,6 +8,7 @@ import ch.supsi.dataaccess.image.PPMDataAccess;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ArrayMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import org.junit.jupiter.api.Test;
@@ -102,8 +103,18 @@ public class DataAccessFactoryTest {
             CtClass dynamicClass = writeWorkingClass(pool, magicNumber);
             //converto in una classe java e la carico: da questo momento non posso modificare il codice!
             Class<?> clazz = dynamicClass.toClass();
+
+            try {
+                Class<?> clazzz = Class.forName("ch.supsi.dataaccess.image.WorkingClass");
+                System.out.println("La classe è stata caricata dal ClassLoader: " + clazzz.getName());
+            } catch (ClassNotFoundException ee) {
+                System.out.println("La classe non è stata caricata dal ClassLoader.");
+            }
+
             dynamicClass.defrost(); //per permettere modifica del codice
         }
+
+
 
         assertDoesNotThrow(() -> {
             ImageDataAccess instance = DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString());
@@ -142,7 +153,7 @@ public class DataAccessFactoryTest {
         ConstPool constPool = dynamicClass.getClassFile().getConstPool();
         AnnotationsAttribute attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag); //runtime visible annotation
         //aggiunge annotation
-        javassist.bytecode.annotation.Annotation imageAccessAnnotation = new javassist.bytecode.annotation.Annotation("ch.supsi.business.image.ImageAccess", constPool);
+        Annotation imageAccessAnnotation = new Annotation("ch.supsi.business.image.ImageAccess", constPool);
 
         ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
         //aggiunge il valore Test come array all'annotation (singolo parametro => non serve nome campo)

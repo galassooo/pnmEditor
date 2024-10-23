@@ -3,6 +3,7 @@ package ch.supsi.application.image;
 import ch.supsi.business.image.ImageBusiness;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ImageApplication {
 
@@ -28,5 +29,7 @@ public class ImageApplication {
         return currentImage.persist(path);
 
     }
-
+    public List<String> getAllSupportedExtension(){
+        return null;
+    }
 }

@@ -104,17 +104,8 @@ public class DataAccessFactoryTest {
             CtClass dynamicClass = writeWorkingClass(pool, magicNumber);
             //converto in una classe java e la carico: da questo momento non posso modificare il codice!
             Class<?> clazz = dynamicClass.toClass();
-
-            try {
-                Class<?> clazzz = Class.forName("ch.supsi.dataaccess.image.WorkingClass");
-                System.out.println("La classe è stata caricata dal ClassLoader: " + clazzz.getName());
-            } catch (ClassNotFoundException ee) {
-                System.out.println("La classe non è stata caricata dal ClassLoader.");
-            }
-
             dynamicClass.defrost(); //per permettere modifica del codice
         }
-
 
         DataAccessFactory.reload();
         assertDoesNotThrow(() -> {
@@ -273,7 +264,6 @@ public class DataAccessFactoryTest {
 
     /* ------------- invalid input ------------*/
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testNoSingleton() throws Exception {
         String magicNumber = "TEST1";
@@ -298,6 +288,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -315,7 +306,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testNoAnnotation() throws Exception {
         String magicNumber = "TEST2";
@@ -340,6 +330,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         IOException e = assertThrows(IOException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Unsupported file type", e.getMessage());
     }
@@ -363,7 +354,7 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
+
     @Test
     public void testNonStaticSingleton() throws Exception {
         String magicNumber = "TEST3";
@@ -388,6 +379,8 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
+
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
     }
@@ -413,7 +406,7 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
+
     @Test
     public void testExceptionSingleton() throws Exception {
         String magicNumber = "TEST4";
@@ -439,6 +432,8 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+
+        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Singleton method thrown an exception: "));
     }
@@ -464,7 +459,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testNonImplementedInterface() throws Exception {
         String magicNumber = "TEST5";
@@ -490,6 +484,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         IOException e = assertThrows(IOException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Unsupported file type", e.getMessage());
     }
@@ -512,7 +507,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testWrongReturnSingleton() throws Exception {
         String magicNumber = "TEST6";
@@ -537,6 +531,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
     }
@@ -560,7 +555,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testPrivateSingleton() throws Exception {
         String magicNumber = "TEST7";
@@ -585,6 +579,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -607,7 +602,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testAbstractReturnSingleton() throws Exception {
         String magicNumber = "TEST8";
@@ -633,6 +627,7 @@ public class DataAccessFactoryTest {
             dynamicClass.defrost();
         }
 
+        DataAccessFactory.reload();
         assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -678,7 +673,6 @@ public class DataAccessFactoryTest {
         return dynamicClass;
     }
 
-    @Disabled("Temporarily disabled for debugging purposes")
     @Test
     public void testNullSingleton() throws Exception {
         String magicNumber = "TEST9";
@@ -703,6 +697,7 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
+        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Cannot access a null class",e.getMessage());
     }

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class PGMDataAccessTest {
 
@@ -464,11 +463,9 @@ class PGMDataAccessTest {
     void testWriteToNonWritableFile() throws IOException {
         Path nonWritablePath = tempDir.resolve("image.pgm");
         Files.createFile(nonWritablePath);
-        boolean setWritableSuccess = nonWritablePath.toFile().setWritable(false);
-        System.out.println("------------------PGM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
+        nonWritablePath.toFile().setWritable(false);
 
-        //se non è vero salta il test
-        assumeTrue(setWritableSuccess, "----------------------------------Unable to modify file permission in this environment");
+        System.out.println("------------------PGM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
 
         long[][] data = new long[][]{
                 {1, 2, 3},

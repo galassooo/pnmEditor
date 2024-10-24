@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class PPMDataAccessTest {
 
@@ -407,11 +406,7 @@ class PPMDataAccessTest {
         Files.createFile(nonWritablePath);
         nonWritablePath.toFile().setWritable(false);
 
-        boolean setWritableSuccess = nonWritablePath.toFile().setWritable(false);
         System.out.println("------------------PPM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
-
-        //se non è vero salta il test
-        assumeTrue(setWritableSuccess, "----------------------------------Unable to modify file permission in this environment");
 
         long[][] data = new long[][]{
                 {1, 2, 3},

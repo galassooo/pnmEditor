@@ -5,6 +5,7 @@ import ch.supsi.business.strategy.ThreeChannel;
 import ch.supsi.application.image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +18,7 @@ class PPMDataAccessTest {
     /* instance fields*/
     private PPMDataAccess ppmDataAccess;
 
-    @TempDir
+    @TempDir(cleanup =  CleanupMode.ALWAYS)
     Path tempDir;
 
     /**

@@ -5,6 +5,7 @@ import ch.supsi.business.strategy.SingleChannel;
 import ch.supsi.application.image.ImageBusinessInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ class PGMDataAccessTest {
     /* instance field */
     private PGMDataAccess pgmDataAccess;
 
-    @TempDir
+    @TempDir(cleanup =  CleanupMode.ALWAYS)
     Path tempDir;
 
     @BeforeEach

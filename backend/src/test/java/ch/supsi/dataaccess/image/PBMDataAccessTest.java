@@ -5,6 +5,7 @@ import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ class PBMDataAccessTest {
     /* instance field */
     private PBMDataAccess pbmDataAccess;
 
-    @TempDir
+    @TempDir(cleanup =  CleanupMode.ALWAYS)
     Path tempDir;
 
     @BeforeEach

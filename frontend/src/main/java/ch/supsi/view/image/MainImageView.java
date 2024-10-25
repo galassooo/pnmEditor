@@ -13,7 +13,7 @@ public class MainImageView implements IImageView{
     @FXML
     private ImageView image;
 
-    private static IImageModel model;
+    private static final IImageModel model;
 
     static{
         model = ImageModel.getInstance();

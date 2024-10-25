@@ -11,7 +11,6 @@ public class ImageModel implements IImageModel{
 
     private static final ImageApplication backendController;
 
-    private ImageBusinessInterface imageBusiness;
 
     static {
         backendController = ImageApplication.getInstance();
@@ -27,15 +26,18 @@ public class ImageModel implements IImageModel{
     protected ImageModel() {
     }
 
-    public void readImage(String path) throws IOException {
-        try {
-            imageBusiness = backendController.read(path);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace(); //to be changed
-        }
+    public void readImage(String path) throws IOException, IllegalAccessException {
+            backendController.read(path);
     }
     public  ImageBusinessInterface getImage(){
-        return imageBusiness;
+        return backendController.getImage();
     }
 
+    public String getImageName(){
+        return backendController.getImageName();
+    }
+
+    public void writeImage(String path) throws IOException, IllegalAccessException {
+           backendController.persist(path);
+    }
 }

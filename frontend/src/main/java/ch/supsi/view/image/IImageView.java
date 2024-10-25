@@ -4,5 +4,4 @@ import java.io.IOException;
 
 public interface IImageView {
     void update();
-
 }

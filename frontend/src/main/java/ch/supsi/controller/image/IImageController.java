@@ -1,12 +1,17 @@
 package ch.supsi.controller.image;
 
 import ch.supsi.view.image.IImageView;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public interface IImageController {
 
 
-    void save();
+    void addControlledItems(MenuItem... menuItems);
+
+    void save() throws IOException, IllegalAccessException;
 
     void saveAs();
 

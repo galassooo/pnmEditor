@@ -1,4 +1,4 @@
-package business.strategy;
+package ch.supsi.business.strategy;
 
 import ch.supsi.business.strategy.SingleBit;
 import org.junit.jupiter.api.Test;

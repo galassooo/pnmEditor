@@ -2,7 +2,6 @@ package ch.supsi.model.filters;
 
 import ch.supsi.application.filters.FilterApplication;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 public class FilterModel implements IFilterModel{
@@ -22,11 +21,8 @@ public class FilterModel implements IFilterModel{
 
     protected FilterModel(){
 
-        //X debug rapido, da eliminare LASCIA IL COSTRUTTORE PROTECTED!!!!!
-        filterPipeline.addListener((ListChangeListener<String>) change -> {
-            System.out.println("filterPipeline updated: " + filterPipeline);
-        });
     }
+
     @Override
     public void addRotationLeft() {
         application.addRotation(true);

@@ -1,4 +1,4 @@
-package business.image;
+package ch.supsi.business.image;
 
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleBit;

@@ -6,6 +6,7 @@ import ch.supsi.controller.filter.FilterController;
 import ch.supsi.controller.filter.IFilterController;
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
+import ch.supsi.dispatcher.MenuDispatcher;
 import ch.supsi.view.filter.IFilteredListView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -60,6 +61,7 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl);
             MenuBar menuBar = loader.load();
+            MenuDispatcher dispatcher = loader.getController();
             root.setTop(menuBar);
 
             fxmlUrl = getClass().getResource("/layout/FilterColumn.fxml");
@@ -124,6 +126,8 @@ public class MainFx extends Application {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();
+
+            imageController.addControlledItems(dispatcher.saveAsMenuItem, dispatcher.saveMenuItem);
 
         } catch (IOException e) {
             e.printStackTrace();

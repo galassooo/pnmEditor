@@ -13,6 +13,7 @@ public interface ImageBusinessInterface {
     long[][] returnOriginalMatrix(ConvertStrategy strategy);
     String getMagicNumber();
     ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
+    String getName();
     /* modifiable image */ //-> crea nuova interface
     void setPixels(long[][] rotatedPixels);
 }

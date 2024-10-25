@@ -5,6 +5,7 @@ import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.dataaccess.image.DataAccessFactory;
 import ch.supsi.dataaccess.image.PGMDataAccess;
 
+import java.io.File;
 import java.io.IOException;
 
 public class ImageBusiness implements ImageBusinessInterface {
@@ -61,8 +62,9 @@ public class ImageBusiness implements ImageBusinessInterface {
     }
     @Override
     public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
-        filePath = !path.equals(filePath) ? path : filePath;
-        ImageDataAccess dac = DataAccessFactory.getInstance(path);
+        ImageDataAccess dac = DataAccessFactory.getInstance(filePath);
+        if(path!= null)
+            filePath = !filePath.equals(path) ? path : filePath;
         return dac.write(this);
 
     }
@@ -112,6 +114,11 @@ public class ImageBusiness implements ImageBusinessInterface {
             }
         }
         return argbMatrix;
+    }
+    @Override
+    public String getName(){
+        File file = new File(filePath);
+        return  file.getName();
     }
 }
 

@@ -2,6 +2,7 @@ package ch.supsi.application.image;
 
 import ch.supsi.business.image.ImageBusiness;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,5 +32,17 @@ public class ImageApplication {
     }
     public List<String> getAllSupportedExtension(){
         return null;
+    }
+
+    /**
+     * return the image name in the file system
+     * @return the file name or null if no image was loaded
+     */
+    public @Nullable  String getImageName(){
+        return currentImage == null ? null : currentImage.getName();
+    }
+
+    public ImageBusinessInterface getImage() {
+        return currentImage;
     }
 }

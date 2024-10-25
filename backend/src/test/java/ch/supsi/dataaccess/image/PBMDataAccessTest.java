@@ -335,7 +335,7 @@ class PBMDataAccessTest {
                 {0, 1, 0},
         };
         ImageBusinessInterface img = new ImageBusiness(
-                data, nonWritablePath.toAbsolutePath().toString(), "P1",
+                data, nonWritablePath.toAbsolutePath().toString(), "P1", //viene skippato se ho i privilegi di root
                 new SingleBit());
 
         IOException e = assertThrows(IOException.class, () -> pbmDataAccess.write(img));

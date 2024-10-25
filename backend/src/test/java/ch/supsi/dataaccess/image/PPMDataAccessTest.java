@@ -420,7 +420,7 @@ class PPMDataAccessTest {
                 {4, 5, 6},
         };
         ImageBusiness img = new ImageBusiness(
-                data, nonWritablePath.toAbsolutePath().toString(), "P3",
+                data, nonWritablePath.toAbsolutePath().toString(), "P3", //viene skippato se ho i privilegi di root
                 new ThreeChannel(255));
 
         IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));

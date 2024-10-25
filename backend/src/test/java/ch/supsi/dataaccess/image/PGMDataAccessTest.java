@@ -471,7 +471,7 @@ class PGMDataAccessTest {
         assertTrue(tmpFile.canWrite());
         tmpFile.setWritable(false);
 
-        Assumptions.assumeFalse(tmpFile.canWrite());
+        Assumptions.assumeFalse(tmpFile.canWrite()); //viene skippato se ho i privilegi di root
 
         long[][] data = new long[][]{
                 {1, 2, 3},

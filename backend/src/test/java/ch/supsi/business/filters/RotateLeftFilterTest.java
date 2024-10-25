@@ -1,23 +1,21 @@
 package ch.supsi.business.filters;
 
+import ch.supsi.business.filter.filterStrategy.RotateLeft;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
-import ch.supsi.business.filter.RotateRIght;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Rotate90Test {
+public class RotateLeftFilterTest {
 
     NamedFilterStrategy rotateLeft;
-    NamedFilterStrategy rotateRight;
 
     @BeforeEach
     void setup(){
-        rotateLeft = new RotateRIght(false);
-        rotateRight = new RotateRIght(true);
+        rotateLeft = new RotateLeft();
     }
 
 
@@ -30,8 +28,8 @@ public class Rotate90Test {
         ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
-                {0xFF000002L, 0xFF000004L},
-                {0xFF000001L, 0xFF000003L}
+                {0xFF000003L, 0xFF000001L},
+                {0xFF000004L, 0xFF000002L}
         };
 
         rotateLeft.applyFilter(img);
@@ -66,29 +64,11 @@ public class Rotate90Test {
         ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
-                {0xFF000003L, 0xFF000001L},
-                {0xFF000004L, 0xFF000002L}
+                {0xFF000002L, 0xFF000004L},
+                {0xFF000001L, 0xFF000003L}
         };
 
-        rotateRight.applyFilter(img);
-        long[][] originalArgb = img.getPixels();
-        assertArrayEquals(expected, originalArgb);
-    }
-    @Test
-    void testRotate90RightNonSquare() {
-        long[][] original = {
-                {1, 2, 3},
-                {4, 5,  6},
-        };
-        ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
-
-        long[][] expected ={
-                {0xFF000004L, 0xFF000001L},
-                {0xFF000005L, 0xFF000002L},
-                {0xFF000006L, 0xFF000003L}
-        };
-
-        rotateRight.applyFilter(img);
+        rotateLeft.applyFilter(img);
         long[][] originalArgb = img.getPixels();
         assertArrayEquals(expected, originalArgb);
     }
@@ -96,7 +76,7 @@ public class Rotate90Test {
     @Test
     void testEmptyImage(){
         ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ThreeChannel(255));
-        rotateRight.applyFilter(img);
+        rotateLeft.applyFilter(img);
 
         assertArrayEquals(new long[0][0], img.getPixels());
     }

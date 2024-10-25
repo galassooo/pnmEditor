@@ -22,7 +22,7 @@ public class RotateLeft implements NamedFilterStrategy {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                rotated[j][width - 1 - i] = pixels[i][j]; // Rotazione a destra
+                rotated[height - 1 - j][i] = pixels[i][j]; // Rotazione a sinistra
             }
         }
 

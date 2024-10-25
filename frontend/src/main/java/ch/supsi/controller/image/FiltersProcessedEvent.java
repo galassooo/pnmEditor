@@ -1,5 +1,5 @@
 package ch.supsi.controller.image;
 
-public interface FilterAddedListener {
+public interface FiltersProcessedEvent {
     void onPipelineProcessed();
 }

@@ -38,7 +38,8 @@ public class FilterApplication {
     public void processFilterPipeline(ImageBusinessInterface image){
 
         model.getPipeline().forEach(filter ->{
-            filter.applyFilter(image);
+            if(filter != null) //caso in cui rimuovo
+                filter.applyFilter(image);
         });
         model.clear();
     }

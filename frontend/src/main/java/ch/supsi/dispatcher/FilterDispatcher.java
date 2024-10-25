@@ -1,8 +1,8 @@
 package ch.supsi.dispatcher;
 
 import ch.supsi.controller.filter.FilterController;
-import ch.supsi.controller.filter.IFilterController;
 import ch.supsi.controller.image.ImageController;
+import ch.supsi.view.filter.FilterUpdateListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 
 public class FilterDispatcher implements ImageLoadedListener {
 
-    private final IFilterController filterController = FilterController.getInstance();
+    private final FilterUpdateListener filterController = FilterController.getInstance();
 
 
     @FXML
@@ -21,20 +21,19 @@ public class FilterDispatcher implements ImageLoadedListener {
     }
 
     public void activatePipeline(ActionEvent event) {
-        filterController.activatePipeline();
+        filterController.onFiltersActivated();
     }
     public void rotationLeft(ActionEvent event) {
-        filterController.addRotationLeft();
-
+        filterController.onFilterAdded("Rotate Left");
     }
     public void rotationRight(ActionEvent event) {
-        filterController.addRotationRight();
+        filterController.onFilterAdded("Rotate Right");
     }
     public void mirror(ActionEvent event) {
-        filterController.mirror();
+        filterController.onFilterAdded("Mirror");
     }
     public void negative(ActionEvent event) {
-        filterController.negative();
+        filterController.onFilterAdded("Negative");
     }
 
     //NON MI PIACE!

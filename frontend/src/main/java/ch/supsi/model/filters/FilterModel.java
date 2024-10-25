@@ -2,9 +2,10 @@ package ch.supsi.model.filters;
 
 import ch.supsi.application.filters.FilterApplication;
 import ch.supsi.application.image.ImageApplication;
-import ch.supsi.business.filter.FilterPipeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class FilterModel implements IFilterModel{
 
@@ -43,7 +44,7 @@ public class FilterModel implements IFilterModel{
         filterPipeline.add(filter); //local copy for observers
 
         application.addFilterToPipeline(filter);
-
+        System.out.println("A");
     }
 
     public void processFilters(){
@@ -64,4 +65,16 @@ public class FilterModel implements IFilterModel{
             application.add(item, toIndex);
         }
     }
+
+    @Override
+    public List<String> getAllFilters() {
+        return application.getAllAvailableFilters();
+    }
+
+    @Override
+    public void removeFilter(int index) {
+        filterPipeline.remove(index);
+        application.remove(index);
+    }
+
 }

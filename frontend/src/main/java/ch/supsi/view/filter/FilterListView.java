@@ -6,8 +6,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -36,7 +38,7 @@ import java.util.Objects;
  * The class also includes utility methods to register and deregister
  * FilterUpdateListener instances, which receive notifications on filter updates.
  */
-public class FilterListView implements IFilteredListView {
+public class FilterListView implements IFilterEvent {
 
     /* FXML fields */
     @FXML
@@ -181,6 +183,27 @@ public class FilterListView implements IFilteredListView {
                     cell.getScene().getRoot().getStyleClass().remove("dragging-hand");
                     event.consume();
                 });
+
+
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem deleteItem = new MenuItem("Delete");
+
+                deleteItem.setOnAction(event -> {
+                    CustomCell selectedItem = cell.getItem();
+                    if (selectedItem != null) {
+                        int index = items.indexOf(selectedItem);
+                        listeners.forEach(listener -> listener.onFilterRemoved(items.size() - 1 - index));
+                        items.remove(selectedItem);
+                    }
+                });
+                contextMenu.getItems().add(deleteItem);
+
+                cell.setOnContextMenuRequested(event -> {
+                    if (!cell.isEmpty()) {
+                        contextMenu.show(cell, event.getScreenX(), event.getScreenY());
+                    }
+                });
+
                 return cell;
             }
         });

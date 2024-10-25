@@ -3,15 +3,15 @@ package ch.supsi;
 import ch.supsi.controller.errors.ErrorController;
 import ch.supsi.controller.errors.IErrorController;
 import ch.supsi.controller.filter.FilterController;
-import ch.supsi.controller.filter.IFilterController;
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
 import ch.supsi.dispatcher.MenuDispatcher;
-import ch.supsi.view.filter.IFilteredListView;
+import ch.supsi.view.filter.FilterUpdateListener;
+import ch.supsi.view.filter.IFilterEvent;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
@@ -36,7 +36,7 @@ public class MainFx extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        IFilterController filterController = FilterController.getInstance();
+        FilterUpdateListener filterController = FilterController.getInstance();
         IImageController imageController = ImageController.getInstance();
         IErrorController errorController = ErrorController.getInstance();
 
@@ -63,7 +63,20 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl);
             MenuBar menuBar = loader.load();
             MenuDispatcher dispatcher = loader.getController();
+
             root.setTop(menuBar);
+
+            fxmlUrl = getClass().getResource("/layout/FilterMenu.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl);
+            Menu filterMenu = loader.load();
+
+            IFilterEvent menuItemCtrl = loader.getController();
+            filterController.addEventPublisher(menuItemCtrl);
+            menuBar.getMenus().add(filterMenu);
+
 
             fxmlUrl = getClass().getResource("/layout/FilterColumn.fxml");
             if (fxmlUrl == null) {
@@ -79,7 +92,7 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl);
             ScrollPane filterList = loader.load();
 
-            IFilteredListView controller = loader.getController();
+            IFilterEvent controller = loader.getController();
             filterController.addEventPublisher(controller);
 
             filterColumn.getChildren().add(1, filterList);

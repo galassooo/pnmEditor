@@ -1,6 +1,6 @@
 package ch.supsi.view.filter;
 
-public interface IFilteredListView {
+public interface IFilterEvent {
     void registerListener(FilterUpdateListener listener);
     void deregisterListener(FilterUpdateListener listener);
 }

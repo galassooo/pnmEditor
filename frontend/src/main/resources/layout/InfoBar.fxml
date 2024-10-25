@@ -2,8 +2,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.text.Font?>
 <HBox stylesheets="/style/style.css" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml">
     <children>

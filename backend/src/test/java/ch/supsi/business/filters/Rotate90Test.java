@@ -1,8 +1,8 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.FilterStrategy;
-import ch.supsi.business.filter.Rotate90;
+import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
+import ch.supsi.business.filter.RotateRIght;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Rotate90Test {
 
-    FilterStrategy rotateLeft;
-    FilterStrategy rotateRight;
+    NamedFilterStrategy rotateLeft;
+    NamedFilterStrategy rotateRight;
 
     @BeforeEach
     void setup(){
-        rotateLeft = new Rotate90(false);
-        rotateRight = new Rotate90(true);
+        rotateLeft = new RotateRIght(false);
+        rotateRight = new RotateRIght(true);
     }
 
 

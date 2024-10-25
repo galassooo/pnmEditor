@@ -1,13 +1,8 @@
-package ch.supsi.business.filter;
+package ch.supsi.business.filter.filterStrategy;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class Rotate90 implements FilterStrategy {
-    private final boolean right;
-
-    public Rotate90(boolean right) {
-        this.right = right;
-    }
+public class RotateLeft implements NamedFilterStrategy {
 
     @Override
     public void applyFilter(ImageBusinessInterface img) {
@@ -15,11 +10,11 @@ public class Rotate90 implements FilterStrategy {
         if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {
             return;
         }
-        long[][] rotatedPixels = rotate(pixels, right);
+        long[][] rotatedPixels = rotate(pixels);
         img.setPixels(rotatedPixels);
     }
 
-    private long[][] rotate(long[][] pixels, boolean isRight) {
+    private long[][] rotate(long[][] pixels) {
 
         int width = pixels.length;
         int height = pixels[0].length;
@@ -27,14 +22,15 @@ public class Rotate90 implements FilterStrategy {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (isRight) {
-                    rotated[j][width - 1 - i] = pixels[i][j]; // Rotazione a destra
-                } else {
-                    rotated[height - 1 - j][i] = pixels[i][j]; // Rotazione a sinistra
-                }
+                rotated[j][width - 1 - i] = pixels[i][j]; // Rotazione a destra
             }
         }
 
         return rotated;
     }
+    @Override
+    public String getName() {
+        return "Rotate Left";
+    }
+
 }

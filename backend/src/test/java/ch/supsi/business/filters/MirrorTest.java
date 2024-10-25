@@ -1,7 +1,7 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.MirrorFilter;
+import ch.supsi.business.filter.filterStrategy.MirrorFilter;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

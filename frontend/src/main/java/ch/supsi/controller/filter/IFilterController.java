@@ -9,4 +9,6 @@ public interface IFilterController {
     void negative();
 
     void addEventPublisher(IFilteredListView view);
+
+    void activatePipeline();
 }

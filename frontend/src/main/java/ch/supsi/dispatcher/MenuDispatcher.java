@@ -7,7 +7,7 @@ import javafx.scene.control.MenuItem;
 
 import java.io.IOException;
 
-public class MenuDispatcher {
+public class MenuDispatcher implements ImageLoadedListener {
 
     private static final IImageController imageController;
 
@@ -21,6 +21,10 @@ public class MenuDispatcher {
     @FXML
     public MenuItem saveAsMenuItem;
 
+    @FXML
+    private void initialize(){
+        ImageController.getInstance().subscribe(this);
+    }
 
 
     public void save() throws IOException, IllegalAccessException {
@@ -50,4 +54,10 @@ public class MenuDispatcher {
         //about ctrl
     }
 
+    //NON MI PIACE!
+    @Override
+    public void onImageLoaded(){
+        saveAsMenuItem.setDisable(false);
+        saveMenuItem.setDisable(false);
+    }
 }

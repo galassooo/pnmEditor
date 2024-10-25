@@ -1,6 +1,7 @@
 package ch.supsi.model.filters;
 
 import ch.supsi.application.filters.FilterApplication;
+import ch.supsi.application.image.ImageApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -8,6 +9,7 @@ public class FilterModel implements IFilterModel{
 
     private static FilterModel mySelf;
     private final FilterApplication application = FilterApplication.getInstance();
+    private final ImageApplication imgApplication = ImageApplication.getInstance();
 
     private final ObservableList<String> filterPipeline = FXCollections.observableArrayList();
 
@@ -24,33 +26,20 @@ public class FilterModel implements IFilterModel{
     }
 
     @Override
-    public void addRotationLeft() {
-        application.addRotation(true);
-        filterPipeline.add("Rotation Left");
-    }
-
-    @Override
     public ObservableList<String> getFilterPipeline() {
         return filterPipeline;
     }
 
-    @Override
-    public void mirror() {
-        application.mirror();
-        filterPipeline.add("Mirror");
+    public void addFilterToPipeline(String filter){
+
+        filterPipeline.add(filter); //local copy for observers
+
+        application.addFilterToPipeline(filter);
+
     }
 
-    @Override
-    public void addRotationRight() {
-        application.addRotation(false);
-        filterPipeline.add("Rotation Right");
+    public void processFilters(){
+        filterPipeline.clear();
+        application.processFilterPipeline(imgApplication.getImage());
     }
-
-    @Override
-    public void negative() {
-        application.addNegative();
-        filterPipeline.add("Negative");
-    }
-
-
 }

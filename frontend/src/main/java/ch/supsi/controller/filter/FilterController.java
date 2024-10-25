@@ -1,9 +1,13 @@
 package ch.supsi.controller.filter;
 
+import ch.supsi.controller.image.FilterAddedListener;
 import ch.supsi.model.filters.FilterModel;
 import ch.supsi.model.filters.IFilterModel;
 import ch.supsi.view.filter.FilterUpdateListener;
 import ch.supsi.view.filter.IFilteredListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The FilterController class serves as the controller in the MVC architecture, managing
@@ -28,6 +32,7 @@ public class FilterController implements IFilterController, FilterUpdateListener
 
     /* instance field*/
     private final IFilterModel model = FilterModel.getInstance();
+    private static final List<FilterAddedListener> listeners = new ArrayList<>();
 
     /**
      * Returns the singleton instance of FilterController.
@@ -41,6 +46,9 @@ public class FilterController implements IFilterController, FilterUpdateListener
         return myself;
     }
 
+    public static void subscribe(FilterAddedListener listener){
+        listeners.add(listener);
+    }
     /* constructor */
     protected FilterController() {}
 
@@ -49,7 +57,7 @@ public class FilterController implements IFilterController, FilterUpdateListener
      */
     @Override
     public void addRotationLeft() {
-        model.addRotationLeft();
+        model.addFilterToPipeline("Rotate Left");
     }
 
     /**
@@ -57,7 +65,8 @@ public class FilterController implements IFilterController, FilterUpdateListener
      */
     @Override
     public void addRotationRight() {
-        model.addRotationRight();
+        model.addFilterToPipeline("Rotate Right");
+        System.out.println("A");
     }
 
     /**
@@ -65,7 +74,7 @@ public class FilterController implements IFilterController, FilterUpdateListener
      */
     @Override
     public void mirror() {
-        model.mirror();
+            model.addFilterToPipeline("Mirror");
     }
 
     /**
@@ -73,7 +82,7 @@ public class FilterController implements IFilterController, FilterUpdateListener
      */
     @Override
     public void negative() {
-        model.negative();
+        model.addFilterToPipeline("Negative");
     }
 
     /**
@@ -85,6 +94,14 @@ public class FilterController implements IFilterController, FilterUpdateListener
     @Override
     public void addEventPublisher(IFilteredListView view) {
         view.registerListener(this);
+    }
+
+    @Override
+    public void activatePipeline() {
+
+        System.out.println("attivo pipeline");
+        model.processFilters();
+        listeners.forEach(FilterAddedListener::onPipelineProcessed);
     }
 
     /**

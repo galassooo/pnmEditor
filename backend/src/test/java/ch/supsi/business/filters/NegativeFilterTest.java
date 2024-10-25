@@ -3,7 +3,7 @@ package ch.supsi.business.filters;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.NegativeFilter;
+import ch.supsi.business.filter.filterStrategy.NegativeFilter;
 import ch.supsi.business.strategy.SingleChannel;
 import ch.supsi.business.strategy.SingleBit;
 import ch.supsi.business.strategy.ThreeChannel;

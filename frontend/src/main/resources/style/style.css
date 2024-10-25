@@ -55,6 +55,10 @@
     -fx-background-color: #6b6e7b;
 }
 
+.button:disabled {
+    -fx-opacity: 0;
+}
+
 /* Labels */
 .label {
     -fx-text-fill: #676767;

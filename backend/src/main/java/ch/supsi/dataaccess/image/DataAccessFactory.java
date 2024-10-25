@@ -44,15 +44,6 @@ public class DataAccessFactory {
      *
      */
     private static void load(){
-
-        try {
-            Class<?> clazzz = Class.forName("ch.supsi.dataaccess.image.WorkingClass");
-            System.out.println("La classe è stata caricata dal ClassLoader e trovata dal DataAccess: " + clazzz.getName());
-        } catch (ClassNotFoundException ee) {
-            System.out.println("La classe non è stata trovata dal DataAccess dal ClassLoader.");
-        }
-
-
         imageMap.clear();
         //Create a new reflections invalidating cache (used for tests)
         Reflections reflections = new Reflections(new ConfigurationBuilder()

@@ -10,6 +10,7 @@ import ch.supsi.dispatcher.MenuDispatcher;
 import ch.supsi.view.filter.IFilteredListView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
@@ -126,8 +127,6 @@ public class MainFx extends Application {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();
-
-            imageController.addControlledItems(dispatcher.saveAsMenuItem, dispatcher.saveMenuItem);
 
         } catch (IOException e) {
             e.printStackTrace();

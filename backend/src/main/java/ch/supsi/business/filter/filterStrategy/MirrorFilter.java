@@ -1,8 +1,8 @@
-package ch.supsi.business.filter;
+package ch.supsi.business.filter.filterStrategy;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class MirrorFilter implements FilterStrategy {
+public class MirrorFilter implements NamedFilterStrategy {
     @Override
     public void applyFilter(ImageBusinessInterface img) {
         long[][] pixels = img.getPixels();
@@ -23,5 +23,10 @@ public class MirrorFilter implements FilterStrategy {
         }
 
         img.setPixels(pixels);
+    }
+
+    @Override
+    public String getName() {
+        return "Mirror";
     }
 }

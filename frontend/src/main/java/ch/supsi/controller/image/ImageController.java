@@ -2,37 +2,41 @@ package ch.supsi.controller.image;
 
 import ch.supsi.controller.errors.ErrorController;
 import ch.supsi.controller.errors.IErrorController;
+import ch.supsi.controller.filter.FilterController;
+import ch.supsi.dispatcher.ImageLoadedListener;
 import ch.supsi.model.image.IImageModel;
 import ch.supsi.model.image.ImageModel;
 import ch.supsi.view.FileSystemView;
 import ch.supsi.view.IFileSystemView;
 import ch.supsi.view.image.IImageView;
-import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ImageController implements  IImageController{
+public class ImageController implements  IImageController, FilterAddedListener{
 
     private IImageView mainImageView;
 
     private final IImageModel model = ImageModel.getInstance();
     private final IErrorController errorController = ErrorController.getInstance();
 
+    private final List<ImageLoadedListener> subscribers = new ArrayList<>();
     private static ImageController myself;
 
     private Stage root;
 
-    private List<MenuItem> controlledItems = new ArrayList<>();
 
     public static ImageController getInstance(){
         if(myself==null){
             myself=new ImageController();
         }
         return myself;
+    }
+
+    private ImageController() {
+        FilterController.subscribe(this);
     }
 
     @Override
@@ -50,14 +54,12 @@ public class ImageController implements  IImageController{
             errorController.showError(e.getMessage());
             return;
         }
-        controlledItems.forEach(item -> item.setDisable(false));
+        subscribers.forEach(ImageLoadedListener::onImageLoaded);
         mainImageView.update();
     }
 
-    @Override
-    public void addControlledItems(MenuItem... menuItems){
-        controlledItems.addAll(Arrays.asList(menuItems));
-    }
+
+
     @Override
     public void save() throws IOException, IllegalAccessException {
             model.writeImage(null);
@@ -89,4 +91,12 @@ public class ImageController implements  IImageController{
         this.root = stage;
     }
 
+    @Override
+    public void onPipelineProcessed() {
+        mainImageView.update();
+    }
+
+    public void subscribe(ImageLoadedListener subscriber) {
+        subscribers.add(subscriber);
+    }
 }

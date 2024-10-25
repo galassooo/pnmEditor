@@ -1,8 +1,8 @@
-package ch.supsi.business.filter;
+package ch.supsi.business.filter.filterStrategy;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class NegativeFilter implements FilterStrategy {
+public class NegativeFilter implements NamedFilterStrategy {
     @Override
     public void applyFilter(ImageBusinessInterface img) {
         long[][] pixels = img.getPixels();
@@ -18,5 +18,10 @@ public class NegativeFilter implements FilterStrategy {
                 pixels[i][j] ^= maxValue; //XOR
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return "Negative";
     }
 }

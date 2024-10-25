@@ -3,6 +3,7 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.ThreeChannel;
 import ch.supsi.application.image.ImageBusinessInterface;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
@@ -410,21 +411,20 @@ class PPMDataAccessTest {
 
         Files.createFile(nonWritablePath);
         assertTrue(tmpFile.canWrite());
+        tmpFile.setWritable(false);
 
-        boolean isWritable = tmpFile.setWritable(false);
-        assertTrue(isWritable);
-        assertFalse(tmpFile.canWrite());
+        Assumptions.assumeFalse(tmpFile.canWrite());
 
-//        long[][] data = new long[][]{
-//                {1, 2, 3},
-//                {4, 5, 6},
-//        };
-//        ImageBusiness img = new ImageBusiness(
-//                data, nonWritablePath.toAbsolutePath().toString(), "P3",
-//                new ThreeChannel(255));
-//
-//        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));
-//        assertTrue(e.getMessage().contains("Unable to write to file: "));
-//        nonWritablePath.toFile().setWritable(true);
+        long[][] data = new long[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+        };
+        ImageBusiness img = new ImageBusiness(
+                data, nonWritablePath.toAbsolutePath().toString(), "P3",
+                new ThreeChannel(255));
+
+        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));
+        assertTrue(e.getMessage().contains("Unable to write to file: "));
+        nonWritablePath.toFile().setWritable(true);
     }
 }

@@ -3,11 +3,13 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleChannel;
 import ch.supsi.application.image.ImageBusinessInterface;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -463,10 +465,13 @@ class PGMDataAccessTest {
     @Test
     void testWriteToNonWritableFile() throws IOException {
         Path nonWritablePath = tempDir.resolve("image.pgm");
-        Files.createFile(nonWritablePath);
-        nonWritablePath.toFile().setWritable(false);
+        File tmpFile = nonWritablePath.toFile();
 
-        System.out.println("------------------PGM FILE: Writable after setWritable(false): " + Files.isWritable(nonWritablePath));
+        Files.createFile(nonWritablePath);
+        assertTrue(tmpFile.canWrite());
+        tmpFile.setWritable(false);
+
+        Assumptions.assumeFalse(tmpFile.canWrite());
 
         long[][] data = new long[][]{
                 {1, 2, 3},

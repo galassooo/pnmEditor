@@ -1,7 +1,6 @@
 package ch.supsi.view.image;
 
 import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.filter.filterStrategy.MirrorFilter;
 import ch.supsi.model.image.IImageModel;
 import ch.supsi.model.image.ImageModel;
 import javafx.fxml.FXML;

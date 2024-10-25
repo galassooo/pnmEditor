@@ -1,7 +1,7 @@
-package ch.supsi.business.filters;
+package ch.supsi.business.filters.strategy;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.filterStrategy.MirrorFilter;
+import ch.supsi.business.filter.strategy.MirrorFilter;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,5 +89,9 @@ public class MirrorTest {
         mirrorFilter.applyFilter(img);
 
         assertNull(img.getPixels());
+    }
+    @Test
+    void testGetName(){
+        assertEquals("Mirror", mirrorFilter.getName());
     }
 }

@@ -1,8 +1,8 @@
-package ch.supsi.business.filters;
+package ch.supsi.business.filters.strategy;
 
-import ch.supsi.business.filter.filterStrategy.RotateLeft;
+import ch.supsi.business.filter.strategy.RotateLeft;
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
+import ch.supsi.business.filter.strategy.NamedFilterStrategy;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -3,7 +3,7 @@ package ch.supsi.application.filters;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.filter.FilterFactory;
 import ch.supsi.business.filter.FilterPipeline;
-import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
+import ch.supsi.business.filter.strategy.NamedFilterStrategy;
 
 import java.util.List;
 import java.util.Map;

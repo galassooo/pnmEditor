@@ -1,4 +1,4 @@
-package ch.supsi.business.filter.filterStrategy;
+package ch.supsi.business.filter.strategy;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 

@@ -1,9 +1,9 @@
-package ch.supsi.business.filters;
+package ch.supsi.business.filters.strategy;
 
 
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.filterStrategy.NegativeFilter;
+import ch.supsi.business.filter.strategy.NegativeFilter;
 import ch.supsi.business.strategy.SingleChannel;
 import ch.supsi.business.strategy.SingleBit;
 import ch.supsi.business.strategy.ThreeChannel;
@@ -114,6 +114,11 @@ class NegativeFilterTest {
         filter.applyFilter(img);
 
         assertNull(img.getPixels());
+    }
+
+    @Test
+    void testGetName(){
+        assertEquals("Negative", filter.getName());
     }
 }
 

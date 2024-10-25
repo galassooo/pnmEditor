@@ -1,7 +1,7 @@
 package ch.supsi.business.filter;
 
 import ch.supsi.application.filters.FilterPipelineInterface;
-import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
+import ch.supsi.business.filter.strategy.NamedFilterStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 public class FilterPipeline implements FilterPipelineInterface {
 
     private static FilterPipeline filterPipeline;
-    private List<NamedFilterStrategy> pipeline = new ArrayList<>();
+    private final List<NamedFilterStrategy> pipeline = new ArrayList<>();
 
     public static FilterPipeline getInstance() {
         if(filterPipeline == null) {

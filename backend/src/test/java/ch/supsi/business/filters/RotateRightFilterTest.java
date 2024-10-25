@@ -1,6 +1,7 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.filter.filterStrategy.RotateLeft;
+import ch.supsi.business.filter.filterStrategy.RotateRight;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.filter.filterStrategy.NamedFilterStrategy;
 import ch.supsi.business.strategy.ThreeChannel;
@@ -15,10 +16,8 @@ public class RotateRightFilterTest {
 
     @BeforeEach
     void setup(){
-        rotateRight = new RotateLeft();
+        rotateRight = new RotateRight();
     }
-
-
 
     @Test
     void testRotate90Right() {
@@ -93,5 +92,10 @@ public class RotateRightFilterTest {
         rotateRight.applyFilter(img);
 
         assertNull(img.getPixels());
+    }
+
+    @Test
+    void testGetName(){
+        assertEquals("Rotate Right", rotateRight.getName());
     }
 }

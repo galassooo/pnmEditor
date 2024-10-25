@@ -28,8 +28,8 @@ public class RotateLeftFilterTest {
         ImageBusiness img = new ImageBusiness(original,"test.path", "P1", new ThreeChannel(255));
 
         long[][] expected ={
-                {0xFF000003L, 0xFF000001L},
-                {0xFF000004L, 0xFF000002L}
+                {0xFF000002L, 0xFF000004L},
+                {0xFF000001L, 0xFF000003L}
         };
 
         rotateLeft.applyFilter(img);
@@ -110,5 +110,9 @@ public class RotateLeftFilterTest {
         rotateLeft.applyFilter(img);
 
         assertNull(img.getPixels());
+    }
+    @Test
+    void testGetName(){
+        assertEquals("Rotate Left", rotateLeft.getName());
     }
 }

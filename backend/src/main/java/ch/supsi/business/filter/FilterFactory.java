@@ -35,11 +35,11 @@ public class FilterFactory {
                 filters.put(strategy.getName(), strategy);
 
             } catch (NoSuchMethodException e) {
-                System.out.println("No default constructor found for class: " + c.getName()+ " this class wont be taken into consideration for filter processing");
+                //System.out.println("No default constructor found for class: " + c.getName()+ " this class wont be taken into consideration for filter processing");
             } catch (InstantiationException e) {
-                System.out.println("Abstract class with NamedFilterStrategy annotation detected:" + c.getName()+ " this class wont be taken into consideration for filter processing");
+                //System.out.println("Abstract class with NamedFilterStrategy annotation detected:" + c.getName()+ " this class wont be taken into consideration for filter processing");
             } catch (InvocationTargetException | IllegalAccessException e ){
-                System.out.println("Constructor has thrown an exception in class: " + c.getName() + " this class wont be taken into consideration for filter processing");
+                //System.out.println("Constructor has thrown an exception in class: " + c.getName() + " this class wont be taken into consideration for filter processing");
             }
         }
     }

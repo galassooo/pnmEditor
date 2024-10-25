@@ -42,7 +42,11 @@ public class ImageApplication {
         return currentImage == null ? null : currentImage.getName();
     }
 
-    public ImageBusinessInterface getImage() {
+    public long[][] getImagePixels(){
+        return currentImage == null ? null : currentImage.getPixels();
+    }
+
+    public ImageBusinessInterface getCurrentImage() {
         return currentImage;
     }
 }

@@ -40,6 +40,6 @@ public class FilterModel implements IFilterModel{
 
     public void processFilters(){
         filterPipeline.clear();
-        application.processFilterPipeline(imgApplication.getImage());
+        application.processFilterPipeline(imgApplication.getCurrentImage());
     }
 }

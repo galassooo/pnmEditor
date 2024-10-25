@@ -29,12 +29,14 @@ public class ImageModel implements IImageModel{
     public void readImage(String path) throws IOException, IllegalAccessException {
             backendController.read(path);
     }
-    public  ImageBusinessInterface getImage(){
-        return backendController.getImage();
-    }
 
     public String getImageName(){
         return backendController.getImageName();
+    }
+
+    @Override
+    public long[][] getImagePixels() {
+        return backendController.getImagePixels();
     }
 
     public void writeImage(String path) throws IOException, IllegalAccessException {

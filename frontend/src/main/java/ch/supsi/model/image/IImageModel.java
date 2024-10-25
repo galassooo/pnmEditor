@@ -7,7 +7,7 @@ import java.io.IOException;
 public interface IImageModel {
     void readImage(String path) throws IOException, IllegalAccessException;
     void writeImage(String path) throws IOException, IllegalAccessException;
-    ImageBusinessInterface getImage();
     String getImageName();
+    long[][] getImagePixels();
 
 }

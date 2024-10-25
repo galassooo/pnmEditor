@@ -23,6 +23,8 @@ public class FilterApplication {
         return myself;
     }
 
+    private FilterApplication() {}
+
     public List<String> getAllAvailableFilters(){ //si occupa della presentazione dei dati
         var allFiltersNames = allFilters.keySet();
 
@@ -38,6 +40,10 @@ public class FilterApplication {
         model.getPipeline().forEach(filter ->{
             filter.applyFilter(image);
         });
+        model.clear();
+    }
+
+    public void clearPipeline(){
         model.clear();
     }
 }

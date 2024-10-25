@@ -23,10 +23,10 @@ public class MainImageView implements IImageView{
     }
 
     public void update() {
-        ImageBusinessInterface i  = model.getImage();
-        int width = i.getWidth();
-        int height = i.getHeight();
-        long[][] pixels = i.getPixels();
+        long[][] pixels = model.getImagePixels();
+        int width = pixels[0].length;
+        int height = pixels.length;
+
 
         WritableImage writableImage = new WritableImage(width, height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();

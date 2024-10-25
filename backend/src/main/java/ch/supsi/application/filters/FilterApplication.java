@@ -46,4 +46,12 @@ public class FilterApplication {
     public void clearPipeline(){
         model.clear();
     }
+
+    public void add(String filterName, int index){
+        NamedFilterStrategy filter = allFilters.get(filterName);
+        model.addFilter(filter, index);
+    }
+    public void remove(int index){
+        model.remove(index);
+    }
 }

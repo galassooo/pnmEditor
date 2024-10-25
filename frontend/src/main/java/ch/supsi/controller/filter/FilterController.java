@@ -124,10 +124,6 @@ public class FilterController implements IFilterController, FilterUpdateListener
      */
     @Override
     public void onFilterMoved(int fromIndex, int toIndex) {
-        if (fromIndex != toIndex) {
-            var filterPipeline = model.getFilterPipeline();
-            var item = filterPipeline.remove(fromIndex);
-            filterPipeline.add(toIndex, item);
-        }
+        model.moveFilter(fromIndex, toIndex);
     }
 }

@@ -30,4 +30,12 @@ public class FilterPipeline implements FilterPipelineInterface {
     public List<NamedFilterStrategy> getPipeline() {
         return pipeline;
     }
+
+    public void addFilter(NamedFilterStrategy filterStrategy, int index){
+        pipeline.add(index, filterStrategy);
+    }
+
+    public void remove(int index){
+        pipeline.remove(index);
+    }
 }

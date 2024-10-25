@@ -7,6 +7,8 @@ import java.util.List;
 public interface FilterPipelineInterface {
 
     void  addFilter(NamedFilterStrategy filterStrategy);
+    void  addFilter(NamedFilterStrategy filterStrategy, int index);
+    void remove(int index);
     void clear();
     List<NamedFilterStrategy> getPipeline();
 }

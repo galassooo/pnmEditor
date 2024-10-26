@@ -156,16 +156,29 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                             ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
                             resourceBundles.add(resourceBundle);
                         }
-                    } else {
-                        System.err.printf("Risorsa non trovata: %s nel modulo frontend%n", resourceName);
                     }
                 } catch (IOException e) {
                     System.err.printf("Errore nel caricamento della risorsa %s dal modulo frontend%n", resourceName);
                     e.printStackTrace();
                 }
             }
-        } else {
-            System.err.println("Modulo frontend non trovato.");
+        } else { //jar
+            String localeCode = locale.toLanguageTag().replace('-', '_');
+            String resourceName = String.format("%s_%s.properties", FRONTEND_PATH.substring(1), localeCode);
+
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourceName)) {
+                if (inputStream != null) {
+                    try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                        ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
+                        resourceBundles.add(resourceBundle);
+                    }
+                } else {
+                    System.err.printf("Risorsa non trovata: %s nel JAR%n", resourceName);
+                }
+            } catch (IOException e) {
+                System.err.printf("Errore nel caricamento della risorsa %s dal JAR%n", resourceName);
+                e.printStackTrace();
+            }
         }
 
         return resourceBundles;

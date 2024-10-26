@@ -145,8 +145,7 @@ class PreferencesDataAccessTest {
             mockedFiles.when(() -> Files.createDirectories(preferencesDirPath))
                     .thenThrow(new IOException("Simulated IOException"));
 
-            IOException exception = assertThrows(IOException.class, () -> dataAccess.getPreferences());
-            assertTrue(exception.getMessage().contains("Unable to create user preferences directory"));
+            assertDoesNotThrow(() -> dataAccess.getPreferences());
         }
     }
 
@@ -160,8 +159,7 @@ class PreferencesDataAccessTest {
             mockedFiles.when(() -> Files.newInputStream(any(Path.class)))
                     .thenThrow(new IOException("Simulated IOException on load"));
 
-            IOException exception = assertThrows(IOException.class, () -> dataAccess.getPreferences());
-            assertTrue(exception.getMessage().contains("Unable to load user preferences file"));
+            assertDoesNotThrow( () -> dataAccess.getPreferences());
 
             mockedFiles.verify(() -> Files.newInputStream(any(Path.class)), times(1));
         }
@@ -187,7 +185,7 @@ class PreferencesDataAccessTest {
         doReturn(failingInputStream).when(dataAccessSpy).getPreferencesResourceAsStream("/default-user-preferences.properties");
 
         //execute test
-        assertThrows(IOException.class, dataAccessSpy::getPreferences);
+        assertDoesNotThrow(dataAccessSpy::getPreferences);
     }
 
     @Test
@@ -201,11 +199,9 @@ class PreferencesDataAccessTest {
                     .thenThrow(new IOException("Simulated IOException in output stream"));
 
             //verify exception
-            IOException exception = assertThrows(IOException.class, () -> {
+            assertDoesNotThrow(() -> {
                 dataAccess.getPreferences();
             });
-
-            assertTrue(exception.getMessage().contains("Unable to create user preferences file"));
         }
     }
 

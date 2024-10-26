@@ -113,6 +113,6 @@ public class RotateLeftFilterTest {
     }
     @Test
     void testGetCode(){
-        assertEquals("Rotate Left", rotateLeft.getCode());
+        assertEquals("Rotate_Left", rotateLeft.getCode());
     }
 }

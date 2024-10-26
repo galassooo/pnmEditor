@@ -50,8 +50,8 @@ public class FilterApplicationTest {
         assertFalse(allFilters.isEmpty());
         assertTrue(allFilters.contains("Negative"));
         assertTrue(allFilters.contains("Mirror"));
-        assertTrue(allFilters.contains("Rotate Right"));
-        assertTrue(allFilters.contains("Rotate Left"));
+        assertTrue(allFilters.contains("Rotate_Right"));
+        assertTrue(allFilters.contains("Rotate_Left"));
 
     }
 

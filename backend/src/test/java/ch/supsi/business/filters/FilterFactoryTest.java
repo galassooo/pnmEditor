@@ -19,8 +19,8 @@ public class FilterFactoryTest {
     void test(){
         FilterFactory.getFilters().entrySet().forEach(System.out::println);
         assertTrue(FilterFactory.getFilters().containsKey("Negative"));
-        assertTrue(FilterFactory.getFilters().containsKey("Rotate Left"));
-        assertTrue(FilterFactory.getFilters().containsKey("Rotate Right"));
+        assertTrue(FilterFactory.getFilters().containsKey("Rotate_Left"));
+        assertTrue(FilterFactory.getFilters().containsKey("Rotate_Right"));
         assertTrue(FilterFactory.getFilters().containsKey("Mirror"));
 
     }

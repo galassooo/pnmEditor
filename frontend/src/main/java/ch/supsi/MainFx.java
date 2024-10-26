@@ -1,5 +1,6 @@
 package ch.supsi;
 
+import ch.supsi.application.preferences.PreferencesApplication;
 import ch.supsi.controller.errors.ErrorController;
 import ch.supsi.controller.errors.IErrorController;
 import ch.supsi.controller.filter.FilterController;
@@ -35,7 +36,7 @@ public class MainFx extends Application {
      * @param primaryStage root
      */
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         FilterUpdateListener filterController = FilterController.getInstance();
         IImageController imageController = ImageController.getInstance();
         IErrorController errorController = ErrorController.getInstance();
@@ -46,6 +47,7 @@ public class MainFx extends Application {
             primaryStage.close();
         });
 
+        PreferencesApplication.getInstance().getPreference("language-tag");
 
         try {
             URL fxmlUrl = getClass().getResource("/layout/BasePane.fxml");

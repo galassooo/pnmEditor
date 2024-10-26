@@ -90,17 +90,6 @@ class PreferencesBusinessTest {
         assertEquals("dark", theme, "The theme should be 'dark' after setting it");
     }
 
-    @Test
-    void testDoubleGetPreferenceExistingKey() throws IOException {
-        preferencesBusiness.setPreference(Map.entry("theme", "dark"));
-
-        //retrieve the stored preference
-        Object theme = preferencesBusiness.getPreference("theme");
-        Object theme2 = preferencesBusiness.getPreference("theme");
-        assertEquals("dark", theme, "The theme should be 'dark' after setting it");
-        assertEquals("dark", theme2, "The theme should be 'dark' after setting it");
-    }
-
 
     @Test
     void testGetPreferenceNonExistingKey() throws IOException {

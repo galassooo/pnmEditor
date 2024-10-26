@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="400.0" stylesheets="/style/errorPopUp.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.supsi.view.info.ErrorPopUp">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="441.0" stylesheets="/style/errorPopUp.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.supsi.view.info.ErrorPopUp">
    <top>
       <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="title" layoutX="114.0" layoutY="5.0" styleClass="main-label" text="OOPS! An error occured" textAlignment="CENTER">
+            <Label fx:id="title" layoutX="135.0" layoutY="3.0" styleClass="main-label" text="OOPS! An error occured" textAlignment="CENTER">
                <font>
                   <Font size="17.0" />
                </font></Label>
@@ -35,12 +35,15 @@
             <HBox alignment="CENTER" prefHeight="225.0" prefWidth="400.0">
                <children>
                   <ImageView fx:id="image" fitHeight="107.0" fitWidth="105.0" pickOnBounds="true" preserveRatio="true" />
-                  <VBox alignment="TOP_CENTER" prefHeight="110.0" prefWidth="264.0">
+                  <VBox alignment="TOP_CENTER" prefHeight="144.0" prefWidth="322.0">
                      <children>
                         <Label fx:id="messageHeader" text="The previous operation failed due to reason:" textAlignment="CENTER">
                            <VBox.margin>
                               <Insets bottom="15.0" top="15.0" />
                            </VBox.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
                         </Label>
                         <Label fx:id="message" />
                      </children>

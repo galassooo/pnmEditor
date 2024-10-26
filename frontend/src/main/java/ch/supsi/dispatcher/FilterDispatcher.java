@@ -2,6 +2,7 @@ package ch.supsi.dispatcher;
 
 import ch.supsi.controller.filter.FilterController;
 import ch.supsi.controller.image.ImageController;
+import ch.supsi.controller.image.ImageLoadedListener;
 import ch.supsi.view.filter.FilterUpdateListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package ch.supsi.view;
+package ch.supsi.view.fileSystem;
 
 import java.io.File;
 

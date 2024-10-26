@@ -1,0 +1,54 @@
+/* Background */
+.root {
+    -fx-background-color: #262626;
+}
+.label{
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+    -fx-text-fill: #B8BFC9;
+}
+.main-label{
+    -fx-font-weight: bold;
+    -fx-font-size: 17;
+    -fx-text-fill: #B8BFC9;
+}
+
+.top-pane {
+    -fx-background-color: #2f343f;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 0;
+}
+
+.button:hover {
+    -fx-background-color: #6b6e7b;
+    -fx-cursor: hand;
+}
+.choice-box {
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+    -fx-background-radius: 0;
+    -fx-border-color: #6b6e7b;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+}
+
+.choice-box:hover {
+    -fx-background-color: #6b6e7b;
+    -fx-cursor: hand;
+}
+
+.choice-box .list-cell {
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
+}
+
+.choice-box .list-cell:hover {
+    -fx-background-color: #6b6e7b;
+}

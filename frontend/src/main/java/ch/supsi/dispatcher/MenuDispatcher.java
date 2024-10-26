@@ -2,6 +2,9 @@ package ch.supsi.dispatcher;
 
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
+import ch.supsi.controller.image.ImageLoadedListener;
+import ch.supsi.controller.preferences.IPreferencesController;
+import ch.supsi.controller.preferences.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
@@ -10,9 +13,11 @@ import java.io.IOException;
 public class MenuDispatcher implements ImageLoadedListener {
 
     private static final IImageController imageController;
+    private static final IPreferencesController preferencesController;
 
     static{
         imageController = ImageController.getInstance();
+        preferencesController = PreferencesController.getInstance();
     }
 
     @FXML
@@ -39,7 +44,7 @@ public class MenuDispatcher implements ImageLoadedListener {
         imageController.saveAs();
     }
     public void preferences(){
-        //preferences ctrl
+        preferencesController.showPreferencesPopup();
     }
 
     public void open(){

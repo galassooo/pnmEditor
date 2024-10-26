@@ -56,12 +56,6 @@ public class ErrorPopUp implements IErrorPopUp{
 
     }
 
-    public ErrorPopUp() {
-    }
-
-
-
-
     @Override
     public void build(){
         message.setText(model.getMessage());
@@ -69,7 +63,6 @@ public class ErrorPopUp implements IErrorPopUp{
 
     @Override
     public void show(){
-
         myStage.show();
     }
 

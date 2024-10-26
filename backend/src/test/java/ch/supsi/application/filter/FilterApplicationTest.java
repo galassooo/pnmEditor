@@ -9,6 +9,8 @@ import ch.supsi.business.strategy.SingleBit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterApplicationTest {
@@ -86,14 +88,9 @@ public class FilterApplicationTest {
 
         ImageBusiness img = new ImageBusiness(image, null, null, new SingleBit());
 
-        filterApplication.addFilterToPipeline("Mirror");
-        System.out.println("---------------------------- ");
-        filterApplication.getAllAvailableFilters().forEach(filter -> {
-            System.out.println(filter);
-        });
-        System.out.println("---------------------------- ");
-
+        filterApplication.addFilterToPipeline("Rotate Right");
         filterApplication.processFilterPipeline(img);
+
         assertArrayEquals(expected, img.getPixels());
         filterApplication.clearPipeline();
 

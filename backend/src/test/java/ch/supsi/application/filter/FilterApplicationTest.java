@@ -8,6 +8,7 @@ import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleBit;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -92,11 +93,25 @@ public class FilterApplicationTest {
 
         ImageBusiness img = new ImageBusiness(original, null, null, new ThreeChannel(255));
 
+        filterApplication.clearPipeline();
         filterApplication.addFilterToPipeline("Mirror");
         filterApplication.processFilterPipeline(img);
 
+        //printMatrix("Expected: ",expected);
+        //printMatrix("Actual: ",img.getPixels());
         assertArrayEquals(expected, img.getPixels());
         filterApplication.clearPipeline();
 
     }
+    private void printMatrix(String label, long[][] matrix) {
+        System.out.println(label);
+        for (long[] row : matrix) {
+            for (long value : row) {
+                System.out.printf("%08X ", value);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
 }

@@ -16,12 +16,13 @@
     <dependencies>
 
             <!-- mockare i test -->
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>4.0.0</version>
-                <scope>test</scope>
-            </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.14.2</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- test reflection -->
         <dependency>
@@ -29,29 +30,38 @@
             <artifactId>javassist</artifactId>
             <version>3.28.0-GA</version>
         </dependency>
+
+        <!-- annotation util -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Reflections  -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Logger x reflection  -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.4.12</version>
         </dependency>
+
+        <!-- Junit test  -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>

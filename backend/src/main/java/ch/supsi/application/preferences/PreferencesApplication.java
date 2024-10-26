@@ -31,7 +31,7 @@ public class PreferencesApplication {
      * @param key the key of the key - value pair of the requested preference
      * @return an object representing the value of the preference
      */
-    public Object getPreference(String key) throws IOException {
+    public Object getPreference(String key) {
         return this.preferencesModel.getPreference(key);
     }
 

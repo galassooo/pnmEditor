@@ -14,7 +14,7 @@
     <top>
         <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="title" layoutX="162.0" layoutY="5.0" styleClass="main-label" text="Edit preferences" textAlignment="CENTER">
+                <Label fx:id="title" layoutX="142.0" layoutY="4.0" styleClass="main-label" text="%ui_edit_preferences" textAlignment="CENTER">
                     <font>
                         <Font size="17.0" />
                     </font></Label>
@@ -27,7 +27,7 @@
                 <Pane prefHeight="112.0" prefWidth="400.0" />
                 <HBox alignment="CENTER_LEFT" prefHeight="225.0" prefWidth="400.0">
                     <children>
-                          <Label text="LANGUAGE" textAlignment="CENTER">
+                          <Label text="%ui_edit_language" textAlignment="CENTER">
                               <font>
                                   <Font size="15.0" />
                               </font>
@@ -48,19 +48,19 @@
    <bottom>
       <HBox alignment="CENTER" prefHeight="30.0" prefWidth="421.0" BorderPane.alignment="CENTER">
          <children>
-              <Button fx:id="saveButton" mnemonicParsing="false" text="Save">
+              <Button fx:id="saveButton" mnemonicParsing="false" text="%ui_save_button">
                <HBox.margin>
                   <Insets right="20.0" />
                </HBox.margin>
               </Button>
-            <Button fx:id="closeButton" mnemonicParsing="false" text="Close">
+            <Button fx:id="closeButton" mnemonicParsing="false" text="%ui_close_button">
                <HBox.margin>
                   <Insets left="20.0" />
                </HBox.margin>
             </Button>
          </children>
          <BorderPane.margin>
-            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+            <Insets bottom="20.0" left="10.0" right="10.0" top="5.0" />
          </BorderPane.margin>
       </HBox>
    </bottom>

@@ -3,6 +3,7 @@ package ch.supsi.model.filters;
 import javafx.collections.ObservableList;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IFilterModel {
     ObservableList<String> getFilterPipeline();
@@ -11,7 +12,7 @@ public interface IFilterModel {
     void processFilters();
     void moveFilter(int fromIndex, int toIndex);
 
-    List<String> getAllFilters();
+    Map<String, String> getFiltersKeyValues();
 
     void removeFilter(int index);
 }

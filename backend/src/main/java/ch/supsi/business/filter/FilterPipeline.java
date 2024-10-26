@@ -22,7 +22,6 @@ public class FilterPipeline implements FilterPipelineInterface {
 
     public void  addFilter(NamedFilterStrategy filterStrategy){
         pipeline.add(filterStrategy);
-        pipeline.forEach(System.out::println);
     }
     public void clear(){
         pipeline.clear();

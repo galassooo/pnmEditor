@@ -13,7 +13,7 @@
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="250.0">
             <children>
-                <Label text="▼ History" />
+                <Label text="%ui_history" />
             </children>
             <VBox.margin>
                 <Insets left="15.0" />

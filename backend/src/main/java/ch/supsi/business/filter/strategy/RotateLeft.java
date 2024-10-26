@@ -29,8 +29,8 @@ public class RotateLeft implements NamedFilterStrategy {
         return rotated;
     }
     @Override
-    public String getName() {
-        return "Rotate Left";
+    public String getCode() {
+        return "Rotate_Left";
     }
 
 }

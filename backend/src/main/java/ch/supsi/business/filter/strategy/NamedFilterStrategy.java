@@ -5,5 +5,5 @@ import ch.supsi.application.image.ImageBusinessInterface;
 public interface NamedFilterStrategy {
 
     void applyFilter(ImageBusinessInterface img);
-    String getName();
+    String getCode();
 }

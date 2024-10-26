@@ -112,7 +112,7 @@ public class RotateLeftFilterTest {
         assertNull(img.getPixels());
     }
     @Test
-    void testGetName(){
-        assertEquals("Rotate Left", rotateLeft.getName());
+    void testGetCode(){
+        assertEquals("Rotate Left", rotateLeft.getCode());
     }
 }

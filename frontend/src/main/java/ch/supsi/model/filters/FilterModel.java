@@ -2,16 +2,20 @@ package ch.supsi.model.filters;
 
 import ch.supsi.application.filters.FilterApplication;
 import ch.supsi.application.image.ImageApplication;
+import ch.supsi.application.translations.TranslationsApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FilterModel implements IFilterModel{
 
     private static FilterModel mySelf;
     private final FilterApplication application = FilterApplication.getInstance();
     private final ImageApplication imgApplication = ImageApplication.getInstance();
+    private final TranslationsApplication translationsApplication = TranslationsApplication.getInstance();
 
     private final ObservableList<String> filterPipeline = FXCollections.observableArrayList();
 
@@ -41,10 +45,9 @@ public class FilterModel implements IFilterModel{
 
     public void addFilterToPipeline(String filter){
 
-        filterPipeline.add(filter); //local copy for observers
+        filterPipeline.add(TranslationsApplication.getInstance().translate(filter)); //local copy for observers
 
         application.addFilterToPipeline(filter);
-        System.out.println("A");
     }
 
     public void processFilters(){
@@ -67,8 +70,12 @@ public class FilterModel implements IFilterModel{
     }
 
     @Override
-    public List<String> getAllFilters() {
-        return application.getAllAvailableFilters();
+    public Map<String, String> getFiltersKeyValues() {
+        return application.getAllAvailableFilters().stream()
+                .collect(Collectors.toMap(
+                        filter -> filter,
+                        translationsApplication::translate
+                ));
     }
 
     @Override

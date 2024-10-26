@@ -52,3 +52,29 @@
 .choice-box .list-cell:hover {
     -fx-background-color: #6b6e7b;
 }
+
+.choice-box .menu-item:focused > .label {
+    -fx-text-fill: #B8BFC9;
+}
+
+.choice-box .menu-item > .label {
+    -fx-text-fill: #ffffff;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #6b6e7b;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: #474747;
+}
+
+.choice-box .list-cell {
+    -fx-background-color: #474747;
+    -fx-text-fill: #ffffff;
+}
+
+.choice-box .list-cell:hover {
+    -fx-background-color: #6b6e7b;
+    -fx-cursor: hand;
+}

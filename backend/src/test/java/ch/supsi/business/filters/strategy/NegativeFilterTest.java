@@ -117,8 +117,8 @@ class NegativeFilterTest {
     }
 
     @Test
-    void testGetName(){
-        assertEquals("Negative", filter.getName());
+    void testGetCode(){
+        assertEquals("Negative", filter.getCode());
     }
 }
 

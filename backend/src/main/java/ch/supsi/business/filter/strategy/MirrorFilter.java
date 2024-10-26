@@ -26,7 +26,7 @@ public class MirrorFilter implements NamedFilterStrategy {
     }
 
     @Override
-    public String getName() {
+    public String getCode() {
         return "Mirror";
     }
 }

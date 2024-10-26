@@ -10,6 +10,7 @@ import javafx.scene.control.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FilterMenuItem implements IFilterEvent{
 
@@ -21,16 +22,16 @@ public class FilterMenuItem implements IFilterEvent{
     @FXML
     void initialize() {
         IFilterModel model = FilterModel.getInstance();
-        List<String> allFilters = model.getAllFilters();
-        allFilters.forEach(filter -> {
-            MenuItem item = new MenuItem(filter);
-            item.setOnAction(new EventHandler<ActionEvent>() {
 
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    listeners.forEach(listener -> listener.onFilterAdded(filter));
-                }
-            });
+        Map<String, String> filtersKeyValues = model.getFiltersKeyValues();
+
+        filtersKeyValues.forEach((filterKey, translatedFilter) -> {
+            MenuItem item = new MenuItem(translatedFilter);
+
+            item.setOnAction(actionEvent ->
+                    listeners.forEach(listener -> listener.onFilterAdded(filterKey))
+            );
+
             menu.getItems().add(item);
         });
     }

@@ -21,7 +21,7 @@ public class NegativeFilter implements NamedFilterStrategy {
     }
 
     @Override
-    public String getName() {
+    public String getCode() {
         return "Negative";
     }
 }

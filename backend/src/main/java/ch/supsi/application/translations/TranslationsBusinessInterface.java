@@ -16,7 +16,6 @@ public interface TranslationsBusinessInterface {
     boolean changeLanguage(String languageTag);
 
     String translate(String key);
-
     ResourceBundle getUIResourceBundle(Locale locale);
 
 }

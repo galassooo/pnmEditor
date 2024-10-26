@@ -18,7 +18,7 @@ public class TranslationsApplication {
     /* business references */
     private final TranslationsBusinessInterface translationsModel;
 
-    private TranslationsApplication() throws IOException {
+    private TranslationsApplication() {
         PreferencesBusinessInterface preferencesModel = PreferencesBusiness.getInstance();
         this.translationsModel = TranslationBusiness.getInstance();
 
@@ -26,7 +26,7 @@ public class TranslationsApplication {
         this.translationsModel.changeLanguage(currentLanguage);
     }
 
-    public static TranslationsApplication getInstance() throws IOException {
+    public static TranslationsApplication getInstance() {
         if (myself == null) {
             myself = new TranslationsApplication();
         }

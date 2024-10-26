@@ -38,7 +38,7 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
      * @return the current language of the program
      */
     @Override
-    public String getCurrentLanguage() throws IOException {
+    public String getCurrentLanguage() {
         userPreferences = preferencesDao.getPreferences();
         return userPreferences.getProperty("language-tag");
     }
@@ -61,7 +61,7 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
      * @return the value associated with the given key
      */
     @Override
-    public Object getPreference(String key) throws IOException {
+    public Object getPreference(String key) {
         this.userPreferences = preferencesDao.getPreferences();
         if (key == null || key.isEmpty()) {
             return null;

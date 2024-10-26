@@ -25,10 +25,10 @@ public class FilterDispatcher implements ImageLoadedListener {
         filterController.onFiltersActivated();
     }
     public void rotationLeft(ActionEvent event) {
-        filterController.onFilterAdded("Rotate Left");
+        filterController.onFilterAdded("Rotate_Left");
     }
     public void rotationRight(ActionEvent event) {
-        filterController.onFilterAdded("Rotate Right");
+        filterController.onFilterAdded("Rotate_Right");
     }
     public void mirror(ActionEvent event) {
         filterController.onFilterAdded("Mirror");

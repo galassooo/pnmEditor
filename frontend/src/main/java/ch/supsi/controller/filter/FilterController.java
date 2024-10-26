@@ -77,7 +77,6 @@ public class FilterController implements  FilterUpdateListener {
 
     @Override
     public void onFiltersActivated() {
-        System.out.println("attivo pipeline");
         model.processFilters();
         listeners.forEach(FiltersProcessedEvent::onPipelineProcessed);
     }

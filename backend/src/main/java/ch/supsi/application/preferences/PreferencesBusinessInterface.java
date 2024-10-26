@@ -8,11 +8,11 @@ import java.util.Map;
  */
 public interface PreferencesBusinessInterface {
 
-    String getCurrentLanguage() throws IOException;
+    String getCurrentLanguage();
 
     void setCurrentLanguage(String language) throws IOException;
 
-    Object getPreference(String key) throws IOException;
+    Object getPreference(String key);
 
     void setPreference(Map.Entry<String, String> preference) throws IOException;
 }

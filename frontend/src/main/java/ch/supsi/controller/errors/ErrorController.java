@@ -2,6 +2,8 @@ package ch.supsi.controller.errors;
 
 import ch.supsi.model.errors.ErrorModel;
 import ch.supsi.model.errors.IErrorModel;
+import ch.supsi.model.translations.ITranslationsModel;
+import ch.supsi.model.translations.TranslationModel;
 import ch.supsi.view.info.IErrorPopUp;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -10,6 +12,7 @@ import java.net.URL;
 
 public class ErrorController implements IErrorController {
     private final IErrorModel model = ErrorModel.getInstance();
+    private final ITranslationsModel translationsModel = TranslationModel.getInstance();
 
     private IErrorPopUp errorPopUp;
 
@@ -29,8 +32,9 @@ public class ErrorController implements IErrorController {
         if (fxmlUrl == null) {
             return;
         }
-        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+
         try {
+            FXMLLoader loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             loader.load();
             errorPopUp = loader.getController();
             errorPopUp.setModel(model);

@@ -52,7 +52,9 @@
 }
 
 .button:hover {
-    -fx-background-color: #6b6e7b;
+    -fx-background-color: #b3b3b3;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
 }
 
 .button:disabled {

@@ -13,6 +13,12 @@
     -fx-text-fill: #B8BFC9;
 }
 
+.error-label{
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+    -fx-text-fill: #ff7d7d;
+}
+
 .top-pane {
     -fx-background-color: #2f343f;
 }

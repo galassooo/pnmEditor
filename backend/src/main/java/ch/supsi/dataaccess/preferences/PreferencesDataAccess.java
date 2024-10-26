@@ -159,23 +159,27 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
      * @return a properties object representing the user preferences
      */
     @Override
-    public Properties getPreferences() throws IOException {
+    public Properties getPreferences() {
 
-        /* an object representation of the user preferences in the filesystem */
-        Properties userPreferences;
-        if (userPreferencesFileExists()) {
-            userPreferences = this.loadPreferences(this.getUserPreferencesFilePath());
-            // the user preferences exist if we're here..
+        try {
+            /* an object representation of the user preferences in the filesystem */
+            Properties userPreferences;
+            if (userPreferencesFileExists()) {
+                userPreferences = this.loadPreferences(this.getUserPreferencesFilePath());
+                // the user preferences exist if we're here..
+                newProperties = (Properties) userPreferences.clone();
+                return userPreferences;
+            }
+
+            userPreferences = this.loadDefaultPreferences();
             newProperties = (Properties) userPreferences.clone();
+            createUserPreferencesFile(userPreferences);
+
+            // return the properties object with the loaded preferences
             return userPreferences;
+        } catch (IOException e) {
+            return null;
         }
-
-        userPreferences = this.loadDefaultPreferences();
-        newProperties = (Properties) userPreferences.clone();
-        createUserPreferencesFile(userPreferences);
-
-        // return the properties object with the loaded preferences
-        return userPreferences;
     }
 
     /**

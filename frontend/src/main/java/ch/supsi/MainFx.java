@@ -7,6 +7,8 @@ import ch.supsi.controller.filter.FilterController;
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
 import ch.supsi.dispatcher.MenuDispatcher;
+import ch.supsi.model.translations.ITranslationsModel;
+import ch.supsi.model.translations.TranslationModel;
 import ch.supsi.view.filter.FilterUpdateListener;
 import ch.supsi.view.filter.IFilterEvent;
 import javafx.application.Application;
@@ -23,6 +25,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class MainFx extends Application {
 
@@ -36,10 +40,12 @@ public class MainFx extends Application {
      * @param primaryStage root
      */
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
+
         FilterUpdateListener filterController = FilterController.getInstance();
         IImageController imageController = ImageController.getInstance();
         IErrorController errorController = ErrorController.getInstance();
+        ITranslationsModel translationsModel = TranslationModel.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
@@ -54,7 +60,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            FXMLLoader loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle() );
             BorderPane root = loader.load();
 
 
@@ -62,7 +68,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             MenuBar menuBar = loader.load();
             MenuDispatcher dispatcher = loader.getController();
 
@@ -72,7 +78,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             Menu filterMenu = loader.load();
 
             IFilterEvent menuItemCtrl = loader.getController();
@@ -84,14 +90,14 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox filterColumn = loader.load();
 
             fxmlUrl = getClass().getResource("/layout/FilterList.fxml");
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             ScrollPane filterList = loader.load();
 
             IFilterEvent controller = loader.getController();
@@ -103,7 +109,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             HBox infoBar = loader.load();
             filterColumn.getChildren().add(infoBar);
 
@@ -113,7 +119,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             ImageView image = loader.load();
             root.setCenter(image);
 
@@ -125,7 +131,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox historyBox = loader.load();
 
 
@@ -134,7 +140,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl);
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox infoCol = loader.load();
 
             root.setRight(new VBox(historyBox, infoCol));

@@ -15,8 +15,8 @@ public class RotateRight implements NamedFilterStrategy {
     }
 
     @Override
-    public String getName() {
-        return "Rotate Right";
+    public String getCode() {
+        return "Rotate_Right";
     }
 
     private long[][] rotate(long[][] pixels) {

@@ -92,6 +92,6 @@ public class MirrorTest {
     }
     @Test
     void testGetName(){
-        assertEquals("Mirror", mirrorFilter.getName());
+        assertEquals("Mirror", mirrorFilter.getCode());
     }
 }

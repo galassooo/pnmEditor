@@ -94,7 +94,7 @@ public class RotateRightFilterTest {
     }
 
     @Test
-    void testGetName(){
-        assertEquals("Rotate Right", rotateRight.getName());
+    void testGetCode(){
+        assertEquals("Rotate Right", rotateRight.getCode());
     }
 }

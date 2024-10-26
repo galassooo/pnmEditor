@@ -4,32 +4,33 @@ import ch.supsi.business.translations.TranslationsDataAccessInterface;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class TranslationsPropertiesDataAccess implements TranslationsDataAccessInterface {
+public class TranslationsDataAccess implements TranslationsDataAccessInterface {
     /* where the supported languages are stored */
     private static final String SUPPORTED_LANGUAGES_PROPERTIES = "/supported-languages.properties";
-    /* where the UI labels are stored */
-    private static final String UI_LABELS_PATH = "i18n/UI/ui_labels";
     /* where the labels are stored */
     private static final String LABELS_PATH = "i18n/labels/";
     /* the format of the files containing the labels */
     private static final String LABELS_FORMAT = ".properties";
 
-    /* self reference */
-    public static TranslationsPropertiesDataAccess myself;
+    private static String FRONTEND_PATH = "/i18n/ui_labels";
 
-    protected TranslationsPropertiesDataAccess() {
+    /* self reference */
+    public static TranslationsDataAccess myself;
+
+    protected TranslationsDataAccess() {
     }
 
     // Singleton instantiation
-    public static TranslationsPropertiesDataAccess getInstance() {
+    public static TranslationsDataAccess getInstance() {
         if (myself == null) {
-            myself = new TranslationsPropertiesDataAccess();
+            myself = new TranslationsDataAccess();
         }
 
         return myself;
@@ -97,19 +98,25 @@ public class TranslationsPropertiesDataAccess implements TranslationsDataAccessI
         return translations;
     }
 
-    /**
-     * Retrieves all the resource bundles associated with the provided locale, located in the provided path.
-     * This method is supposed to work correctly across filesystems.
-     *
-     * @param locale          the locale that we want to load the translations for
-     * @param pathToResources the path to the resources folder
-     * @return a list of resource bundles associated with the given locale, or an empty list in case an exception was thrown
-     */
     private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale, String pathToResources) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
 
-        // 1. Carica le risorse dal modulo backend
+
+        resourceBundles.addAll(loadBackendResources(locale, pathToResources));
+
+        // Carica risorse dal modulo frontend
+        resourceBundles.addAll(loadFrontendResources(locale));
+
+        return resourceBundles;
+    }
+
+    /**
+     * Carica tutte le risorse associate al locale specificato dal modulo backend.
+     */
+    private @NotNull List<ResourceBundle> loadBackendResources(Locale locale, String pathToResources) {
+        List<ResourceBundle> resourceBundles = new ArrayList<>();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
         try {
             Resource[] resources = resolver.getResources(String.format("classpath:%s*%s", pathToResources, LABELS_FORMAT));
             for (Resource resource : resources) {
@@ -126,13 +133,22 @@ public class TranslationsPropertiesDataAccess implements TranslationsDataAccessI
             e.printStackTrace();
         }
 
-        // 2. Carica le risorse dal modulo frontend
-        Optional<Module> frontendModule = ModuleLayer.boot().findModule("frontend"); // Usa il nome esatto del modulo frontend
+        return resourceBundles;
+    }
+
+    /**
+     * Carica tutte le risorse associate al locale specificato dal modulo frontend.
+     */
+    private @NotNull List<ResourceBundle> loadFrontendResources(Locale locale) {
+        List<ResourceBundle> resourceBundles = new ArrayList<>();
+        Optional<Module> frontendModule = ModuleLayer.boot().findModule("frontend");
+
         if (frontendModule.isPresent()) {
-            try {
-                String localeCode = locale.toLanguageTag().replace('-', '_'); // Converte il locale per corrispondere al pattern dei file
-                // Utilizza il percorso corretto, senza una cartella `ui_labels`
-                String resourceName = String.format("/i18n/ui_labels_%s.properties", localeCode);
+            String frontendPath = loadFrontendPath();
+
+            if (frontendPath != null) {
+                String localeCode = locale.toLanguageTag().replace('-', '_');
+                String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
 
                 try (InputStream inputStream = frontendModule.get().getResourceAsStream(resourceName)) {
                     if (inputStream != null) {
@@ -143,10 +159,10 @@ public class TranslationsPropertiesDataAccess implements TranslationsDataAccessI
                     } else {
                         System.err.printf("Risorsa non trovata: %s nel modulo frontend%n", resourceName);
                     }
+                } catch (IOException e) {
+                    System.err.printf("Errore nel caricamento della risorsa %s dal modulo frontend%n", resourceName);
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                System.err.printf("Errore nel caricamento della risorsa %s dal modulo frontend%n", "i18n/ui_labels", e);
-                e.printStackTrace();
             }
         } else {
             System.err.println("Modulo frontend non trovato.");
@@ -154,6 +170,26 @@ public class TranslationsPropertiesDataAccess implements TranslationsDataAccessI
 
         return resourceBundles;
     }
+
+    /**
+     * Carica il percorso `frontend.labels.path` dal file `application.properties`.
+     */
+    private String loadFrontendPath() {
+        try (InputStream is = TranslationsDataAccess.class.getClassLoader().getResourceAsStream("application.properties")) {
+            Properties properties = new Properties();
+            if (is != null) {
+                properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
+                return properties.getProperty("frontend.labels.path");
+            } else {
+                System.err.println("File application.properties non trovato.");
+            }
+        } catch (IOException e) {
+            System.err.println("Errore durante il caricamento di application.properties.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
     /**
@@ -177,10 +213,10 @@ public class TranslationsPropertiesDataAccess implements TranslationsDataAccessI
      */
     @Override
     public ResourceBundle getUIResourceBundle(Locale locale) {
-        List<ResourceBundle> bundles = getResourceBundlesForLocale(locale, UI_LABELS_PATH);
+        List<ResourceBundle> bundles = loadFrontendResources(locale);
         if (bundles.isEmpty()) {
             Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
-            bundles = handleMissingResource(locale, fallbackLocale, UI_LABELS_PATH);
+            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
         }
         return bundles.get(0);
     }

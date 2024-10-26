@@ -1,8 +1,9 @@
 package ch.supsi.business.translations;
 
 import ch.supsi.application.translations.TranslationsBusinessInterface;
-import ch.supsi.dataaccess.translations.TranslationsPropertiesDataAccess;
+import ch.supsi.dataaccess.translations.TranslationsDataAccess;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -23,7 +24,7 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
 
     /* constructor */
     protected TranslationBusiness() {
-        this.translationsDao = TranslationsPropertiesDataAccess.getInstance();
+        this.translationsDao = TranslationsDataAccess.getInstance();
         this.supportedLanguageTags = translationsDao.getSupportedLanguageTags();
     }
 
@@ -78,7 +79,6 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
     public String translate(String key) {
         return this.translations.getProperty(key);
     }
-
     /**
      * Return the UI translation bundle with the given locale
      *

@@ -1,18 +1,21 @@
 package ch.supsi.view.preferences;
 
-import ch.supsi.model.errors.IErrorModel;
-import ch.supsi.model.preferences.IPreferencesModel;
+import ch.supsi.model.translations.ITranslationsModel;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 
-import java.net.URL;
-
-public class PreferencesView implements IPreferencesView {
+public class PreferencesView implements IPreferencesView, PreferenceChangedEvent {
 
 
     @FXML
@@ -29,8 +32,11 @@ public class PreferencesView implements IPreferencesView {
 
     private Stage myStage;
 
-    private IPreferencesModel model;
+    private ITranslationsModel model;
 
+    private List<PreferenceChangeListener> listeners = new ArrayList<>();
+
+    private final Map<String, String> labelsAndCodesMap = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -39,9 +45,17 @@ public class PreferencesView implements IPreferencesView {
         myStage = new Stage();
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
+
+        saveButton.setOnAction(event -> {
+            Preferences dummyPreferences = Preferences.userRoot().node("dummy");
+            PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, "language-tag",
+                    labelsAndCodesMap.get(choiceBox.getValue()));
+            listeners.forEach(listener -> listener.preferenceChange(pEvent));
+            myStage.close();
+        });
     }
 
-    public void setModel(IPreferencesModel model) {
+    public void setModel(ITranslationsModel model) {
         this.model = model;
     }
 
@@ -52,6 +66,22 @@ public class PreferencesView implements IPreferencesView {
 
     @Override
     public void build() {
-        //ask model for available language
+        choiceBox.getItems().removeAll(choiceBox.getItems());
+        model.getSupportedLanguages().forEach(languageTag -> {
+            String translation = model.translate(languageTag);
+            labelsAndCodesMap.put(translation, languageTag);
+
+            choiceBox.getItems().add(translation);
+        });
+    }
+
+    @Override
+    public void registerListener(PreferenceChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void deregisterListener(PreferenceChangeListener listener) {
+        listeners.remove(listener);
     }
 }

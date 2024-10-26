@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public interface PreferencesDataAccessInterface {
 
-    Properties getPreferences() throws IOException;
+    Properties getPreferences();
 
     boolean storePreference(Map.Entry<String, String> preference) throws IOException;
 }

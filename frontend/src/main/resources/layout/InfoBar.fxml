@@ -5,7 +5,7 @@
 <?import javafx.scene.text.Font?>
 <HBox stylesheets="/style/style.css" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml">
     <children>
-        <Label text="Filter order">
+        <Label text="%ui_filter_order">
             <font>
                 <Font size="11.0" />
             </font></Label>

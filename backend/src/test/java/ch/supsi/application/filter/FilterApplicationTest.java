@@ -87,6 +87,12 @@ public class FilterApplicationTest {
         ImageBusiness img = new ImageBusiness(image, null, null, new SingleBit());
 
         filterApplication.addFilterToPipeline("Mirror");
+        System.out.println("---------------------------- ");
+        filterApplication.getAllAvailableFilters().forEach(filter -> {
+            System.out.println(filter);
+        });
+        System.out.println("---------------------------- ");
+
         filterApplication.processFilterPipeline(img);
         assertArrayEquals(expected, img.getPixels());
         filterApplication.clearPipeline();

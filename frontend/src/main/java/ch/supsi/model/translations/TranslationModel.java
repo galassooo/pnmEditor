@@ -58,7 +58,8 @@ public class TranslationModel implements ITranslationsModel {
      *
      * @return The Locale, null if it wasn't found
      */
-    private Locale getLocale() {
+    @Override
+    public Locale getLocale() {
         if (locale == null) { //load only once
             locale = Locale.forLanguageTag(preferencesController.getPreference("language-tag").toString());
         }

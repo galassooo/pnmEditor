@@ -2,6 +2,7 @@ package ch.supsi.model.translations;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -13,4 +14,5 @@ public interface ITranslationsModel {
     String translate(String s);
     ResourceBundle getUiBundle() throws IOException;
     List<String> getSupportedLanguages();
+    Locale getLocale();
 }

@@ -43,8 +43,9 @@ public class ErrorController implements IErrorController {
             errorPopUp.setModel(model);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            loggerModel.addError("ui_failed_to_load_component");
         }
+        loggerModel.addDebug("ui_help_loaded");
     }
 
     public void setStage(Stage stage) {

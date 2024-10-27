@@ -1,5 +1,7 @@
 package ch.supsi.dispatcher;
 
+import ch.supsi.controller.about.AboutController;
+import ch.supsi.controller.about.IAboutController;
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
 import ch.supsi.controller.image.ImageLoadedListener;
@@ -14,10 +16,12 @@ public class MenuDispatcher implements ImageLoadedListener {
 
     private static final IImageController imageController;
     private static final IPreferencesController preferencesController;
+    private static final IAboutController aboutController;
 
     static{
         imageController = ImageController.getInstance();
         preferencesController = PreferencesController.getInstance();
+        aboutController = AboutController.getInstance();
     }
 
     @FXML
@@ -56,7 +60,7 @@ public class MenuDispatcher implements ImageLoadedListener {
     }
 
     public void about(){
-        //about ctrl
+        aboutController.showPopup();
     }
 
     //NON MI PIACE!

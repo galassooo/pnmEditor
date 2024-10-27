@@ -13,7 +13,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>20.0.1</javafx.version>
-
+        <maven.build.timestamp>${maven.build.timestamp}</maven.build.timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss</maven.build.timestamp.format>
         <javafx.module.path>${project.basedir}/target/dependency</javafx.module.path>
 
     </properties>
@@ -102,8 +103,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -115,6 +114,11 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Build-Time>${build.timestamp}</Build-Time>
+                            <Build-Version>${project.version}</Build-Version>
+                            <Developer>${project.developers[0].name}</Developer>
+                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -137,4 +141,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <developers>
+        <developer>
+            <name>Martina Galasso</name>
+            <email>martinagalasso@yahoo.it</email>
+        </developer>
+    </developers>
+
 </project>

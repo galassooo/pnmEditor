@@ -1,0 +1,56 @@
+/* Background */
+.root {
+    -fx-background-color: #262626;
+}
+
+
+
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: #262626;
+    -fx-border-color: transparent;
+}
+
+
+.scroll-pane .viewport {
+    -fx-background-color: #262626;
+}
+
+.anchor-pane {
+    -fx-background-color: #262626;
+}
+
+.scroll-bar {
+    -fx-background-color: #262626;
+}
+
+
+.scroll-bar .track {
+    -fx-background-color: #262626;
+
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #474747;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+/* History column */
+.history-vbox {
+    -fx-border-color: transparent transparent transparent #474747;
+    -fx-border-width: 0 0 0 2px;
+}

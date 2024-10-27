@@ -1,6 +1,8 @@
 package ch.supsi.controller.preferences;
 
 import ch.supsi.controller.errors.ErrorController;
+import ch.supsi.model.info.ILoggerModel;
+import ch.supsi.model.info.LoggerModel;
 import ch.supsi.model.preferences.IPreferencesModel;
 import ch.supsi.model.preferences.PreferencesModel;
 import ch.supsi.model.translations.ITranslationsModel;
@@ -20,7 +22,7 @@ public class PreferencesController implements IPreferencesController, Preference
 
     private IPreferencesView view;
     private final IPreferencesModel model = PreferencesModel.getInstance();
-
+    private final ILoggerModel loggerModel = LoggerModel.getInstance();
     private final ITranslationsModel translationsModel = TranslationModel.getInstance();
 
     public static PreferencesController getInstance() {
@@ -54,8 +56,11 @@ public class PreferencesController implements IPreferencesController, Preference
 
     @Override
     public void showPreferencesPopup(){
+        loggerModel.addDebug("ui_start_popup_build");
         view.build();
+        loggerModel.addDebug("ui_end_popup_build");
         view.show();
+        loggerModel.addDebug("ui_popup_show");
     }
 
     @Override
@@ -65,5 +70,6 @@ public class PreferencesController implements IPreferencesController, Preference
         } catch (IOException e) {
             ErrorController.getInstance().showError(e.getMessage());
         }
+        loggerModel.addInfo("ui_preferences_stored");
     }
 }

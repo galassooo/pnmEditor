@@ -2,6 +2,8 @@ package ch.supsi.controller.errors;
 
 import ch.supsi.model.errors.ErrorModel;
 import ch.supsi.model.errors.IErrorModel;
+import ch.supsi.model.info.ILoggerModel;
+import ch.supsi.model.info.LoggerModel;
 import ch.supsi.model.translations.ITranslationsModel;
 import ch.supsi.model.translations.TranslationModel;
 import ch.supsi.view.info.IErrorPopUp;
@@ -13,6 +15,7 @@ import java.net.URL;
 public class ErrorController implements IErrorController {
     private final IErrorModel model = ErrorModel.getInstance();
     private final ITranslationsModel translationsModel = TranslationModel.getInstance();
+    private final ILoggerModel loggerModel = LoggerModel.getInstance();
 
     private IErrorPopUp errorPopUp;
 
@@ -50,8 +53,12 @@ public class ErrorController implements IErrorController {
 
     public void showError(String message){
         //va aggiunto il logger, stampa il log di debug + error + info su richiesta
+        loggerModel.addError(message);
         model.setMessage(message);
+        loggerModel.addDebug("ui_start_popup_build");
         errorPopUp.build();
+        loggerModel.addDebug("ui_end_popup_build");
         errorPopUp.show();
+        loggerModel.addDebug("ui_popup_show");
     }
 }

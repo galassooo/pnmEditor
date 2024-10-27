@@ -3,8 +3,14 @@ package ch.supsi.controller.filter;
 import ch.supsi.controller.image.FiltersProcessedEvent;
 import ch.supsi.model.filters.FilterModel;
 import ch.supsi.model.filters.IFilterModel;
+import ch.supsi.model.image.ImageModel;
+import ch.supsi.model.info.ILoggerModel;
+import ch.supsi.model.info.LoggerModel;
+import ch.supsi.model.translations.ITranslationsModel;
 import ch.supsi.view.filter.FilterUpdateListener;
 import ch.supsi.view.filter.IFilterEvent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +33,14 @@ import java.util.List;
  */
 public class FilterController implements  FilterUpdateListener {
 
+    private static final Log log = LogFactory.getLog(FilterController.class);
     /* self reference */
     private static FilterController myself;
 
     /* instance field*/
     private final IFilterModel model = FilterModel.getInstance();
     private static final List<FiltersProcessedEvent> listeners = new ArrayList<>();
+    private final ILoggerModel loggerModel = LoggerModel.getInstance();
 
     /**
      * Returns the singleton instance of FilterController.
@@ -60,6 +68,10 @@ public class FilterController implements  FilterUpdateListener {
      */
     @Override
     public void onFilterAdded(String filter) {
+        if(ImageModel.getInstance().getImageName() == null){
+            loggerModel.addWarning("ui_no_image_added");
+        }
+        loggerModel.addDebug("ui_filter_added");
         model.addFilterToPipeline(filter);
     }
 
@@ -72,11 +84,13 @@ public class FilterController implements  FilterUpdateListener {
      */
     @Override
     public void onFilterMoved(int fromIndex, int toIndex) {
+        loggerModel.addDebug("ui_filter_moved");
         model.moveFilter(fromIndex, toIndex);
     }
 
     @Override
     public void onFiltersActivated() {
+        loggerModel.addInfo("ui_pipeline_processed");
         model.processFilters();
         listeners.forEach(FiltersProcessedEvent::onPipelineProcessed);
     }
@@ -94,6 +108,7 @@ public class FilterController implements  FilterUpdateListener {
 
     @Override
     public void onFilterRemoved(int index) {
+        loggerModel.addDebug("ui_filter_removed");
         model.removeFilter(index);
     }
 }

@@ -6,6 +6,8 @@ import ch.supsi.controller.errors.IErrorController;
 import ch.supsi.controller.filter.FilterController;
 import ch.supsi.controller.image.IImageController;
 import ch.supsi.controller.image.ImageController;
+import ch.supsi.controller.logger.ILoggerController;
+import ch.supsi.controller.logger.LoggerController;
 import ch.supsi.dispatcher.MenuDispatcher;
 import ch.supsi.model.translations.ITranslationsModel;
 import ch.supsi.model.translations.TranslationModel;
@@ -43,6 +45,7 @@ public class MainFx extends Application {
         IImageController imageController = ImageController.getInstance();
         IErrorController errorController = ErrorController.getInstance();
         ITranslationsModel translationsModel = TranslationModel.getInstance();
+        ILoggerController loggerController = LoggerController.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
@@ -146,6 +149,7 @@ public class MainFx extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
 
+            loggerController.addDebug("ui_application_started");
         } catch (IOException e) {
             e.printStackTrace();
         }

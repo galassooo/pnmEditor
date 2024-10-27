@@ -1,6 +1,7 @@
 /* Background */
 .root {
     -fx-background-color: #262626;
+    -fx-text-fill: inherit;
 }
 
 /* MenuBar */
@@ -63,7 +64,8 @@
 
 /* Labels */
 .label {
-    -fx-text-fill: #676767;
+    -fx-text-fill: #676767 inherit;
+
 }
 
 /* Search box */
@@ -135,7 +137,7 @@
 /* Custom cells */
 .list-cell {
     -fx-background-color: #262626;
-    -fx-text-fill: #676767;
+    -fx-text-fill: #676767 inherit;
     -fx-padding: 8px;
     -fx-border-color: #3a3a3a;
     -fx-border-width: 0 0 1px 0;
@@ -176,6 +178,6 @@
 /* History column */
 .history-vbox {
     -fx-border-color: transparent transparent transparent #474747;
-    -fx-border-width: 0 0 0 2px;
+    -fx-border-width: 0 0 2 2px;
 }
 

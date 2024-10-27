@@ -19,14 +19,11 @@ public class HistoryStack {
 
     @FXML
     private void initialize() {
-        // Crea una copia invertita di getLastApplied()
         ObservableList<String> reversedList = FXCollections.observableArrayList(model.getLastApplied());
         FXCollections.reverse(reversedList);
 
-        // Collega la lista invertita alla ListView
         list.setItems(reversedList);
 
-        // Ascolta i cambiamenti sulla lista originale e aggiorna l'ordine invertito
         model.getLastApplied().addListener((ListChangeListener<String>) change -> {
             reversedList.setAll(model.getLastApplied());
             FXCollections.reverse(reversedList);

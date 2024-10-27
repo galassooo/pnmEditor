@@ -5,6 +5,8 @@ import ch.supsi.controller.errors.IErrorController;
 import ch.supsi.controller.filter.FilterController;
 import ch.supsi.model.image.IImageModel;
 import ch.supsi.model.image.ImageModel;
+import ch.supsi.model.info.ILoggerModel;
+import ch.supsi.model.info.LoggerModel;
 import ch.supsi.view.fileSystem.FileSystemView;
 import ch.supsi.view.fileSystem.IFileSystemView;
 import ch.supsi.view.image.IImageView;
@@ -20,6 +22,7 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
 
     private final IImageModel model = ImageModel.getInstance();
     private final IErrorController errorController = ErrorController.getInstance();
+    private final ILoggerModel loggerModel = LoggerModel.getInstance();
 
     private final List<ImageLoadedListener> subscribers = new ArrayList<>();
     private static ImageController myself;
@@ -49,6 +52,7 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
 
         try {
             model.readImage(chosen.getPath());
+            loggerModel.addInfo("ui_image_loaded");
         }catch(Exception e ){
             errorController.showError(e.getMessage());
             return;
@@ -62,7 +66,7 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
     @Override
     public void save() throws IOException, IllegalAccessException {
             model.writeImage(null);
-
+            loggerModel.addInfo("ui_image_saved");
     }
 
     @Override
@@ -78,6 +82,7 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
         }catch(Exception e ){
             errorController.showError(e.getMessage());
         }
+        loggerModel.addInfo("ui_image_saved");
     }
 
     @Override

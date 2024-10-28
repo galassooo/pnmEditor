@@ -103,6 +103,30 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--plugin per parsare data  -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-timestamp</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>build.timestamp</name>
+                            <pattern>yyyy-MM-dd'T'HH:mm:ss</pattern>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--plugin per creare jar -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -134,10 +158,43 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--plugin per parsare le risorse nel build.properties-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <!--filtra solo il file build.prop-->
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>build.properties</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <excludes>
+                                    </excludes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                            <encoding>UTF-8</encoding>
+                            <!--mette output nella build: IMPORTANTE x moduli-->
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

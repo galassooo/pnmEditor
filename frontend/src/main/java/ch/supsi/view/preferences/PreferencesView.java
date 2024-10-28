@@ -1,9 +1,12 @@
 package ch.supsi.view.preferences;
 
+import ch.supsi.model.preferences.IPreferencesModel;
+import ch.supsi.model.preferences.PreferencesModel;
 import ch.supsi.model.translations.ITranslationsModel;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -30,9 +33,23 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
     @FXML
     private ChoiceBox<String> choiceBox;
 
+    @FXML
+    private CheckBox debugCB;
+
+    @FXML
+    private CheckBox infoCB;
+
+    @FXML
+    private CheckBox errorCB;
+
+    @FXML
+    private CheckBox warningCB;
+
     private Stage myStage;
 
     private ITranslationsModel model;
+
+    private IPreferencesModel preferencesModel = PreferencesModel.getInstance();
 
     private List<PreferenceChangeListener> listeners = new ArrayList<>();
 
@@ -46,13 +63,36 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
 
+        debugCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-debug").toString()));
+        infoCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-info").toString()));
+        errorCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-error").toString()));
+        warningCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-warning").toString()));
+
         saveButton.setOnAction(event -> {
-            Preferences dummyPreferences = Preferences.userRoot().node("dummy");
-            PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, "language-tag",
-                    labelsAndCodesMap.get(choiceBox.getValue()));
-            listeners.forEach(listener -> listener.preferenceChange(pEvent));
+            if(choiceBox.getValue()!=null){
+                Preferences dummyPreferences = Preferences.userRoot().node("dummy");
+                PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, "language-tag",
+                        labelsAndCodesMap.get(choiceBox.getValue()));
+                listeners.forEach(listener -> listener.preferenceChange(pEvent));
+            }
+
+
+            notifyPref("show-debug", debugCB );
+            notifyPref("show-info", infoCB );
+            notifyPref("show-warning", warningCB );
+            notifyPref("show-error", errorCB );
+
+
             myStage.close();
         });
+
+
+    }
+
+    private void notifyPref(String tag, CheckBox box){
+        Preferences dummyPreferences = Preferences.userRoot().node("dummy");
+        PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, tag, String.valueOf(box.isSelected()));
+        listeners.forEach(listener -> listener.preferenceChange(pEvent));
     }
 
     public void setModel(ITranslationsModel model) {

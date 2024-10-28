@@ -6,16 +6,20 @@ import ch.supsi.model.info.ILoggerModel;
 import ch.supsi.model.info.LoggerModel;
 import ch.supsi.model.translations.ITranslationsModel;
 import ch.supsi.model.translations.TranslationModel;
-import ch.supsi.view.info.AboutView;
 import ch.supsi.view.info.IAboutView;
 import javafx.fxml.FXMLLoader;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -56,30 +60,40 @@ public class AboutController implements IAboutController{
     }
 
     private void readBuildInfo() {
-        try {
-            InputStream manifestStream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
-            if (manifestStream != null) {
-                Manifest manifest = new Manifest(manifestStream);
-                Attributes attributes = manifest.getMainAttributes();
+        try (InputStream propertiesStream = getClass().getResourceAsStream("/build.properties")) {
+            if (propertiesStream != null) {
 
-                String buildTimeString = attributes.getValue("Build-Time");
+                Properties properties = new Properties();
+                properties.load(propertiesStream);
 
-                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                LocalDateTime buildTime = LocalDateTime.parse(buildTimeString, inputFormatter);
-
+                String buildTimeString = properties.getProperty("build-time");
+                String buildVersion = properties.getProperty("build-version");
+                String developer = properties.getProperty("developer");
 
                 Locale locale = translationsModel.getLocale();
-                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm:ss", locale);
-                String formattedDate = buildTime.format(outputFormatter);
+
+                ZonedDateTime buildTime = null;
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                    buildTime = ZonedDateTime.parse(buildTimeString, formatter.withZone(ZoneId.of("UTC")));
+
+                    buildTime = buildTime.withZoneSameInstant(ZoneId.of("Europe/Rome"));
+                } catch (DateTimeParseException e) {
+                    loggerModel.addDebug("ui_build_properties_date_parse_error");
+                }
+
+                String formattedDate = buildTime != null ? buildTime.format(DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT).withLocale(locale)) : "N/A";
 
                 model.setDate(formattedDate);
-                model.setVersion(attributes.getValue("Build-Version"));
-                model.setDeveloper(attributes.getValue("Developer"));
-                loggerModel.addDebug("ui_manifest_parsed");
+                model.setVersion(buildVersion);
+                model.setDeveloper(developer);
 
+                loggerModel.addDebug("ui_build_properties_parsed");
+            } else {
+                loggerModel.addDebug("ui_build_properties_not_found");
             }
         } catch (IOException e) {
-            loggerModel.addDebug("ui_manifest_missing");
+            loggerModel.addDebug("ui_build_properties_error");
         }
     }
 

@@ -13,6 +13,9 @@ public class LoggerModel implements ILoggerModel {
     private TranslationsApplication translationsApp = TranslationsApplication.getInstance();
 
     private boolean showDebug = false;
+    private boolean showInfo = false;
+    private boolean showError = false;
+    private boolean showWarning = false;
 
     public static LoggerModel getInstance(){
         if(myself == null){
@@ -26,15 +29,24 @@ public class LoggerModel implements ILoggerModel {
     }
 
     public void addInfo(String info){
-        logs.add(new LogEntry(LogEntry.LogType.INFO, translationsApp.translate(info)));
+        if(showInfo){
+            logs.add(new LogEntry(LogEntry.LogType.INFO, translationsApp.translate(info)));
+        }
+
     }
 
     public void addError(String error){
-        logs.add(new LogEntry(LogEntry.LogType.ERROR, translationsApp.translate(error)));
+        if(showError){
+            logs.add(new LogEntry(LogEntry.LogType.ERROR, translationsApp.translate(error)));
+        }
+
     }
 
     public void addWarning(String warning){
-        logs.add(new LogEntry(LogEntry.LogType.WARNING, translationsApp.translate(warning)));
+        if(showWarning){
+            logs.add(new LogEntry(LogEntry.LogType.WARNING, translationsApp.translate(warning)));
+        }
+
     }
 
     public void addDebug(String debug){
@@ -50,5 +62,17 @@ public class LoggerModel implements ILoggerModel {
     @Override
     public void setShowDebug(boolean showDebug) {
         this.showDebug = showDebug;
+    }
+    @Override
+    public void setShowInfo(boolean showInfo) {
+        this.showInfo = showInfo;
+    }
+    @Override
+    public void setShowError(boolean showError) {
+        this.showError = showError;
+    }
+    @Override
+    public void setShowWarning(boolean showWarning) {
+        this.showWarning = showWarning;
     }
 }

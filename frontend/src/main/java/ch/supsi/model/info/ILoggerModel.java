@@ -11,4 +11,7 @@ public interface ILoggerModel {
     ObservableList<LogEntry> getLogs();
 
     void setShowDebug(boolean showDebug);
+    void setShowWarning(boolean showWarning);
+    void setShowError(boolean showError);
+    void setShowInfo(boolean showInfo);
 }

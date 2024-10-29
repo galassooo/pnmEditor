@@ -44,7 +44,7 @@ public class CustomCell {
      *
      * @param text The text to display in the cell label.
      */
-    public CustomCell(String text) {
+    public CustomCell(String key, String text) {
         this();  //calls the private no args constructor
         label.setText(text);
     }

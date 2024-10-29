@@ -435,7 +435,7 @@ public class DataAccessFactoryTest {
 
         DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
-        assertTrue(e.getMessage().contains("Singleton method thrown an exception: "));
+        assertTrue(e.getMessage().contains("Singleton method thrown an exception."));
     }
 
     private CtClass writeExceptionSingleton(ClassPool pool, String magicNumber) throws CannotCompileException, IOException, NotFoundException {

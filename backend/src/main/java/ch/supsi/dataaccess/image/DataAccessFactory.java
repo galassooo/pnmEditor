@@ -86,9 +86,9 @@ public class DataAccessFactory {
                 throw new IllegalAccessException();
             }
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw  new IllegalAccessException("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type" + clazz.getName());
+            throw  new IllegalAccessException("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type");
         } catch (InvocationTargetException e) {
-            throw new IllegalAccessException("Singleton method thrown an exception: " + e.getTargetException().getMessage());
+            throw new IllegalAccessException("Singleton method thrown an exception.");
         }
     }
 

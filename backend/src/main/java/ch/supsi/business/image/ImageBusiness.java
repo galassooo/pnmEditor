@@ -13,6 +13,7 @@ public class ImageBusiness implements ImageBusinessInterface {
     /* instance field */
     private long[][] argbPixels;
     private String filePath;
+    private final String magicNumber;
 
     // Tutti i formati di immagine
     // (PNG, BMP, GIF, JPEG, TIFF, ICO, PPM, PGM, PBM etc...)
@@ -20,12 +21,10 @@ public class ImageBusiness implements ImageBusinessInterface {
     // il tipo senza basarsi sull'estensione. Di conseguenza va incluso
     // come attributo di un immagine generica
     // P + valore nei PNM è semplicemente codificato in ascii e non in byte
-    private final String magicNumber;
 
-    public ImageBusiness(long[][] original, String path, String magicNumber, ConvertStrategy strategy) {
-        this.argbPixels = createArgbMatrix(original, strategy);
-        filePath = path;
-
+    public ImageBusiness(long[][] original, String filePath, String magicNumber) {
+        this.argbPixels = original;
+        this.filePath = filePath;
         this.magicNumber = magicNumber;
     }
 
@@ -40,26 +39,7 @@ public class ImageBusiness implements ImageBusinessInterface {
         argbPixels = rotatedPixels;
     }
 
-    @Override
-    public long[][] returnOriginalMatrix(ConvertStrategy strategy) {
-        int height = argbPixels.length;
-        if (argbPixels.length == 0) {
-            return new long[0][0];
-        }
 
-        int width = argbPixels[0].length;
-
-        long[][] pixels = new long[height][width];
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x ++) {
-                //estrae i valori originali dei canali
-                pixels[y][x] = strategy.ArgbToOriginal(this.argbPixels[y][x]);
-            }
-        }
-
-        return pixels;
-    }
     @Override
     public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(filePath);
@@ -97,24 +77,6 @@ public class ImageBusiness implements ImageBusinessInterface {
         return magicNumber;
     }
 
-    private long[][] createArgbMatrix(long[][] original, ConvertStrategy strategy) {
-        if(original == null)
-            return new long[0][0];
-        int height = original.length;
-        if (height == 0) {
-            return new long[0][0];
-        }
-        int width = original[0].length;
-
-        long[][] argbMatrix = new long[height][width];
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                argbMatrix[y][x] = strategy.toArgb(original[y][x]);
-            }
-        }
-        return argbMatrix;
-    }
     @Override
     public String getName(){
         File file = new File(filePath);

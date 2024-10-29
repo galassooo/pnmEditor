@@ -10,12 +10,12 @@ public interface ImageBusinessInterface {
     int getWidth();
     int getHeight();
     long[][] getPixels();
-
-    //ADAPTER ????????????????
-    long[][] returnOriginalMatrix(ConvertStrategy strategy);
-    String getMagicNumber();
-    ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
     String getName();
+    String getMagicNumber();
+
+
+    ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
+
     /* modifiable image */ //-> crea nuova interface
     void setPixels(long[][] rotatedPixels);
 }

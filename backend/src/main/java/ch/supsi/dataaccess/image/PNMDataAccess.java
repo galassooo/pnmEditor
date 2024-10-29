@@ -1,6 +1,8 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.business.image.ImageAdapter;
+import ch.supsi.business.image.ImageAdapterInterface;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.image.ImageDataAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
@@ -81,7 +83,10 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
         try (InputStream is = new FileInputStream(path)) { //da cambiare in FIS
             readHeader(is);
             long[][] processedMatrix = isBinaryFormat(format) ? processBinary(is) : processAscii(is);
-            return new ImageBusiness(processedMatrix, path, format, getArgbConvertStrategy());
+
+            ImageBusinessInterface rawImage = new ImageBusiness(processedMatrix, path, format);
+            ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());
+            return adapter.rawToArgb(rawImage);
         }
     }
 
@@ -118,7 +123,10 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
             writeHeader(image, os);
 
             // Prepare to write pixel data
-            long[][] pixels = image.returnOriginalMatrix(getArgbConvertStrategy());
+            ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());
+
+            long[][] pixels = adapter.argbToRaw(image).getPixels();
+
             ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
             // Write pixel data based on format

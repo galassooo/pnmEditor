@@ -6,6 +6,7 @@ module backend {
     requires spring.context;
     requires javassist;
     requires spring.beans;
+    requires java.desktop;
 
     exports ch.supsi.application.image;
     exports ch.supsi.application.preferences;

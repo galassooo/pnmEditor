@@ -1,4 +1,4 @@
-open module backend {
+module backend {
     requires jsr305;
     requires org.jetbrains.annotations;
     requires org.reflections;
@@ -21,4 +21,7 @@ open module backend {
     exports ch.supsi.dataaccess.translations;
     exports ch.supsi.dataaccess.image;
     exports ch.supsi.dataaccess.preferences;
+
+    opens ch.supsi.dataaccess.image to org.reflections;
+    opens ch.supsi.business.filter.strategy to org.reflections;
 }

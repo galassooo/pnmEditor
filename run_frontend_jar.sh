@@ -1,8 +1,12 @@
-cd backend
+cd plugin
+mvn clean
+cd ../backend
 mvn clean
 cd ../frontend
 mvn clean
 
+cd ../plugin
+mvn install -DskipTests
 cd ../backend
 mvn install -DskipTests
 cd ../frontend

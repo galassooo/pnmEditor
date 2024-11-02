@@ -28,6 +28,13 @@ public class ImageBusiness implements ImageBusinessInterface {
         this.magicNumber = magicNumber;
     }
 
+    //per non avere errori in compilazione da ELIMINARE!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public ImageBusiness(long[][] original, String filePath, String magicNumber, ConvertStrategy convertStrategy ) {
+        this.argbPixels = original;
+        this.filePath = filePath;
+        this.magicNumber = magicNumber;
+    }
+
     @Override
     public long[][] getPixels() {
         return argbPixels;

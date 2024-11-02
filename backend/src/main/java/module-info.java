@@ -7,6 +7,8 @@ module backend {
     requires javassist;
     requires spring.beans;
     requires java.desktop;
+    requires plugin;
+    requires jdk.compiler;
 
     exports ch.supsi.application.image;
     exports ch.supsi.application.preferences;

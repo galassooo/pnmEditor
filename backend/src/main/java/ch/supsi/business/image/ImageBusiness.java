@@ -4,6 +4,8 @@ import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.dataaccess.image.DataAccessFactory;
 import ch.supsi.dataaccess.image.PGMDataAccess;
+import ch.supsi.dataaccess.image.PNMDataAccess;
+import ch.supsi.dataaccess.image.PPMDataAccess;
 
 import java.io.File;
 import java.io.IOException;

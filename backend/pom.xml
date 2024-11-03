@@ -88,8 +88,18 @@
                     <release>17</release>
                     <compilerArgs>
                         <arg>-Xplugin:MyPlugin</arg>
+                        <arg>-Xlint:all</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</arg>
                     </compilerArgs>
-                    <!-- Aggiungi il pluginOptions per specificare il classpath del plugin -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>ch.supsi</groupId>
@@ -108,7 +118,6 @@
                 <configuration>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <!-- IMPORTANTISSIMO per evitare che venga usato il modulo in module-info x test -->
-                    <argLine>-Xplugin:MyPlugin</argLine>
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>

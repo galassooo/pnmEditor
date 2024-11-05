@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.business.image.ImageAccess;
+import ch.supsi.ImageAccess;
 import ch.supsi.business.image.ImageDataAccess;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;

@@ -7,8 +7,9 @@ module backend {
     requires javassist;
     requires spring.beans;
     requires java.desktop;
-    requires plugin;
-    requires jdk.compiler;
+
+    requires static plugin;
+    requires transitive jdk.compiler;
 
     exports ch.supsi.application.image;
     exports ch.supsi.application.preferences;
@@ -24,6 +25,8 @@ module backend {
     exports ch.supsi.dataaccess.translations;
     exports ch.supsi.dataaccess.image;
     exports ch.supsi.dataaccess.preferences;
+
+
 
     opens ch.supsi.dataaccess.image to org.reflections;
     opens ch.supsi.business.filter.strategy to org.reflections;

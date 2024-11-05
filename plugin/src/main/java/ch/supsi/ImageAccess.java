@@ -1,4 +1,4 @@
-package ch.supsi.business.image;
+package ch.supsi;
 
 
 import java.lang.annotation.ElementType;

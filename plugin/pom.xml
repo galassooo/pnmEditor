@@ -19,35 +19,57 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.8.1</version>
                 <configuration>
+                    <source>17</source>
+                    <target>17</target>
                     <release>17</release>
-                    <!-- Usa il module path invece del classpath -->
-                    <useModulePath>true</useModulePath>
+                    <compilerArgs>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.api=plugin</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=plugin</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.code=plugin</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=plugin</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
+            <!-- Aggiungiamo il plugin per gestire correttamente il module-info -->
+            <plugin>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>1.0.0.RC1</version>
+                <executions>
+                    <execution>
+                        <id>add-module-info</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>add-module-info</goal>
+                        </goals>
+                        <configuration>
+                            <module>
+                                <moduleInfo>
+                                    <name>plugin</name>
+                                    <exports>
+                                        ch.supsi;
+                                    </exports>
+                                </moduleInfo>
+                            </module>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Assicuriamoci che il META-INF/services venga incluso -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
+                    <includes>
+                        <include>META-INF/services/**</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>META-INF/services/*</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 </project>

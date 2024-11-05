@@ -60,6 +60,7 @@ public class ImageBusiness implements ImageBusinessInterface {
 
     public static ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
+        PPMDataAccess ppm = PPMDataAccess.getInstance();
         return dac.read(path);
     }
 

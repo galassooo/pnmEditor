@@ -7,6 +7,7 @@ mkdir -p "$TEMP_DIR/ch/supsi"
 # Copia tutti i file necessari
 cp src/main/java/ch/supsi/ImageAccessPlugin.java "$TEMP_DIR/ch/supsi/"
 cp src/main/java/ch/supsi/ImageAccess.java "$TEMP_DIR/ch/supsi/"
+cp src/main/java/ch/supsi/DataAccessComponent.java "$TEMP_DIR/ch/supsi/"
 cp src/main/java/module-info.java "$TEMP_DIR/"
 
 # Vai nella directory temporanea
@@ -16,6 +17,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 
 # Compila prima l'annotazione
 javac ch/supsi/ImageAccess.java
+javac ch/supsi/DataAccessComponent.java
 
 # Compila il plugin usando l'annotazione appena compilata
 javac -encoding UTF8 \
@@ -67,4 +69,4 @@ export MAVEN_OPTS="--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED 
                    --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED \
                    --add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED"
 
-mvn clean compile
+mvn clean install -X -DskipTests

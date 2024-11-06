@@ -4,6 +4,7 @@ module plugin {
 
     exports ch.supsi;
     requires transitive java.compiler;
+    requires java.management;
 
     provides com.sun.source.util.Plugin with ch.supsi.ImageAccessPlugin;
 }

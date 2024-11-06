@@ -1,5 +1,6 @@
 package ch.supsi.dataaccess.image;
 
+import ch.supsi.DataAccessComponent;
 import ch.supsi.ImageAccess;
 import ch.supsi.business.image.ImageDataAccess;
 import org.reflections.Reflections;
@@ -10,17 +11,20 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class DataAccessFactory {
-    private static final Map<String, Class<?>> imageMap = new HashMap<>();
-
     static {
+
         load();
     }
+
+
+    private static  List<DataAccessComponent> dataAccesses;
+
+
+    private static final Map<String, Class<?>> imageMap = new HashMap<>();
 
     /**
      * Il codice funziona sia con classi concrete che astratte, ovvero non si rompe

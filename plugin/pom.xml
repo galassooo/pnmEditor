@@ -23,7 +23,6 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <release>17</release>
                     <compilerArgs>
                         <arg>--add-exports=jdk.compiler/com.sun.tools.javac.api=plugin</arg>
                         <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=plugin</arg>

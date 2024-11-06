@@ -382,7 +382,7 @@ public class ImageAccessPlugin implements Plugin {
                                 .replace("{", "")
                                 .replace("}", "")
                                 .split(","))
-                        .map(String::trim)
+                        .map(s -> s.trim().replace("\"", ""))
                         .filter(s -> !s.isEmpty()))
                 .toArray(String[]::new);
     }

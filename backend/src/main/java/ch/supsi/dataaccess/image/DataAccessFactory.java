@@ -1,13 +1,7 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.DataAccessComponent;
-import ch.supsi.ImageAccess;
 import ch.supsi.business.image.ImageDataAccess;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

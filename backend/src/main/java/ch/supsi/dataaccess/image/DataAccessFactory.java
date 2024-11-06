@@ -10,9 +10,6 @@ import java.util.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class DataAccessFactory {
-    static {
-
-    }
 
 
     private static List<DataAccessComponent> dataAccesses;

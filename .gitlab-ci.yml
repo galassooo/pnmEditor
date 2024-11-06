@@ -43,7 +43,7 @@ structure:
     - '[ -d plugin ] || exit 1'
 
   rules:
-    - if: $CI_COMMIT_BRANCH == "test_pipeline"
+    - if: $CI_COMMIT_BRANCH == "dev"
 
 install-package:
   stage: install_package
@@ -65,7 +65,7 @@ install-package:
     - cd ..
     
   rules:
-    - if: $CI_COMMIT_BRANCH == "test_pipeline"
+    - if: $CI_COMMIT_BRANCH == "dev"
 
   artifacts:
     paths:

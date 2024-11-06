@@ -107,7 +107,6 @@ public class DataAccessFactoryTest {
             dynamicClass.defrost(); //per permettere modifica del codice
         }
 
-        DataAccessFactory.reload();
         assertDoesNotThrow(() -> {
             ImageDataAccess instance = DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString());
             assertNotNull(instance);
@@ -288,7 +287,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -330,7 +328,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         IOException e = assertThrows(IOException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Unsupported file type", e.getMessage());
     }
@@ -379,7 +376,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
 
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
@@ -433,7 +429,6 @@ public class DataAccessFactoryTest {
             dynamicClass.defrost();
         }
 
-        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Singleton method thrown an exception."));
     }
@@ -484,7 +479,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         IOException e = assertThrows(IOException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Unsupported file type", e.getMessage());
     }
@@ -531,7 +525,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertTrue(e.getMessage().contains("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type"));
     }
@@ -579,7 +572,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -627,7 +619,6 @@ public class DataAccessFactoryTest {
             dynamicClass.defrost();
         }
 
-        DataAccessFactory.reload();
         assertDoesNotThrow(() -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
     }
 
@@ -697,7 +688,6 @@ public class DataAccessFactoryTest {
             Class<?> clazz = dynamicClass.toClass();
             dynamicClass.defrost();
         }
-        DataAccessFactory.reload();
         IllegalAccessException e = assertThrows(IllegalAccessException.class, () -> DataAccessFactory.getInstance(tempFile.toAbsolutePath().toString()));
         assertEquals("Cannot access a null class",e.getMessage());
     }

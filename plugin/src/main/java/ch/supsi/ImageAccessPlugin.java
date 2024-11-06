@@ -243,16 +243,6 @@ public class ImageAccessPlugin implements Plugin {
 
         List<JCTree.JCStatement> statements = List.nil();
 
-        statements = statements.append(
-                maker.Exec(
-                        maker.Apply(
-                                List.nil(),
-                                maker.Ident(names.fromString("load")),
-                                List.nil()
-                        )
-                )
-        );
-
         // Creiamo una lista temporanea con tutti i componenti
         statements = statements.append(
                 maker.VarDef(

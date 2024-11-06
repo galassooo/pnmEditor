@@ -1,12 +1,10 @@
-cd plugin
-mvn clean
-cd ../backend
+cd backend
 mvn clean
 cd ../frontend
 mvn clean
 
 cd ../plugin
-mvn install -DskipTests
+/bin/bash compileInstall.sh
 cd ../backend
 mvn install -DskipTests
 cd ../frontend

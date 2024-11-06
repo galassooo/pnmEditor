@@ -40,9 +40,10 @@ structure:
   script:
     - '[ -d backend ] || exit 1'
     - '[ -d frontend ] || exit 1'
+    - '[ -d plugin ] || exit 1'
 
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "test_pipeline"
 
 install-package:
   stage: install_package
@@ -51,6 +52,9 @@ install-package:
     - Xvfb :99 -screen 0 1920x1080x16 &
 
   script:
+    - cd plugin
+    - /bin/bash compileInstall.sh
+    - cd ..
     - cd backend
     - 'mvn $MAVEN_CLI_OPTS clean'
     - 'mvn $MAVEN_CLI_OPTS install'
@@ -61,7 +65,7 @@ install-package:
     - cd ..
     
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "test_pipeline"
 
   artifacts:
     paths:

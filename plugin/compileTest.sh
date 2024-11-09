@@ -1,5 +1,6 @@
 #!/bin/bash
 
+/bin/bash compile.sh
 # Verifica che il plugin esista
 if [ ! -f "target/plugin-1.0-SNAPSHOT.jar" ]; then
     echo "Plugin jar not found at target/plugin-1.0-SNAPSHOT.jar"

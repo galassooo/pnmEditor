@@ -43,7 +43,7 @@ structure:
     - '[ -d plugin ] || exit 1'
 
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "pattern_refactor"
 
 install-package:
   stage: install_package
@@ -53,6 +53,7 @@ install-package:
 
   script:
     - cd plugin
+    - /bin/bash compileTest.sh
     - /bin/bash compileInstall.sh
     - cd ..
     - cd backend
@@ -65,7 +66,7 @@ install-package:
     - cd ..
     
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "pattern_refactor"
 
   artifacts:
     paths:

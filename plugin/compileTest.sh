@@ -1,4 +1,5 @@
 #!/bin/bash
+/bin/bash compile.sh
 
 # Verifica che il plugin esista
 if [ ! -f "target/plugin-1.0-SNAPSHOT.jar" ]; then
@@ -16,7 +17,7 @@ mkdir -p "$TEMP_DIR/ch/supsi/test"
 # Copia il file di test
 cp src/test/java/ch/supsi/test/ImageAccessPluginTest.java "$TEMP_DIR/ch/supsi/test/"
 
-# Scarica JUnit se necessario
+# scarica junit standalone se non c'è nella local repo
 JUNIT_STANDALONE="$HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar"
 
 if [ ! -f "$JUNIT_STANDALONE" ]; then
@@ -26,7 +27,7 @@ fi
 
 cd "$TEMP_DIR"
 
-# Compila i test
+
 echo "Compiling tests..."
 javac -cp "$JUNIT_STANDALONE:$PLUGIN_JAR" \
       --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
@@ -36,7 +37,7 @@ javac -cp "$JUNIT_STANDALONE:$PLUGIN_JAR" \
       -d . \
       ch/supsi/test/ImageAccessPluginTest.java
 
-# Esegui i test
+
 echo "Running tests..."
 java -cp ".:$PLUGIN_JAR:$JUNIT_STANDALONE" \
      -Dplugin.jar.path="$PLUGIN_JAR" \
@@ -49,7 +50,7 @@ java -cp ".:$PLUGIN_JAR:$JUNIT_STANDALONE" \
 
 TEST_RESULT=$?
 
-# Torna alla directory originale e pulisci
+#ritorno alla directory originale e pulisci
 cd - > /dev/null
 rm -rf "$TEMP_DIR"
 

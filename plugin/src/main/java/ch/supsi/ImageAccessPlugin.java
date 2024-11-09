@@ -77,6 +77,8 @@ public class ImageAccessPlugin implements Plugin {
     //initialize
     @Override
     public void init(JavacTask task, String... args) {
+
+        System.out.println("INITIALiZEEEEEEEEEEEEEEEEEEEEEEEEEEEED");
         //get context, maker, names and task
         Context context = ((BasicJavacTask) task).getContext();
         this.maker = TreeMaker.instance(context);

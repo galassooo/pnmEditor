@@ -24,8 +24,8 @@ public class DataAccessFactory {
             }
             return getInstanceMethod.invoke(null);
 
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalAccessException("Class marked with @ImageAccess must provide a singleton static access (getInstance) with a concrete class implementing ImageDataAccess as return type");
+        } catch (NoSuchMethodException | IllegalAccessException ignored) {
+            return null; //impossible exception,  singleton integrity in plugin
         } catch (InvocationTargetException e) {
             throw new IllegalAccessException("Singleton method thrown an exception.");
         }

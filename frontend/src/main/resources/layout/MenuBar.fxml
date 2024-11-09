@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<MenuBar stylesheets="/style/style.css" fx:controller="ch.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
+<MenuBar stylesheets="/style/style.css" fx:controller="org.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
          BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
     <Menu mnemonicParsing="false" text="%ui_file">
         <items>

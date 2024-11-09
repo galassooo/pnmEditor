@@ -5,6 +5,5 @@ open module frontend {
     requires java.prefs;
     requires backend;
 
-    requires static java.compiler;
     requires spring.jcl;
 }

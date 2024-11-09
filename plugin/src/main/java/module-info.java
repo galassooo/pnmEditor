@@ -1,10 +1,10 @@
 module plugin {
     requires jdk.compiler;
     requires java.xml;
+    requires java.compiler;
+    requires java.management;
 
     exports ch.supsi;
-    requires transitive java.compiler;
-    requires java.management;
 
     provides com.sun.source.util.Plugin with ch.supsi.ImageAccessPlugin;
 }

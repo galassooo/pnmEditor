@@ -135,7 +135,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ch.supsi.Main</mainClass>
+                            <mainClass>org.supsi.Main</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.Tooltip?>
-<VBox prefHeight="819.0" prefWidth="250.0" stylesheets="/style/style.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.supsi.dispatcher.FilterDispatcher">
+<VBox prefHeight="819.0" prefWidth="250.0" stylesheets="/style/style.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.supsi.dispatcher.FilterDispatcher">
     <children>
         <StackPane prefHeight="40.0" prefWidth="212.0">
             <children>

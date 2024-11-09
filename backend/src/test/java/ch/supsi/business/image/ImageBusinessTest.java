@@ -38,7 +38,7 @@ class ImageBusinessTest {
      */
     @Test
     void testConstructorAndPixelConversion() {
-        ImageBusiness image = new ImageBusiness(sampleMatrix, "null", "P4",  strategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, "null", "P4");
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL},
@@ -62,7 +62,7 @@ class ImageBusinessTest {
                 {1, 0, 1},
                 {0, 1, 0}
         };
-        ImageBusiness image = new ImageBusiness(nonSquareMatrix, null,"P3", strategy);
+        ImageBusiness image = new ImageBusiness(nonSquareMatrix, null,"P3");
 
         long[][] expectedArgbPixels = {
                 {0xFF000000L, 0xFFFFFFFFL, 0xFF000000L},
@@ -80,7 +80,7 @@ class ImageBusinessTest {
     @Test
     void testEmptyMatrix() {
         long[][] emptyMatrix = new long[0][0];
-        ImageBusiness image = new ImageBusiness(emptyMatrix, null, "P3", strategy);
+        ImageBusiness image = new ImageBusiness(emptyMatrix, null, "P3");
 
         assertEquals(0, image.getPixels().length, "empty matrix expected");
         assertEquals(0, image.getWidth(), "wrong width for empty matrix");
@@ -104,7 +104,7 @@ class ImageBusinessTest {
         };
 
         //construct a new matrix with the given strategy
-        ImageBusiness image = new ImageBusiness(sampleMatrix, null, "P8", customStrategy);
+        ImageBusiness image = new ImageBusiness(sampleMatrix, null, "P8");
 
         long[][] expectedCustomPixels = {
                 {2, 0},
@@ -122,7 +122,7 @@ class ImageBusinessTest {
         };
         SingleChannel strategy = new SingleChannel(255);
 
-        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.pgm", "P5", strategy);
+        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.pgm", "P5");
 
         //long[][] result = img.returnOriginalMatrix(strategy);
         //assertArrayEquals(originalMatrix, result);
@@ -136,7 +136,7 @@ class ImageBusinessTest {
         };
         ThreeChannel strategy = new ThreeChannel(65535);
 
-        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.ppm", "P6", strategy);
+        ImageBusiness img = new ImageBusiness(originalMatrix, "testImage.ppm", "P6");
 
        // long[][] result = img.returnOriginalMatrix(strategy);
         //assertArrayEquals(originalMatrix, result);
@@ -147,7 +147,7 @@ class ImageBusinessTest {
         long[][] emptyMatrix = new long[0][0];
         SingleChannel strategy = new SingleChannel(255);
 
-        ImageBusiness img = new ImageBusiness(emptyMatrix, "emptyImage.pgm", "P5", strategy);
+        ImageBusiness img = new ImageBusiness(emptyMatrix, "emptyImage.pgm", "P5");
 
         assertEquals(0, img.getHeight());
         assertEquals(0, img.getWidth());
@@ -158,7 +158,7 @@ class ImageBusinessTest {
     void testSetPixels(){
         long[][] expected = {{1,2}, {3,4}};
 
-        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5", strategy);
+        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5");
         img.setPixels(expected);
 
         assertArrayEquals(expected, img.getPixels());
@@ -169,7 +169,7 @@ class ImageBusinessTest {
     @Test
     void testGetWidthNullMatrix(){
 
-        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5", strategy);
+        ImageBusiness img = new ImageBusiness(null, "testImage.pgm", "P5");
         int width = img.getWidth();
         assertEquals(0, width);
 

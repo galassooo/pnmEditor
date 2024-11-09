@@ -1,10 +1,7 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.image.ImageAdapter;
-import ch.supsi.business.image.ImageAdapterInterface;
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.image.ImageDataAccess;
+import ch.supsi.business.image.*;
 import ch.supsi.business.strategy.ConvertStrategy;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;
@@ -84,9 +81,14 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
             readHeader(is);
             long[][] processedMatrix = isBinaryFormat(format) ? processBinary(is) : processAscii(is);
 
-            ImageBusinessInterface rawImage = new ImageBusiness(processedMatrix, path, format);
             ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());
-            return adapter.rawToArgb(rawImage);
+
+            return  new ImageBuilder()
+                    .withPixels(processedMatrix)
+                    .withFilePath(path)
+                    .withMagicNumber(format)
+                    .withImageAdapter(adapter)
+                    .build();
         }
     }
 

@@ -24,14 +24,8 @@ public class ImageBusiness implements ImageBusinessInterface {
     // come attributo di un immagine generica
     // P + valore nei PNM è semplicemente codificato in ascii e non in byte
 
-    public ImageBusiness(long[][] original, String filePath, String magicNumber) {
-        this.argbPixels = original;
-        this.filePath = filePath;
-        this.magicNumber = magicNumber;
-    }
-
-    //per non avere errori in compilazione da ELIMINARE!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public ImageBusiness(long[][] original, String filePath, String magicNumber, ConvertStrategy convertStrategy ) {
+    //VOLUTAMENTE PACKAGE PRIVATE!!!!! -> obbliga a passare dal builder
+    ImageBusiness(long[][] original, String filePath, String magicNumber) {
         this.argbPixels = original;
         this.filePath = filePath;
         this.magicNumber = magicNumber;

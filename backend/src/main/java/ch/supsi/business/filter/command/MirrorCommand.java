@@ -1,10 +1,10 @@
-package ch.supsi.business.filter.strategy;
+package ch.supsi.business.filter.command;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class MirrorFilter implements NamedFilterStrategy {
+public class MirrorCommand implements FilterCommand {
     @Override
-    public void applyFilter(ImageBusinessInterface img) {
+    public void execute(ImageBusinessInterface img) {
         long[][] pixels = img.getPixels();
 
         if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {
@@ -26,7 +26,7 @@ public class MirrorFilter implements NamedFilterStrategy {
     }
 
     @Override
-    public String getCode() {
+    public String getName() {
         return "Mirror";
     }
 }

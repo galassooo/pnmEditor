@@ -2,16 +2,13 @@ package ch.supsi.application.filter;
 
 import ch.supsi.application.filters.FilterApplication;
 import ch.supsi.business.filter.FilterFactory;
-import ch.supsi.business.filter.FilterPipeline;
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
+import ch.supsi.business.filter.FilterManager;
+import ch.supsi.business.filter.command.FilterCommand;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.strategy.SingleBit;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,10 +34,9 @@ public class FilterApplicationTest {
         String key = "Negative";
 
         filterApplication.addFilterToPipeline(key);
-        NamedFilterStrategy strategy = FilterFactory.getFilters().get(key);
+        FilterCommand strategy = FilterFactory.getFilters().get(key);
 
-        assertTrue(FilterPipeline.getInstance().getPipeline().contains(strategy));
-        filterApplication.clearPipeline();
+        assertTrue(FilterManager.getInstance().getPipeline().contains(strategy));
     }
 
     @Test
@@ -72,7 +68,6 @@ public class FilterApplicationTest {
 
         filterApplication.processFilterPipeline(img);
         assertArrayEquals(expected, img.getPixels());
-        filterApplication.clearPipeline();
     }
 
     @Test
@@ -93,14 +88,12 @@ public class FilterApplicationTest {
 
         ImageBusiness img = new ImageBusiness(original, null, null, new ThreeChannel(255));
 
-        filterApplication.clearPipeline();
         filterApplication.addFilterToPipeline("Mirror");
         filterApplication.processFilterPipeline(img);
 
         //printMatrix("Expected: ",expected);
         //printMatrix("Actual: ",img.getPixels());
         assertArrayEquals(expected, img.getPixels());
-        filterApplication.clearPipeline();
 
     }
     private void printMatrix(String label, long[][] matrix) {

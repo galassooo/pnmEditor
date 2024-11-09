@@ -1,14 +1,16 @@
 package ch.supsi.application.filters;
 
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
+
+import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.business.filter.command.FilterCommand;
 
 import java.util.List;
 
 public interface FilterPipelineInterface {
 
-    void  addFilter(NamedFilterStrategy filterStrategy);
-    void  addFilter(NamedFilterStrategy filterStrategy, int index);
+    void  addFilter(FilterCommand filterStrategy);
+    void  addFilter(FilterCommand filterStrategy, int index);
     void remove(int index);
-    void clear();
-    List<NamedFilterStrategy> getPipeline();
+    List<FilterCommand> getPipeline();
+    void executePipeline(ImageBusinessInterface image);
 }

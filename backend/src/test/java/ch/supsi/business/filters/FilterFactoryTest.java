@@ -1,10 +1,8 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.filter.FilterFactory;
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
-import ch.supsi.business.image.ImageDataAccess;
+import ch.supsi.business.filter.command.FilterCommand;
 import javassist.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -43,7 +41,7 @@ public class FilterFactoryTest {
             System.out.println("Dynamic test class not found in VM... Creating an instance...");
 
             CtClass dynamicClass = pool.makeClass("ch.supsi.business.filters.strategy.AbstractFilter");
-            dynamicClass.addInterface(pool.get(NamedFilterStrategy.class.getName()));
+            dynamicClass.addInterface(pool.get(FilterCommand.class.getName()));
             dynamicClass.setModifiers(Modifier.ABSTRACT);
 
             String outputDirectory = "target/classes";
@@ -73,7 +71,7 @@ public class FilterFactoryTest {
             System.out.println("Dynamic test class not found in VM... Creating an instance...");
 
             CtClass dynamicClass = pool.makeClass("ch.supsi.business.filters.strategy.NoNoArgConstructor");
-            dynamicClass.addInterface(pool.get(NamedFilterStrategy.class.getName()));
+            dynamicClass.addInterface(pool.get(FilterCommand.class.getName()));
 
             CtClass[] paramTypes = new CtClass[]{pool.get("java.lang.String")};
 
@@ -110,7 +108,7 @@ public class FilterFactoryTest {
             System.out.println("Dynamic test class not found in VM... Creating an instance...");
 
             CtClass dynamicClass = pool.makeClass("ch.supsi.business.filters.strategy.exceptionConstructor");
-            dynamicClass.addInterface(pool.get(NamedFilterStrategy.class.getName()));
+            dynamicClass.addInterface(pool.get(FilterCommand.class.getName()));
 
             CtClass[] paramTypes = new CtClass[]{pool.get("java.lang.String")};
 

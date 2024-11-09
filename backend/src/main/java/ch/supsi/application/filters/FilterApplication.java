@@ -2,8 +2,8 @@ package ch.supsi.application.filters;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.filter.FilterFactory;
-import ch.supsi.business.filter.FilterPipeline;
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
+import ch.supsi.business.filter.FilterManager;
+import ch.supsi.business.filter.command.FilterCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +12,9 @@ public class FilterApplication {
 
     private static FilterApplication myself;
 
-    private final Map<String, NamedFilterStrategy> allFilters = FilterFactory.getFilters();
+    private final Map<String, FilterCommand> allFilters = FilterFactory.getFilters();
 
-    private final FilterPipelineInterface model = FilterPipeline.getInstance();
+    private final FilterPipelineInterface model = FilterManager.getInstance();
 
     public static  FilterApplication getInstance(){
         if (myself==null){
@@ -32,24 +32,16 @@ public class FilterApplication {
     }
 
     public void addFilterToPipeline(String filterName){
-        NamedFilterStrategy filter = allFilters.get(filterName);
+        FilterCommand filter = allFilters.get(filterName);
         model.addFilter(filter);
     }
     public void processFilterPipeline(ImageBusinessInterface image){
-
-        model.getPipeline().forEach(filter ->{
-            if(filter != null) //caso in cui rimuovo
-                filter.applyFilter(image);
-        });
-        model.clear();
+        model.executePipeline(image);
     }
 
-    public void clearPipeline(){
-        model.clear();
-    }
 
     public void add(String filterName, int index){
-        NamedFilterStrategy filter = allFilters.get(filterName);
+        FilterCommand filter = allFilters.get(filterName);
         model.addFilter(filter, index);
     }
     public void remove(int index){

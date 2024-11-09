@@ -1,69 +1,68 @@
 package ch.supsi.business.filter;
 
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
+import ch.supsi.business.filter.command.FilterCommand;
 import ch.supsi.dataaccess.translations.TranslationsDataAccess;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FilterFactory {
-    private static final Map<String, NamedFilterStrategy> filters = new HashMap<>();
+    private static final Map<String, FilterCommand> filters = new HashMap<>();
 
     static {
         load();
     }
-    private static void load() {
 
-        //Create a new reflections invalidating cache (used for tests)
+    private static void load() {
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .forPackages("ch.supsi.business.filter.strategy")
+                .forPackages("ch.supsi.business.filter.command")
                 .addScanners(Scanners.SubTypes)
                 .setExpandSuperTypes(false));
 
-        Set<Class<? extends NamedFilterStrategy>> classes = reflections.getSubTypesOf(NamedFilterStrategy.class);
+        Set<Class<? extends FilterCommand>> classes = reflections.getSubTypesOf(FilterCommand.class);
 
         for(var c : classes){
             try {
+                if(Modifier.isAbstract(c.getModifiers())){
+                    continue;
+                }
                 var constructor = c.getDeclaredConstructor();
-                constructor.setAccessible(true); // Questo evita l'IllegalAccessException
+                constructor.setAccessible(true);
 
-                // Prova a istanziare la classe
-                NamedFilterStrategy strategy = constructor.newInstance(); // Questo solleva InstantiationException se è astratta
+                FilterCommand command = constructor.newInstance();
 
                 AtomicBoolean process = new AtomicBoolean(true);
                 TranslationsDataAccess tac = TranslationsDataAccess.getInstance();
-                tac.getSupportedLanguageTags().forEach(tag ->{
+                tac.getSupportedLanguageTags().forEach(tag -> {
                     Properties p = tac.getTranslations(Locale.forLanguageTag(tag));
-                    if(p.get(strategy.getCode()) == null){
-                        String yellow = "\u001B[33m";
-                        String reset = "\u001B[0m";
-                        System.out.println(yellow+"[WARNING] "+reset+"filter "+strategy.getCode()+" is annotated with NamedFilterStrategy and should have a translation associated. Update language bundle("+tag+") to get the filter processed"+reset);
+                    if(p.get(command.getName()) == null){
+                        System.out.println("\u001B[33m[WARNING] \u001B[0m" +
+                                "filter " + command.getName() +
+                                " should have a translation associated. Update language bundle(" +
+                                tag + ") to get the filter processed");
                         process.set(false);
                     }
                 });
 
                 if(process.get()){
-                    filters.put(strategy.getCode(), strategy);
+                    filters.put(command.getName(), command);
                 }
 
-            } catch (NoSuchMethodException e) {
-                //System.out.println("No default constructor found for class: " + c.getName()+ " this class wont be taken into consideration for filter processing");
-            } catch (InstantiationException e) {
-                //System.out.println("Abstract class with NamedFilterStrategy annotation detected:" + c.getName()+ " this class wont be taken into consideration for filter processing");
-            } catch (InvocationTargetException | IllegalAccessException e ){
-                //System.out.println("Constructor has thrown an exception in class: " + c.getName() + " this class wont be taken into consideration for filter processing");
+            } catch (Exception e) {
+                System.err.println("Error loading filter command: " + c.getName());
             }
         }
+    }
+
+    public static Map<String, FilterCommand> getFilters() {
+        return filters;
     }
 
     public static void reload(){
         load();
     }
-        public static Map<String, NamedFilterStrategy> getFilters () {
-            return filters;
-        }
-    }
+}

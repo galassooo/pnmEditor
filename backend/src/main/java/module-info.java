@@ -17,5 +17,5 @@ module backend {
     exports ch.supsi.application.filters;
 
 
-    opens ch.supsi.business.filter.strategy to org.reflections;
+    opens ch.supsi.business.filter.command to org.reflections;
 }

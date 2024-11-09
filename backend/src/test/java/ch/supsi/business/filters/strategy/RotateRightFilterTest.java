@@ -1,8 +1,7 @@
 package ch.supsi.business.filters.strategy;
 
-import ch.supsi.business.filter.strategy.RotateRight;
+import ch.supsi.business.filter.command.RotateRightCommand;
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.strategy.NamedFilterStrategy;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RotateRightFilterTest {
 
-    NamedFilterStrategy rotateRight;
+    RotateRightCommand rotateRight;
 
     @BeforeEach
     void setup(){
-        rotateRight = new RotateRight();
+        rotateRight = new RotateRightCommand();
     }
 
     @Test
@@ -31,7 +30,7 @@ public class RotateRightFilterTest {
                 {0xFF000004L, 0xFF000002L}
         };
 
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
         long[][] originalArgb = img.getPixels();
         assertArrayEquals(expected, originalArgb);
     }
@@ -49,7 +48,7 @@ public class RotateRightFilterTest {
                 {0xFF000006L, 0xFF000003L}
         };
 
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
         long[][] originalArgb = img.getPixels();
         assertArrayEquals(expected, originalArgb);
     }
@@ -57,7 +56,7 @@ public class RotateRightFilterTest {
     @Test
     void testEmptyImage(){
         ImageBusiness img = new ImageBusiness(new long[0][0], "path", "P1", new ThreeChannel(255));
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
 
         assertArrayEquals(new long[0][0], img.getPixels());
     }
@@ -66,7 +65,7 @@ public class RotateRightFilterTest {
         long[][] original = new long[1][0];
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
 
         assertEquals(0, img.getPixels()[0].length);
     }
@@ -76,7 +75,7 @@ public class RotateRightFilterTest {
         long[][] original = new long[0][0];
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
 
         assertEquals(0, img.getPixels().length);
     }
@@ -88,13 +87,13 @@ public class RotateRightFilterTest {
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         img.setPixels(null);
-        rotateRight.applyFilter(img);
+        rotateRight.execute(img);
 
         assertNull(img.getPixels());
     }
 
     @Test
     void testGetCode(){
-        assertEquals("Rotate_Right", rotateRight.getCode());
+        assertEquals("Rotate_Right", rotateRight.getName());
     }
 }

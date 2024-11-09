@@ -1,7 +1,7 @@
 package ch.supsi.business.filters.strategy;
 
 import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.strategy.MirrorFilter;
+import ch.supsi.business.filter.command.MirrorCommand;
 import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MirrorTest {
-    private MirrorFilter mirrorFilter;
+    private MirrorCommand mirrorFilter;
 
     @BeforeEach
     void setup() {
-        mirrorFilter = new MirrorFilter();
+        mirrorFilter = new MirrorCommand();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class MirrorTest {
         };
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        mirrorFilter.applyFilter(img);
+        mirrorFilter.execute(img);
 
         assertArrayEquals(expected, img.getPixels());
     }
@@ -51,7 +51,7 @@ public class MirrorTest {
         };
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        mirrorFilter.applyFilter(img);
+        mirrorFilter.execute(img);
 
         assertArrayEquals(expected, img.getPixels());
     }
@@ -62,7 +62,7 @@ public class MirrorTest {
         long[][] original = new long[1][0];
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        mirrorFilter.applyFilter(img);
+        mirrorFilter.execute(img);
 
         assertEquals(0, img.getPixels()[0].length);
     }
@@ -73,7 +73,7 @@ public class MirrorTest {
         long[][] original = new long[0][0];
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
-        mirrorFilter.applyFilter(img);
+        mirrorFilter.execute(img);
 
         assertEquals(0, img.getPixels().length);
     }
@@ -86,12 +86,12 @@ public class MirrorTest {
 
         ImageBusiness img = new ImageBusiness(original, "test.path", "P1", new ThreeChannel(255));
         img.setPixels(null);
-        mirrorFilter.applyFilter(img);
+        mirrorFilter.execute(img);
 
         assertNull(img.getPixels());
     }
     @Test
     void testGetName(){
-        assertEquals("Mirror", mirrorFilter.getCode());
+        assertEquals("Mirror", mirrorFilter.getName());
     }
 }

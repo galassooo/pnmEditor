@@ -1,6 +1,15 @@
 #!/bin/bash
 
-/bin/bash compile.sh
+# Debug info
+echo "=== Environment Information ==="
+echo "PWD: $(pwd)"
+echo "Java Version:"
+java -version
+echo "Maven Version:"
+mvn -version
+echo "Maven Local Repository: $HOME/.m2/repository"
+echo "========================="
+
 # Verifica che il plugin esista
 if [ ! -f "target/plugin-1.0-SNAPSHOT.jar" ]; then
     echo "Plugin jar not found at target/plugin-1.0-SNAPSHOT.jar"
@@ -17,25 +26,45 @@ mkdir -p "$TEMP_DIR/ch/supsi/test"
 # Copia il file di test
 cp src/test/java/ch/supsi/test/ImageAccessPluginTest.java "$TEMP_DIR/ch/supsi/test/"
 
-# Download JUnit and its dependencies
-echo "Downloading JUnit dependencies..."
-mvn dependency:get -Dartifact=org.junit.jupiter:junit-jupiter-api:5.10.1
-mvn dependency:get -Dartifact=org.junit.jupiter:junit-jupiter-engine:5.10.1
-mvn dependency:get -Dartifact=org.junit.platform:junit-platform-console-standalone:1.10.1
+# Debug: verifica JUnit prima del download
+echo "=== JUnit Files Before Download ==="
+ls -la $HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
+echo "=================================="
 
-# Setup classpath with all required dependencies
-JUNIT_API="$HOME/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar"
-JUNIT_ENGINE="$HOME/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar"
+# Scarica JUnit se necessario
 JUNIT_STANDALONE="$HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar"
 
-# Construct classpath with all dependencies
-TEST_CLASSPATH="$JUNIT_API:$JUNIT_ENGINE:$JUNIT_STANDALONE:$PLUGIN_JAR"
+if [ ! -f "$JUNIT_STANDALONE" ]; then
+    echo "Downloading JUnit..."
+    mvn dependency:get -Dartifact=org.junit.platform:junit-platform-console-standalone:1.10.1
+fi
+
+# Debug: verifica JUnit dopo il download
+echo "=== JUnit Files After Download ==="
+ls -la $HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
+echo "================================="
 
 cd "$TEMP_DIR"
 
-# Compila i test con il classpath completo
+# Debug: mostra contenuto directory corrente e CLASSPATH
+echo "=== Current Directory Content ==="
+ls -la
+echo "=== CLASSPATH ==="
+echo $CLASSPATH
+echo "==================="
+
+# Compila i test
 echo "Compiling tests..."
-javac -cp "$TEST_CLASSPATH" \
+echo "Using javac command:"
+echo "javac -cp \"$JUNIT_STANDALONE:$PLUGIN_JAR\" \\"
+echo "      --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \\"
+echo "      --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \\"
+echo "      --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \\"
+echo "      --add-exports jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \\"
+echo "      -d . \\"
+echo "      ch/supsi/test/ImageAccessPluginTest.java"
+
+javac -cp "$JUNIT_STANDALONE:$PLUGIN_JAR" \
       --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
       --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
       --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \
@@ -43,9 +72,22 @@ javac -cp "$TEST_CLASSPATH" \
       -d . \
       ch/supsi/test/ImageAccessPluginTest.java
 
+COMPILE_RESULT=$?
+echo "Compilation result: $COMPILE_RESULT"
+
+if [ $COMPILE_RESULT -ne 0 ]; then
+    echo "Compilation failed. Checking if JUnit jar exists:"
+    ls -l "$JUNIT_STANDALONE"
+    echo "Checking if plugin jar exists:"
+    ls -l "$PLUGIN_JAR"
+    cd - > /dev/null
+    rm -rf "$TEMP_DIR"
+    exit $COMPILE_RESULT
+fi
+
 # Esegui i test
 echo "Running tests..."
-java -cp ".:$TEST_CLASSPATH" \
+java -cp ".:$JUNIT_STANDALONE:$PLUGIN_JAR" \
      -Dplugin.jar.path="$PLUGIN_JAR" \
      --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
      --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \

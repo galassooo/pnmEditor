@@ -1,12 +1,13 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.annotation.ImageAccess;
+import ch.supsi.annotation.ImageAccessFactory;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageDataAccess;
 
 import java.io.IOException;
 
-@ImageAccess(magicNumber = {"JPEG"})
+@ImageAccessFactory
 public class JPEGDataAccess implements ImageDataAccess {
 
     private static JPEGDataAccess instance;

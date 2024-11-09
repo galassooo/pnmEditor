@@ -44,6 +44,9 @@ public class ImageAccessPlugin implements Plugin {
     private JCTree.JCVariableDecl registerField = null;
     private JCTree.JCClassDecl factoryClassDecl = null;
 
+    //tiene traccia dei factory trovati (@ImageAccessFactory)
+    private final Set<String> foundFactoryClasses = new HashSet<>();
+
     // util static inner classes to store data
     private static class ClassToValidate {
         final ClassTree classTree;
@@ -95,35 +98,43 @@ public class ImageAccessPlugin implements Plugin {
                     Trees trees = Trees.instance(task);
 
                     // Cerca la classe factory e il campo register
-                    if (factoryClassDecl == null) {
-                        new TreePathScanner<Void, Trees>() {
-                            @Override
-                            public Void visitClass(ClassTree node, Trees trees) {
-                                if (hasImageAccessFactoryAnnotation(node)) {
-                                    System.out.println("[DEBUG] Found factory class: " + node.getSimpleName());
-                                    factoryClassDecl = (JCTree.JCClassDecl) node;
-                                    // Cerca il campo con @Register
-                                    for (Tree member : node.getMembers()) {
-                                        if (member instanceof VariableTree) {
-                                            VariableTree field = (VariableTree) member;
-                                            if (hasRegisterAnnotation(field)) {
-                                                System.out.println("[DEBUG] Found register field: " + field.getName());
-                                                // Verifica che il campo sia una List<DataAccessComponent>
-                                                if (validateRegisterField(field, trees)) {
-                                                    registerField = (JCTree.JCVariableDecl) member;
-                                                } else {
-                                                    throw new RuntimeException("Register field must be of type List<DataAccessComponent>");
-                                                }
+                    new TreePathScanner<Void, Trees>() {
+                        @Override
+                        public Void visitClass(ClassTree node, Trees trees) {
+                            if (hasImageAccessFactoryAnnotation(node)) {
+                                String className = node.getSimpleName().toString();
+                                System.out.println("[DEBUG] Found factory class: " + className);
+
+                                // Verifica se abbiamo già trovato una factory class
+                                if (!foundFactoryClasses.isEmpty() && !foundFactoryClasses.contains(className)) {
+                                    String existingFactory = foundFactoryClasses.iterator().next();
+                                    throw new RuntimeException("Multiple ImageAccessFactory classes found: " +
+                                            existingFactory + " and " + className + ". Only one factory class is allowed.");
+                                }
+
+                                foundFactoryClasses.add(className);
+                                factoryClassDecl = (JCTree.JCClassDecl) node;
+
+                                // Cerca il campo con @Register
+                                for (Tree member : node.getMembers()) {
+                                    if (member instanceof VariableTree) {
+                                        VariableTree field = (VariableTree) member;
+                                        if (hasRegisterAnnotation(field)) {
+                                            System.out.println("[DEBUG] Found register field: " + field.getName());
+                                            if (validateRegisterField(field, trees)) {
+                                                registerField = (JCTree.JCVariableDecl) member;
+                                            } else {
+                                                throw new RuntimeException("Register field must be a static List<DataAccessComponent>");
                                             }
                                         }
                                     }
                                 }
-                                return super.visitClass(node, trees);
                             }
-                        }.scan(cu, trees);
-                    }
+                            return super.visitClass(node, trees);
+                        }
+                    }.scan(cu, trees);
 
-                    // Il resto del codice per processare le classi annotate rimane uguale
+                    // Il resto del codice per processare le classi annotate...
                     new TreePathScanner<Void, Trees>() {
                         @Override
                         public Void visitClass(ClassTree node, Trees trees) {

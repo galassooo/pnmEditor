@@ -1,6 +1,8 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.DataAccessComponent;
+import ch.supsi.annotation.ImageAccessFactory;
+import ch.supsi.annotation.Register;
 import ch.supsi.business.image.ImageDataAccess;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,10 +11,12 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.lang.reflect.InvocationTargetException;
 
+@ImageAccessFactory
 public class DataAccessFactory {
 
 
-    private static List<DataAccessComponent> dataAccesses;
+    @Register
+    private static List<DataAccessComponent> ciaone;
 
     //obtain an instance by calling getInstance static method
     private static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
@@ -63,7 +67,7 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromMagicNumber(String magicNumber) {
-        for(DataAccessComponent component : dataAccesses) {
+        for(DataAccessComponent component : ciaone) {
             if(Arrays.asList(component.magicNumber).contains(magicNumber)) {
                 return component.clazz;
             }
@@ -72,7 +76,7 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromExtension(String extension) {
-        for(DataAccessComponent component : dataAccesses) {
+        for(DataAccessComponent component : ciaone) {
             if(component.extension.equals(extension)) {
                 return component.clazz;
             }

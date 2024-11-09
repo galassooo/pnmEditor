@@ -2,11 +2,14 @@
 
 # Crea una directory temporanea pulita
 TEMP_DIR=$(mktemp -d)
+mkdir -p "$TEMP_DIR/ch/supsi/annotation"
 mkdir -p "$TEMP_DIR/ch/supsi"
 
 # Copia tutti i file necessari
 cp src/main/java/ch/supsi/ImageAccessPlugin.java "$TEMP_DIR/ch/supsi/"
-cp src/main/java/ch/supsi/ImageAccess.java "$TEMP_DIR/ch/supsi/"
+cp src/main/java/ch/supsi/annotation/ImageAccess.java "$TEMP_DIR/ch/supsi/annotation/"
+cp src/main/java/ch/supsi/annotation/ImageAccessFactory.java "$TEMP_DIR/ch/supsi/annotation/"
+cp src/main/java/ch/supsi/annotation/Register.java "$TEMP_DIR/ch/supsi/annotation/"
 cp src/main/java/ch/supsi/DataAccessComponent.java "$TEMP_DIR/ch/supsi/"
 cp src/main/java/module-info.java "$TEMP_DIR/"
 
@@ -16,7 +19,9 @@ cd "$TEMP_DIR"
 export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 
 # Compila prima l'annotazione
-javac ch/supsi/ImageAccess.java
+javac ch/supsi/annotation/ImageAccess.java
+javac ch/supsi/annotation/Register.java
+javac ch/supsi/annotation/ImageAccessFactory.java
 javac ch/supsi/DataAccessComponent.java
 
 # Compila il plugin usando l'annotazione appena compilata

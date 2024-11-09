@@ -12,6 +12,7 @@ import com.sun.tools.javac.util.Names;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -32,13 +33,16 @@ public class ImageAccessPlugin implements Plugin {
     public static final String RESET = "\u001B[0m";
     public static final String BLUE = "\u001B[34m";
     public static final String YELLOW = "\u001B[33m";
+    public static final String RED = "\u001B[31m";
 
-    private JCTree.JCClassDecl factoryClassDecl = null;
     private TreeMaker maker = null;
     private Names names = null;
     private boolean codeGenerated = false;
     private JavacTask javacTask = null;
 
+
+    private JCTree.JCVariableDecl registerField = null;
+    private JCTree.JCClassDecl factoryClassDecl = null;
 
     // util static inner classes to store data
     private static class ClassToValidate {
@@ -77,24 +81,12 @@ public class ImageAccessPlugin implements Plugin {
     //initialize
     @Override
     public void init(JavacTask task, String... args) {
-
         System.out.println("INITIALiZEEEEEEEEEEEEEEEEEEEEEEEEEEEED");
-        //get context, maker, names and task
         Context context = ((BasicJavacTask) task).getContext();
         this.maker = TreeMaker.instance(context);
         this.names = Names.instance(context);
         this.javacTask = task;
 
-        //select parse as event: (sono i cicli di vita del compilatore in breve)
-        //event hierarchy:
-        // Parse (create tree)
-        // Enter (methods declaration and get symbols)
-        // Annotation processing (special step to analyze and parse annotations)
-        // Analyze (resolve references)
-        // Generate (generate bytecode)
-        // Complete (finished compilation)
-
-        //usa parse per modificare il bytecode (video ucraino)
         task.addTaskListener(new TaskListener() {
             @Override
             public void finished(TaskEvent e) {
@@ -102,21 +94,36 @@ public class ImageAccessPlugin implements Plugin {
                     CompilationUnitTree cu = e.getCompilationUnit();
                     Trees trees = Trees.instance(task);
 
+                    // Cerca la classe factory e il campo register
                     if (factoryClassDecl == null) {
                         new TreePathScanner<Void, Trees>() {
                             @Override
                             public Void visitClass(ClassTree node, Trees trees) {
-                                //get dataAccessFactory node
-                                if (node.getSimpleName().toString().equals("DataAccessFactory")) {
+                                if (hasImageAccessFactoryAnnotation(node)) {
+                                    System.out.println("[DEBUG] Found factory class: " + node.getSimpleName());
                                     factoryClassDecl = (JCTree.JCClassDecl) node;
+                                    // Cerca il campo con @Register
+                                    for (Tree member : node.getMembers()) {
+                                        if (member instanceof VariableTree) {
+                                            VariableTree field = (VariableTree) member;
+                                            if (hasRegisterAnnotation(field)) {
+                                                System.out.println("[DEBUG] Found register field: " + field.getName());
+                                                // Verifica che il campo sia una List<DataAccessComponent>
+                                                if (validateRegisterField(field, trees)) {
+                                                    registerField = (JCTree.JCVariableDecl) member;
+                                                } else {
+                                                    throw new RuntimeException("Register field must be of type List<DataAccessComponent>");
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                                //let parent parse the node
                                 return super.visitClass(node, trees);
                             }
                         }.scan(cu, trees);
                     }
 
-                    //get annotated class (NOT CLASSES!!!!!!!!!!!!!)
+                    // Il resto del codice per processare le classi annotate rimane uguale
                     new TreePathScanner<Void, Trees>() {
                         @Override
                         public Void visitClass(ClassTree node, Trees trees) {
@@ -127,13 +134,11 @@ public class ImageAccessPlugin implements Plugin {
                                     collectClassForValidation(node, getCurrentPath());
                                 }
                             }
-                            //let super visit class
                             return super.visitClass(node, trees);
                         }
                     }.scan(cu, trees);
                 }
-                //IF tree has been created (ENTER PHASE) we have a factory, and we haven't generated code yet
-                else if (e.getKind() == TaskEvent.Kind.ENTER && !codeGenerated && factoryClassDecl != null) {
+                else if (e.getKind() == TaskEvent.Kind.ENTER && !codeGenerated && factoryClassDecl != null && registerField != null) {
                     validateCollectedClasses();
                     injectStaticInitializer();
                     codeGenerated = true;
@@ -142,30 +147,67 @@ public class ImageAccessPlugin implements Plugin {
         });
     }
 
+    private boolean hasImageAccessFactoryAnnotation(ClassTree classTree) {
+        return classTree.getModifiers().getAnnotations().stream()
+                .anyMatch(a -> a.getAnnotationType().toString().endsWith("ImageAccessFactory"));
+    }
+
+    private boolean hasRegisterAnnotation(VariableTree field) {
+        return field.getModifiers().getAnnotations().stream()
+                .anyMatch(a -> a.getAnnotationType().toString().endsWith("Register"));
+    }
+
+    private boolean validateRegisterField(VariableTree field, Trees trees) {
+        // Verifica preliminare del tipo raw dalla sintassi
+        String typeString = field.getType().toString();
+        if (!typeString.startsWith("List<") || !typeString.endsWith(">")) {
+            System.out.println("[DEBUG] Field is not a List: " + typeString);
+            return false;
+        }
+
+        String genericType = typeString.substring(5, typeString.length() - 1);
+        if (!genericType.equals("DataAccessComponent")) {
+            System.out.println("[DEBUG] List generic type is not DataAccessComponent: " + genericType);
+            return false;
+        }
+
+        // Verifica che il campo sia static
+        ModifiersTree modifiers = field.getModifiers();
+        if (!modifiers.getFlags().contains(javax.lang.model.element.Modifier.STATIC)) {
+            System.out.println("[DEBUG] Register field must be static");
+            return false;
+        }
+
+        System.out.println("[DEBUG] Register field validation successful");
+        return true;
+    }
+
     //validate class
     private void collectClassForValidation(ClassTree classTree, TreePath path) {
-        //get all annotated classes from classTree
+        System.out.println("[DEBUG] Collecting class for validation: " + classTree.getSimpleName());
+
         for (AnnotationTree annotation : classTree.getModifiers().getAnnotations()) {
-            //get only classes annotated with  imageaccess
             if (annotation.getAnnotationType().toString().endsWith("ImageAccess")) {
-                //init util vars
                 String[] magicNumbers = null;
                 String declaredExtension = null;
 
-                //get annotation arguments
+                System.out.println("[DEBUG] Processing annotation arguments for: " + classTree.getSimpleName());
+
                 for (ExpressionTree arg : annotation.getArguments()) {
                     String argStr = arg.toString();
-                    //extract magic number if it is present
+                    System.out.println("[DEBUG] Processing argument: " + argStr);
+
                     if (argStr.startsWith("magicNumber")) {
                         magicNumbers = extractMagicNumbers(annotation);
-
-                        //extract extension if it is present
+                        System.out.println("[DEBUG] Extracted magic numbers: " + Arrays.toString(magicNumbers));
                     } else if (argStr.startsWith("extension")) {
                         declaredExtension = extractExtension(arg);
+                        System.out.println("[DEBUG] Extracted extension: " + declaredExtension);
                     }
                 }
-                //add annotated class to 'tobevalidated' list
+
                 classesToValidate.add(new ClassToValidate(classTree, path, magicNumbers, declaredExtension));
+                System.out.println("[DEBUG] Added class to validation queue: " + classTree.getSimpleName());
                 break;
             }
         }
@@ -218,56 +260,55 @@ public class ImageAccessPlugin implements Plugin {
 
     //validate class (singleton, interface compatibility etc)
     private void validateCollectedClasses() {
-        //get tree
+        System.out.println("[DEBUG] Starting class validation");
         Trees trees = Trees.instance(javacTask);
-        //get elements and solved types
         Elements elements = javacTask.getElements();
         Types types = javacTask.getTypes();
 
         TypeElement imageDataAccessElement = elements.getTypeElement("ch.supsi.business.image.ImageDataAccess");
         if (imageDataAccessElement == null) {
-            throw new RuntimeException("Compilation error: Could not find ImageDataAccess interface");
+            System.out.println("[DEBUG] " + RED + "ERROR: ImageDataAccess interface not found!" + RESET);
+        } else {
+            System.out.println("[DEBUG] Found ImageDataAccess interface");
         }
 
-        //cycle class to validate them
         for (ClassToValidate classToValidate : classesToValidate) {
             ClassTree classTree = classToValidate.classTree;
             String className = classTree.getSimpleName().toString();
-            boolean isValid = true;
-            String validationErrors = "";
+            System.out.println("\n[DEBUG] Validating class: " + className);
 
+            boolean isValid = true;
+            StringBuilder validationErrors = new StringBuilder();
             boolean hasValidGetInstance = false;
-            //check get instance method
+
+            // Check getInstance method
             for (Tree member : classTree.getMembers()) {
-                //get method tree
                 if (member instanceof MethodTree) {
                     MethodTree method = (MethodTree) member;
+                    System.out.println("[DEBUG] Checking method: " + method.getName());
 
-                    //check if method exists by name and if it is static
                     if (method.getName().toString().equals("getInstance")) {
+                        System.out.println("[DEBUG] Found getInstance method");
                         boolean isStatic = method.getModifiers().getFlags()
                                 .contains(javax.lang.model.element.Modifier.STATIC);
+                        System.out.println("[DEBUG] Is static: " + isStatic);
 
-                        //get method elements to get return type
                         Element methodElement = trees.getElement(new TreePath(classToValidate.path, method));
                         if (methodElement instanceof ExecutableElement) {
                             ExecutableElement executableElement = (ExecutableElement) methodElement;
-
-                            //mirror type for return type
                             TypeMirror returnType = executableElement.getReturnType();
 
-                            //check interface compatibility on return type of getInstance
                             boolean hasValidReturnType = types.isAssignable(returnType, imageDataAccessElement.asType());
+                            System.out.println("[DEBUG] Has valid return type: " + hasValidReturnType);
 
-                            // If getInstance is not static, add a warning
                             if (!isStatic) {
                                 isValid = false;
-                                validationErrors += "\n["+YELLOW+"WARNING"+RESET+"] getInstance in " + className + " must be static";
+                                validationErrors.append("\n[ERROR] getInstance in ").append(className).append(" must be static");
                             }
                             if (!hasValidReturnType) {
                                 isValid = false;
-                                validationErrors += "\n["+YELLOW+"WARNING"+RESET+"] getInstance in " + className +
-                                        " must return a type assignable to ImageDataAccess";
+                                validationErrors.append("\n[ERROR] getInstance in ").append(className)
+                                        .append(" must return a type assignable to ImageDataAccess");
                             }
 
                             hasValidGetInstance = isStatic && hasValidReturnType;
@@ -277,30 +318,23 @@ public class ImageAccessPlugin implements Plugin {
                 }
             }
 
-            //if the getInstance is not valid
             if (!hasValidGetInstance) {
                 isValid = false;
-                validationErrors += "\n["+YELLOW+"WARNING"+RESET+"]" + className + " must provide a valid getInstance method";
+                validationErrors.append("\n[ERROR] ").append(className).append(" must provide a valid getInstance method");
             }
 
-            //print all messages and skip class from process
+            System.out.println("[DEBUG] Class validation result - Is Valid: " + isValid);
             if (!isValid) {
-                System.out.println(validationErrors);
-                System.out.println("["+BLUE+"INFO"+RESET+"] Class " + className + " will not be included in static initialization");
-                continue;
+                System.out.println("[DEBUG] Validation errors: " + validationErrors);
+                throw new RuntimeException("Compilation error: " + validationErrors.toString());
             }
 
-            //otherwise is a valid class, so process it
             try {
-
-                //validate extension (cannot be invalid, if it fails it throws an ex)
                 String extension = validateAndGetExtension(className, classToValidate.declaredExtension);
-                //add to validated class
                 validatedClasses.add(new AnnotatedClassInfo(className, extension, classToValidate.magicNumbers));
-                System.out.println("["+BLUE+"INFO"+RESET+"]+Valid class " + className + " with magic numbers: " +
-                        Arrays.toString(classToValidate.magicNumbers) + " and extension: " + extension);
+                System.out.println("[DEBUG] Successfully validated class: " + className);
             } catch (RuntimeException e) {
-                System.err.println(e.getMessage());
+                System.out.println("[DEBUG] " + RED + "Validation failed with error: " + e.getMessage() + RESET);
                 throw e;
             }
         }
@@ -426,19 +460,17 @@ public class ImageAccessPlugin implements Plugin {
         statements = statements.append(
                 maker.Exec(
                         maker.Assign(
-                                maker.Ident(names.fromString("dataAccesses")),
+                                maker.Ident(names.fromString(registerField.name.toString())),
                                 maker.Ident(names.fromString("tempList"))
                         )
                 )
         );
 
-        //creo il blocco con gli statements
         JCTree.JCBlock staticBlock = maker.Block(
                 Flags.STATIC,
                 statements
         );
 
-        //lo assegno alla dichiarazione
         factoryClassDecl.defs = factoryClassDecl.defs.append(staticBlock);
 
         System.out.println("Static initializer generated successfully");

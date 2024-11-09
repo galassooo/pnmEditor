@@ -144,7 +144,7 @@ public class DataAccessFactoryTest {
         ConstPool constPool = dynamicClass.getClassFile().getConstPool();
         AnnotationsAttribute attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag); //runtime visible annotation
         //aggiunge annotation
-        Annotation imageAccessAnnotation = new Annotation("ch.supsi.ImageAccess", constPool);
+        Annotation imageAccessAnnotation = new Annotation("ch.supsi.annotation.ImageAccess", constPool);
 
         ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
         //aggiunge il valore Test come array all'annotation (singolo parametro => non serve nome campo)

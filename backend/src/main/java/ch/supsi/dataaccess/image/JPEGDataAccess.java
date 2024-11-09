@@ -1,11 +1,10 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.ImageAccess;
+import ch.supsi.annotation.ImageAccess;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.image.ImageDataAccess;
 
 import java.io.IOException;
-import java.util.List;
 
 @ImageAccess(magicNumber = {"JPEG"})
 public class JPEGDataAccess implements ImageDataAccess {

@@ -1,6 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.ImageAccess;
+import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.SingleChannel;
 import org.jetbrains.annotations.NotNull;

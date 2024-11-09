@@ -1,5 +1,6 @@
 #!/bin/bash
 
+/bin/bash compile.sh
 # Debug info
 echo "=== Environment Information ==="
 echo "PWD: $(pwd)"

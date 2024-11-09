@@ -1,6 +1,7 @@
 #!/bin/bash
 
 /bin/bash compile.sh
+
 # Debug info
 echo "=== Environment Information ==="
 echo "PWD: $(pwd)"
@@ -8,8 +9,11 @@ echo "Java Version:"
 java -version
 echo "Maven Version:"
 mvn -version
-echo "Maven Local Repository: $HOME/.m2/repository"
 echo "========================="
+
+# Ottieni il repository Maven dinamicamente
+MAVEN_REPO=$(mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout)
+echo "Using Maven repository: $MAVEN_REPO"
 
 # Verifica che il plugin esista
 if [ ! -f "target/plugin-1.0-SNAPSHOT.jar" ]; then
@@ -29,11 +33,11 @@ cp src/test/java/ch/supsi/test/ImageAccessPluginTest.java "$TEMP_DIR/ch/supsi/te
 
 # Debug: verifica JUnit prima del download
 echo "=== JUnit Files Before Download ==="
-ls -la $HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
+ls -la $MAVEN_REPO/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
 echo "=================================="
 
 # Scarica JUnit se necessario
-JUNIT_STANDALONE="$HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar"
+JUNIT_STANDALONE="$MAVEN_REPO/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar"
 
 if [ ! -f "$JUNIT_STANDALONE" ]; then
     echo "Downloading JUnit..."
@@ -42,7 +46,7 @@ fi
 
 # Debug: verifica JUnit dopo il download
 echo "=== JUnit Files After Download ==="
-ls -la $HOME/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
+ls -la $MAVEN_REPO/org/junit/platform/junit-platform-console-standalone/1.10.1/ 2>/dev/null || echo "Directory not found"
 echo "================================="
 
 cd "$TEMP_DIR"

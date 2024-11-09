@@ -33,7 +33,6 @@ image: gitlab-edu.supsi.ch:5050/dti-isin/labingsw/common:maven3java17
 cache:
   paths:
     - .m2/repository
-    - plugin/.m2/repository
 
 structure:
   stage: structure

@@ -2,9 +2,8 @@ package org.supsi.controller.image;
 
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.controller.errors.IErrorController;
-import org.supsi.controller.filter.FilterController;
-import org.supsi.model.IStateModel;
-import org.supsi.model.StateModel;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
 import org.supsi.model.image.IImageModel;
 import org.supsi.model.image.ImageModel;
 import org.supsi.model.info.ILoggerModel;

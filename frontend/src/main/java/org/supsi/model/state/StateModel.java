@@ -1,4 +1,4 @@
-package org.supsi.model;
+package org.supsi.model.state;
 
 import ch.supsi.application.state.StateApplication;
 import ch.supsi.application.state.StateChangeListener;

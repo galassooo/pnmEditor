@@ -1,4 +1,4 @@
-package org.supsi.model;
+package org.supsi.model.state;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 

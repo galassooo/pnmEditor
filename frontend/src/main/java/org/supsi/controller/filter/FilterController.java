@@ -1,6 +1,5 @@
 package org.supsi.controller.filter;
 
-import org.supsi.controller.image.FiltersProcessedEvent;
 import org.supsi.model.filters.FilterModel;
 import org.supsi.model.filters.IFilterModel;
 import org.supsi.model.image.ImageModel;
@@ -32,13 +31,11 @@ import java.util.List;
  */
 public class FilterController implements  FilterUpdateListener {
 
-    private static final Log log = LogFactory.getLog(FilterController.class);
     /* self reference */
     private static FilterController myself;
 
     /* instance field*/
     private final IFilterModel model = FilterModel.getInstance();
-    private static final List<FiltersProcessedEvent> listeners = new ArrayList<>();
     private final ILoggerModel loggerModel = LoggerModel.getInstance();
 
     /**
@@ -51,10 +48,6 @@ public class FilterController implements  FilterUpdateListener {
             myself = new FilterController();
         }
         return myself;
-    }
-
-    public static void subscribe(FiltersProcessedEvent listener){
-        listeners.add(listener);
     }
     /* constructor */
     protected FilterController() {}
@@ -91,7 +84,6 @@ public class FilterController implements  FilterUpdateListener {
     public void onFiltersActivated() {
         loggerModel.addInfo("ui_pipeline_processed");
         model.processFilters();
-        listeners.forEach(FiltersProcessedEvent::onPipelineProcessed);
     }
 
     /**

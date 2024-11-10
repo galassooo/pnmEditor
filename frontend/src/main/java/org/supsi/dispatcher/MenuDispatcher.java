@@ -8,8 +8,8 @@ import org.supsi.controller.preferences.IPreferencesController;
 import org.supsi.controller.preferences.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
-import org.supsi.model.IStateModel;
-import org.supsi.model.StateModel;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
 
 import java.io.IOException;
 

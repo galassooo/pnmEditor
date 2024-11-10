@@ -51,6 +51,11 @@ public class StateApplication implements EditorState, StateChangeEvent {
     }
 
     @Override
+    public boolean isRefreshRequired() {
+        return businessEditorState.isRefreshRequired();
+    }
+
+    @Override
     public void registerStateListener(StateChangeListener listener) {
         ((StateChangeEvent) businessEditorState).registerStateListener(listener);
     }

@@ -1,25 +1,30 @@
 package org.supsi.dispatcher;
 
+import ch.supsi.application.state.StateApplication;
+import ch.supsi.application.state.StateChangeListener;
+import javafx.beans.property.SimpleBooleanProperty;
 import org.supsi.controller.filter.FilterController;
-import org.supsi.controller.image.ImageController;
-import org.supsi.controller.image.ImageLoadedListener;
+import org.supsi.model.IStateModel;
+import org.supsi.model.StateModel;
 import org.supsi.view.filter.FilterUpdateListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 
-public class FilterDispatcher implements ImageLoadedListener {
+public class FilterDispatcher {
 
     private final FilterUpdateListener filterController = FilterController.getInstance();
 
+    private final IStateModel stateModel = StateModel.getInstance();
 
     @FXML
     public Button activate;
     @FXML
     private void initialize(){
-        ImageController.getInstance().subscribe(this);
+        activate.disableProperty().bind(stateModel.canApplyFiltersProperty().not());
     }
+
 
     public void activatePipeline(ActionEvent event) {
         filterController.onFiltersActivated();
@@ -37,9 +42,4 @@ public class FilterDispatcher implements ImageLoadedListener {
         filterController.onFilterAdded("Negative");
     }
 
-    //NON MI PIACE!
-    @Override
-    public void onImageLoaded(){
-        activate.setDisable(false);
-    }
 }

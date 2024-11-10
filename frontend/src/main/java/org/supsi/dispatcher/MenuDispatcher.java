@@ -1,8 +1,5 @@
 package org.supsi.dispatcher;
 
-import ch.supsi.application.state.StateApplication;
-import ch.supsi.application.state.StateChangeListener;
-import javafx.beans.property.SimpleBooleanProperty;
 import org.supsi.controller.about.AboutController;
 import org.supsi.controller.about.IAboutController;
 import org.supsi.controller.image.IImageController;
@@ -11,21 +8,19 @@ import org.supsi.controller.preferences.IPreferencesController;
 import org.supsi.controller.preferences.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import org.supsi.model.IStateModel;
+import org.supsi.model.StateModel;
 
 import java.io.IOException;
 
-public class MenuDispatcher implements StateChangeListener {
+public class MenuDispatcher {
 
     private static final IImageController imageController;
     private static final IPreferencesController preferencesController;
     private static final IAboutController aboutController;
 
-    //ha doppia interfaccia che uso
-    private static final StateApplication editorState = StateApplication.getInstance();
+    private final IStateModel stateModel = StateModel.getInstance();
 
-    private final SimpleBooleanProperty canSaveProperty = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty canSaveAsProperty = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty canExportProperty = new SimpleBooleanProperty(false);
 
     static{
         imageController = ImageController.getInstance();
@@ -45,11 +40,9 @@ public class MenuDispatcher implements StateChangeListener {
 
     @FXML
     private void initialize(){
-        editorState.registerStateListener(this);
-
-        saveMenuItem.disableProperty().bind(canSaveProperty.not());
-        saveAsMenuItem.disableProperty().bind(canSaveAsProperty.not());
-        exportMenuItem.disableProperty().bind(canExportProperty.not());
+        saveMenuItem.disableProperty().bind(stateModel.canSaveProperty().not());
+        saveAsMenuItem.disableProperty().bind(stateModel.canSaveAsProperty().not());
+        exportMenuItem.disableProperty().bind(stateModel.canExportProperty().not());
     }
 
 
@@ -80,10 +73,4 @@ public class MenuDispatcher implements StateChangeListener {
         aboutController.showPopup();
     }
 
-    @Override
-    public void onStateChanged() {
-        canSaveProperty.set(editorState.canSave());
-        canSaveAsProperty.set(editorState.canSaveAs());
-        canExportProperty.set(editorState.canExport());
-    }
 }

@@ -1,5 +1,6 @@
 package org.supsi.view.image;
 
+import ch.supsi.application.state.StateChangeListener;
 import org.supsi.model.image.IImageModel;
 import org.supsi.model.image.ImageModel;
 import javafx.fxml.FXML;
@@ -7,7 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
-public class MainImageView implements IImageView{
+public class MainImageView implements IImageView {
     @FXML
     private ImageView image;
 

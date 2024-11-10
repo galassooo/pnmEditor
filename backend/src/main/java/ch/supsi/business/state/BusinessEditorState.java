@@ -52,27 +52,32 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
     }
 
     @Override
+    public boolean isRefreshRequired() {
+        return currentState.isRefreshRequired();
+    }
+
+    @Override
     public void onImageLoaded() {
         currentState = new ImageLoadedState();
-        listeners.forEach(StateChangeListener::onStateChanged);
+        listeners.forEach(StateChangeListener::onStateChange);
     }
 
     @Override
     public void onFilterAdded() {
         currentState = new FilterPending();
-        listeners.forEach(StateChangeListener::onStateChanged);
+        listeners.forEach(StateChangeListener::onStateChange);
     }
 
     @Override
     public void onFilterProcessed() {
         currentState = new ImageLoadedState();
-        listeners.forEach(StateChangeListener::onStateChanged);
+        listeners.forEach(StateChangeListener::onStateChange);
     }
 
     @Override
     public void onFilterRemoved() {
         currentState = new ImageLoadedState();
-        listeners.forEach(StateChangeListener::onStateChanged);
+        listeners.forEach(StateChangeListener::onStateChange);
     }
 
     @Override
@@ -93,6 +98,7 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         @Override public boolean canAddFilter() { return false; }
         @Override public boolean canExport() {return false;}
         @Override public boolean hasUnsavedChanges() { return false; }
+        @Override public boolean isRefreshRequired() { return false; }
     }
 
     static class ImageLoadedState implements EditorState {
@@ -102,6 +108,7 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         @Override public boolean canAddFilter() { return true; }
         @Override public boolean canExport() { return true; }
         @Override public boolean hasUnsavedChanges() { return false; }
+        @Override public boolean isRefreshRequired() { return true; }
     }
 
     static class FilterPending implements EditorState {
@@ -111,5 +118,6 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         @Override public boolean canAddFilter() { return true; }
         @Override public boolean canExport() { return true; }
         @Override public boolean hasUnsavedChanges() { return true; }
+        @Override public boolean isRefreshRequired() { return false; }
     }
 }

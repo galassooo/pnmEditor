@@ -3,6 +3,8 @@ package org.supsi.controller.image;
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.controller.errors.IErrorController;
 import org.supsi.controller.filter.FilterController;
+import org.supsi.model.IStateModel;
+import org.supsi.model.StateModel;
 import org.supsi.model.image.IImageModel;
 import org.supsi.model.image.ImageModel;
 import org.supsi.model.info.ILoggerModel;
@@ -13,19 +15,17 @@ import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ImageController implements  IImageController, FiltersProcessedEvent {
+public class ImageController implements  IImageController {
 
     private IImageView mainImageView;
 
     private final IImageModel model = ImageModel.getInstance();
     private final IErrorController errorController = ErrorController.getInstance();
     private final ILoggerModel loggerModel = LoggerModel.getInstance();
-
-    private final List<ImageLoadedListener> subscribers = new ArrayList<>();
+    private final IStateModel stateModel = StateModel.getInstance();
     private static ImageController myself;
+
 
     private Stage root;
 
@@ -38,7 +38,11 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
     }
 
     private ImageController() {
-        FilterController.subscribe(this);
+        stateModel.refreshRequiredProperty().addListener((obs, old, newValue) -> {
+            if (newValue) {
+                mainImageView.update();
+            }
+        });
     }
 
     @Override
@@ -55,10 +59,7 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
             loggerModel.addInfo("ui_image_loaded");
         }catch(Exception e ){
             errorController.showError(e.getMessage());
-            return;
         }
-        subscribers.forEach(ImageLoadedListener::onImageLoaded);
-        mainImageView.update();
     }
 
 
@@ -93,14 +94,5 @@ public class ImageController implements  IImageController, FiltersProcessedEvent
     @Override
     public void setStage(Stage stage){
         this.root = stage;
-    }
-
-    @Override
-    public void onPipelineProcessed() {
-        mainImageView.update();
-    }
-
-    public void subscribe(ImageLoadedListener subscriber) {
-        subscribers.add(subscriber);
     }
 }

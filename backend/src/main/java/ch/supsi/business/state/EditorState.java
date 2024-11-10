@@ -7,4 +7,5 @@ public interface EditorState {
     boolean canAddFilter();
     boolean canExport();
     boolean hasUnsavedChanges();
+    boolean isRefreshRequired();
 }

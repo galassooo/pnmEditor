@@ -16,5 +16,4 @@ public interface IImageController {
     void setImage(IImageView image);
 
     void setStage(Stage stage);
-    void subscribe(ImageLoadedListener subscriber);
 }

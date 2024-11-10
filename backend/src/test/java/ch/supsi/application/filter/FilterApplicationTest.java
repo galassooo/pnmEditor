@@ -31,7 +31,6 @@ public class FilterApplicationTest {
         String key = "Negative";
 
         filterApplication.addFilterToPipeline(key);
-        FilterCommand strategy = FilterFactory.getFilters().get(key);
 
 
     }

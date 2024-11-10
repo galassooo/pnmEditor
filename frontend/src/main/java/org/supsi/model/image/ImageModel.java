@@ -3,6 +3,7 @@ package org.supsi.model.image;
 import ch.supsi.application.image.ImageApplication;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ImageModel implements IImageModel{
 
@@ -25,10 +26,12 @@ public class ImageModel implements IImageModel{
     protected ImageModel() {
     }
 
+    @Override
     public void readImage(String path) throws IOException, IllegalAccessException {
             backendController.read(path);
     }
 
+    @Override
     public String getImageName(){
         return backendController.getImageName();
     }
@@ -38,7 +41,14 @@ public class ImageModel implements IImageModel{
         return backendController.getImagePixels();
     }
 
+    @Override
     public void writeImage(String path) throws IOException, IllegalAccessException {
            backendController.persist(path);
     }
+
+    @Override
+    public List<String> getSupportedExtensions(){
+        return backendController.getAllSupportedExtension();
+    }
+
 }

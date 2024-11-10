@@ -56,6 +56,14 @@ public class DataAccessFactory {
         return loadClazz(clazz);
     }
 
+    public static ImageDataAccess getInstanceFromExtension(String extension) throws IOException, IllegalAccessException {
+        Class<?> clazz = getFromExtension(extension);
+        if (clazz == null) {
+            throw new IOException("Unsupported file type");
+        }
+        return loadClazz(clazz);
+    }
+
     private static ImageDataAccess loadClazz(Class<?> clazz) throws IllegalAccessException {
         ImageDataAccess instance;
         try {
@@ -82,5 +90,9 @@ public class DataAccessFactory {
             }
         }
         return null;
+    }
+
+    public static List<String> getSupportedExtensions() {
+        return ciaone.stream().map(e -> e.extension).toList();
     }
 }

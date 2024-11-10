@@ -7,4 +7,5 @@ public interface EditorStateManager extends EditorState {
     void onFilterAdded();
     void onFilterProcessed();
     void onFilterRemoved();
+    void onLoading();
 }

@@ -57,6 +57,12 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
     }
 
     @Override
+    public void onLoading() {
+        currentState = new LoadingState();
+        listeners.forEach(StateChangeListener::onStateChange);
+    }
+
+    @Override
     public void onImageLoaded() {
         currentState = new ImageLoadedState();
         listeners.forEach(StateChangeListener::onStateChange);
@@ -117,6 +123,16 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         @Override public boolean canSaveAs() { return true; }
         @Override public boolean canAddFilter() { return true; }
         @Override public boolean canExport() { return true; }
+        @Override public boolean hasUnsavedChanges() { return true; }
+        @Override public boolean isRefreshRequired() { return false; }
+    }
+
+    static class LoadingState implements EditorState {
+        @Override public boolean canApplyFilters() { return false; }
+        @Override public boolean canSave() { return false; }
+        @Override public boolean canSaveAs() { return false; }
+        @Override public boolean canAddFilter() { return false; }
+        @Override public boolean canExport() { return false; }
         @Override public boolean hasUnsavedChanges() { return true; }
         @Override public boolean isRefreshRequired() { return false; }
     }

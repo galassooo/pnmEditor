@@ -3,6 +3,7 @@ package ch.supsi.application.image;
 import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.state.BusinessEditorState;
 import ch.supsi.application.state.EditorStateManager;
+import ch.supsi.dataaccess.image.DataAccessFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -25,19 +26,21 @@ public class ImageApplication {
     private ImageBusinessInterface currentImage;
 
     public ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
+        stateManager.onLoading();
         currentImage =  ImageBusiness.read(path);
-
         stateManager.onImageLoaded();
 
         return currentImage;
     }
 
     public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
-        return currentImage.persist(path);
-
+        stateManager.onLoading();
+        currentImage =  currentImage.persist(path);
+        stateManager.onImageLoaded();
+        return currentImage;
     }
     public List<String> getAllSupportedExtension(){
-        return null;
+        return DataAccessFactory.getSupportedExtensions();
     }
 
     /**

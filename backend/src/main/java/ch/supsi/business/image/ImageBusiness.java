@@ -52,16 +52,22 @@ public class ImageBusiness implements ImageBusinessInterface {
 
     }
 
+    public ImageBusinessInterface export(String extension, String path) throws IOException, IllegalAccessException {
+        ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);
+        if(path!= null)
+            filePath = !filePath.equals(path) ? path : filePath;
+        return dac.write(this);
+    }
+
     public static ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
-        PPMDataAccess ppm = PPMDataAccess.getInstance();
         return dac.read(path);
     }
 
     @Override
     public int getWidth() {
         //argbPixels sempre diverso da null perchè viene convertito in long[0][0]
-        //dal costruttore in caso sia null
+        //dal builder in caso sia null
         return  argbPixels.length > 0  ? argbPixels[0].length : 0;
     }
 

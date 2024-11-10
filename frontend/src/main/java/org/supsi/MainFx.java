@@ -74,6 +74,17 @@ public class MainFx extends Application {
 
             root.setTop(menuBar);
 
+            fxmlUrl = getClass().getResource("/layout/ExportMenu.fxml");
+            if (fxmlUrl == null) {
+                return;
+            }
+            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
+            Menu menu = loader.load();
+
+            int indexBeforeHelp = menuBar.getMenus().size();
+            menuBar.getMenus().add(indexBeforeHelp, menu);
+
+
             fxmlUrl = getClass().getResource("/layout/FilterMenu.fxml");
             if (fxmlUrl == null) {
                 return;

@@ -34,15 +34,12 @@ public class MenuDispatcher {
     @FXML
     public MenuItem saveAsMenuItem;
 
-    @FXML
-    public MenuItem exportMenuItem;
 
 
     @FXML
     private void initialize(){
         saveMenuItem.disableProperty().bind(stateModel.canSaveProperty().not());
         saveAsMenuItem.disableProperty().bind(stateModel.canSaveAsProperty().not());
-        exportMenuItem.disableProperty().bind(stateModel.canExportProperty().not());
     }
 
 

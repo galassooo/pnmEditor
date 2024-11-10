@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="780.0" prefWidth="250.0" styleClass="history-vbox" stylesheets="/style/style.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.supsi.view.info.HistoryStack">
+<VBox prefHeight="389.0" prefWidth="250.0" styleClass="history-vbox" stylesheets="/style/style.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.supsi.view.info.HistoryStack">
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="250.0">
             <children>
@@ -29,4 +29,7 @@
             </content>
         </ScrollPane>
     </children>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
 </VBox>

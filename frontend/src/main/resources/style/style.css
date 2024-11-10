@@ -175,9 +175,15 @@
 .pane-hand-hover:hover {
     -fx-cursor: open-hand;
 }
+
 /* History column */
 .history-vbox {
     -fx-border-color: transparent transparent transparent #474747;
     -fx-border-width: 0 0 2 2px;
+}
+
+.filter-vbox{
+    -fx-border-color:  #474747;
+    -fx-border-width: 2 2 2 2px;
 }
 

@@ -72,9 +72,13 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             MenuBar menuBar = loader.load();
+
             MenuDispatcher dispatcher = loader.getController();
 
             root.setTop(menuBar);
+
+            BorderPane centerPane = new BorderPane();
+            root.setCenter(centerPane);
 
             fxmlUrl = getClass().getResource("/layout/ExportMenu.fxml");
             if (fxmlUrl == null) {
@@ -100,12 +104,20 @@ public class MainFx extends Application {
             menuBar.getMenus().add(filterMenu);
 
 
-            fxmlUrl = getClass().getResource("/layout/FilterColumn.fxml");
+            fxmlUrl = getClass().getResource("/layout/FilterLine.fxml");
             if (fxmlUrl == null) {
                 return;
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
-            VBox filterColumn = loader.load();
+            VBox filterLine = loader.load();
+            centerPane.setTop(filterLine);
+
+            VBox filterColumn = new VBox();
+            filterColumn.setPrefHeight(779);
+            filterColumn.setPrefWidth(250);
+            filterColumn.getStylesheets().add("/style/style.css");
+            filterColumn.getStyleClass().add("filter-vbox");
+
 
             fxmlUrl = getClass().getResource("/layout/FilterList.fxml");
             if (fxmlUrl == null) {
@@ -117,7 +129,7 @@ public class MainFx extends Application {
             IFilterEvent controller = loader.getController();
             filterController.addEventPublisher(controller);
 
-            filterColumn.getChildren().add(1, filterList);
+            filterColumn.getChildren().add(0, filterList);
 
             fxmlUrl = getClass().getResource("/layout/InfoBar.fxml");
             if (fxmlUrl == null) {
@@ -127,7 +139,10 @@ public class MainFx extends Application {
             HBox infoBar = loader.load();
             filterColumn.getChildren().add(infoBar);
 
-            root.setLeft(filterColumn);
+
+
+
+            centerPane.setLeft(filterColumn);
 
             fxmlUrl = getClass().getResource("/layout/Image.fxml");
             if (fxmlUrl == null) {
@@ -135,7 +150,7 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             ImageView image = loader.load();
-            root.setCenter(image);
+            centerPane.setCenter(image);
 
             imageController.setImage(loader.getController());
             imageController.setStage(primaryStage);
@@ -157,7 +172,7 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox infoCol = loader.load();
 
-            root.setRight(new VBox(historyBox, infoCol));
+            centerPane.setRight(new VBox(historyBox, infoCol));
 
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);

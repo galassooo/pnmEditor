@@ -110,6 +110,9 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox filterLine = loader.load();
+            IFilterEvent filterLineCtrl = loader.getController();
+
+            filterController.addEventPublisher(filterLineCtrl);
             centerPane.setTop(filterLine);
 
             VBox filterColumn = new VBox();

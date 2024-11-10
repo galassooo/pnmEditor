@@ -2,7 +2,7 @@ package ch.supsi.business.filter.chain;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class MirrorCommand extends FilterChainLink {
+public class HorizontalMirrorCommand extends FilterChainLink {
     @Override
     public void executeFilter(ImageBusinessInterface img) {
         long[][] pixels = img.getPixels();
@@ -27,6 +27,6 @@ public class MirrorCommand extends FilterChainLink {
 
     @Override
     public String getName() {
-        return "Mirror";
+        return "Mirror_Horizontal";
     }
 }

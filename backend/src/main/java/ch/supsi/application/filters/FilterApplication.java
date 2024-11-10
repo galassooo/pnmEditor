@@ -45,7 +45,7 @@ public class FilterApplication {
         model.addFilter(filter, index);
         stateManager.onFilterAdded();
     }
-    public void remove(int index){
-        model.remove(index);
+    public String remove(int index){
+        return model.remove(index);
     }
 }

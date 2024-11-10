@@ -6,6 +6,9 @@ import ch.supsi.application.translations.TranslationsApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -15,6 +18,7 @@ public class FilterModel implements IFilterModel{
     private final FilterApplication application = FilterApplication.getInstance();
     private final ImageApplication imgApplication = ImageApplication.getInstance();
     private final TranslationsApplication translationsApplication = TranslationsApplication.getInstance();
+
 
     private final ObservableList<String> filterPipeline = FXCollections.observableArrayList();
 
@@ -29,7 +33,6 @@ public class FilterModel implements IFilterModel{
     }
 
     protected FilterModel(){
-
     }
 
     @Override
@@ -43,9 +46,7 @@ public class FilterModel implements IFilterModel{
     }
 
     public void addFilterToPipeline(String filter){
-
         filterPipeline.add(TranslationsApplication.getInstance().translate(filter)); //local copy for observers
-
         application.addFilterToPipeline(filter);
     }
 
@@ -59,12 +60,11 @@ public class FilterModel implements IFilterModel{
     @Override
     public void moveFilter(int fromIndex, int toIndex) {
         if (fromIndex != toIndex) {
-            var filterPipeline = getFilterPipeline();
-            var item = filterPipeline.remove(fromIndex);
-            filterPipeline.add(toIndex, item);
 
-            application.remove(fromIndex);
-            application.add(item, toIndex);
+            var translatedItem = filterPipeline.remove(fromIndex);
+            filterPipeline.add(toIndex, translatedItem);
+
+            application.add(application.remove(fromIndex), toIndex);
         }
     }
 

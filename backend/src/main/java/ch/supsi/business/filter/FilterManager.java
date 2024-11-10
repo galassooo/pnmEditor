@@ -3,11 +3,6 @@ package ch.supsi.business.filter;
 import ch.supsi.application.filters.FilterPipelineInterface;
 import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.filter.chain.FilterChainLink;
-import ch.supsi.business.filter.chain.FilterCommand;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class FilterManager implements FilterPipelineInterface {
     private static FilterManager instance;
@@ -71,14 +66,14 @@ public class FilterManager implements FilterPipelineInterface {
     }
 
     @Override
-    public void remove(int index) {
+    public String remove(int index) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("invalid index");
         }
 
         if (index == 0) {
             pipeline = pipeline.getNext();
-            return;
+            return pipeline.getName();
         }
         FilterChainLink current = pipeline;
         for (int i = 0; i < index - 1; i++) {
@@ -91,6 +86,7 @@ public class FilterManager implements FilterPipelineInterface {
         if (current.getNext() != null) {
             current.setNext(current.getNext().getNext());
         }
+        return current.getName();
     }
 
 

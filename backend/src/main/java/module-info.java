@@ -10,6 +10,7 @@ module backend {
 
     requires static plugin;
     requires transitive jdk.compiler;
+    requires jdk.jdi;
 
     exports ch.supsi.application.image;
     exports ch.supsi.application.preferences;
@@ -18,5 +19,5 @@ module backend {
     exports ch.supsi.application.state;
     exports ch.supsi.business.state;
 
-    opens ch.supsi.business.filter.command to org.reflections;
+    opens ch.supsi.business.filter.chain to org.reflections;
 }

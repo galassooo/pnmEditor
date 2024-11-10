@@ -2,16 +2,16 @@ package ch.supsi.business.filter;
 
 import ch.supsi.application.filters.FilterPipelineInterface;
 import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.filter.command.FilterCommand;
+import ch.supsi.business.filter.chain.FilterChainLink;
+import ch.supsi.business.filter.chain.FilterCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 
 public class FilterManager implements FilterPipelineInterface {
     private static FilterManager instance;
-    private final List<FilterCommand> pipeline = new ArrayList<>();
+    private FilterChainLink pipeline;
 
     public static FilterManager getInstance() {
         if(instance == null) {
@@ -25,34 +25,80 @@ public class FilterManager implements FilterPipelineInterface {
     @Override
     public void executePipeline(ImageBusinessInterface image) {
         if (image == null) return;
+        if(pipeline == null) return;
 
-        pipeline.stream()
-                .filter(Objects::nonNull)
-                .forEach(command -> {
-                    command.execute(image);
-                });
-
-        pipeline.clear();
+        pipeline.execute(image);
+        pipeline = null;
     }
 
     @Override
-    public void addFilter(FilterCommand command) {
-        pipeline.add(command);
+    public void addFilter(FilterChainLink command) {
+        if(pipeline == null) {
+            pipeline = command;
+        }else{
+            FilterChainLink link = pipeline;
+            while((link.getNext()) != null){
+                link = link.getNext();
+            }
+            link.setNext(command);
+        }
+        print();
     }
 
     @Override
-    public void addFilter(FilterCommand command, int index) {
-        pipeline.add(index, command);
+    public void addFilter(FilterChainLink command, int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("invalid index");
+        }
+        if (index == 0) {
+            command.setNext(pipeline);
+            pipeline = command;
+            return;
+        }
+
+        FilterChainLink current = pipeline;
+        for (int i = 0; i < index - 1; i++) {
+            if (current == null) {
+                throw new IndexOutOfBoundsException("invalid index");
+            }
+            current = current.getNext();
+        }
+
+        command.setNext(current.getNext());
+        current.setNext(command);
+
+        print();
     }
 
     @Override
     public void remove(int index) {
-        pipeline.remove(index);
-    }
-    
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("invalid index");
+        }
 
-    @Override
-    public List<FilterCommand> getPipeline() {
-        return new ArrayList<>(pipeline);
+        if (index == 0) {
+            pipeline = pipeline.getNext();
+            return;
+        }
+        FilterChainLink current = pipeline;
+        for (int i = 0; i < index - 1; i++) {
+            if (current == null || current.getNext() == null) {
+                throw new IndexOutOfBoundsException("invalid index");
+            }
+            current = current.getNext();
+        }
+
+        if (current.getNext() != null) {
+            current.setNext(current.getNext().getNext());
+        }
+    }
+
+
+    //utile per debug
+    private void print(){
+        System.out.println("LIST: ");
+        for(FilterChainLink link = pipeline; link != null; link = link.getNext()){
+            System.out.println(link);
+        }
     }
 }

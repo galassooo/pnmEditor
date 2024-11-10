@@ -17,26 +17,32 @@ public class AboutModel implements IAboutModel{
 
     private AboutModel() {}
 
+    @Override
     public void setDeveloper(String developer) {
         this.developer = developer;
     }
 
+    @Override
     public void setVersion(String version) {
         this.version = version;
     }
 
+    @Override
     public void setDate(String date) {
         this.date = date;
     }
 
+    @Override
     public String getDeveloper() {
         return developer;
     }
 
+    @Override
     public String getVersion() {
         return version;
     }
 
+    @Override
     public String getDate() {
         return date;
     }

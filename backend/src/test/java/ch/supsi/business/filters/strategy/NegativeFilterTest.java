@@ -1,12 +1,7 @@
 package ch.supsi.business.filters.strategy;
 
 
-import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.filter.command.NegativeCommand;
-import ch.supsi.business.strategy.SingleChannel;
-import ch.supsi.business.strategy.SingleBit;
-import ch.supsi.business.strategy.ThreeChannel;
+import ch.supsi.business.filter.chain.NegativeCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

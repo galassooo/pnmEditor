@@ -7,11 +7,6 @@ import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.view.filter.FilterUpdateListener;
 import org.supsi.view.filter.IFilterEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The FilterController class serves as the controller in the MVC architecture, managing

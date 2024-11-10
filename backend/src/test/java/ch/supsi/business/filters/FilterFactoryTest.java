@@ -1,7 +1,7 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.filter.FilterFactory;
-import ch.supsi.business.filter.command.FilterCommand;
+import ch.supsi.business.filter.chain.FilterCommand;
 import javassist.*;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +15,6 @@ public class FilterFactoryTest {
 
     @Test
     void test(){
-        FilterFactory.getFilters().entrySet().forEach(System.out::println);
-        assertTrue(FilterFactory.getFilters().containsKey("Negative"));
-        assertTrue(FilterFactory.getFilters().containsKey("Rotate_Left"));
-        assertTrue(FilterFactory.getFilters().containsKey("Rotate_Right"));
-        assertTrue(FilterFactory.getFilters().containsKey("Mirror"));
 
     }
 

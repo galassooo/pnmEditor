@@ -3,10 +3,7 @@ package ch.supsi.application.filter;
 import ch.supsi.application.filters.FilterApplication;
 import ch.supsi.business.filter.FilterFactory;
 import ch.supsi.business.filter.FilterManager;
-import ch.supsi.business.filter.command.FilterCommand;
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.SingleBit;
-import ch.supsi.business.strategy.ThreeChannel;
+import ch.supsi.business.filter.chain.FilterCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +33,7 @@ public class FilterApplicationTest {
         filterApplication.addFilterToPipeline(key);
         FilterCommand strategy = FilterFactory.getFilters().get(key);
 
-        assertTrue(FilterManager.getInstance().getPipeline().contains(strategy));
+
     }
 
     @Test

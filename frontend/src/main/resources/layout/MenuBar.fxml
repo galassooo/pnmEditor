@@ -11,7 +11,7 @@
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="%ui_save" onAction="#save" disable="true"/>
             <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" text="%ui_save_as" onAction="#saveAs" disable="true" />
-            <MenuItem mnemonicParsing="false" text="%ui_export" onAction="#export" disable="true" />
+            <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" text="%ui_export" onAction="#export" disable="true" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="%ui_close" onAction="#close"/>
         </items>

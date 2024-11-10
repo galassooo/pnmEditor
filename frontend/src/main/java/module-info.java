@@ -4,6 +4,5 @@ open module frontend {
     requires javafx.graphics;
     requires java.prefs;
     requires backend;
-
     requires spring.jcl;
 }

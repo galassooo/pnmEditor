@@ -1,6 +1,8 @@
 package ch.supsi.application.image;
 
 import ch.supsi.business.image.ImageBusiness;
+import ch.supsi.business.state.BusinessEditorState;
+import ch.supsi.application.state.EditorStateManager;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.List;
 public class ImageApplication {
 
     private static ImageApplication myself;
+    private final EditorStateManager stateManager = BusinessEditorState.getInstance();
 
     public static ImageApplication getInstance(){
         if(myself == null){
@@ -23,6 +26,9 @@ public class ImageApplication {
 
     public ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         currentImage =  ImageBusiness.read(path);
+
+        stateManager.onImageLoaded();
+
         return currentImage;
     }
 

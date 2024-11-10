@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
         permits PPMDataAccess, PGMDataAccess {
 
-    private int maxValue;
+    private int maxValue = 255; //default
 
     private void readMaxValue(InputStream is) throws IOException {
         String line = readLine(is);

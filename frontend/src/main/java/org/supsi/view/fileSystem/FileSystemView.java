@@ -11,6 +11,7 @@ public class FileSystemView implements IFileSystemView {
 
     private final Stage root;
     private final IImageModel model = ImageModel.getInstance();
+    private String extension;
 
     public FileSystemView(Stage root) {
         if (root == null) {
@@ -32,10 +33,15 @@ public class FileSystemView implements IFileSystemView {
 
         fileChooser.setTitle("Save File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setInitialFileName(model.getImageName());
+        fileChooser.setInitialFileName(extension == null ? model.getImageName() : model.getImageName().replaceAll("\\.[^.]+$", "." + extension));
 
         return fileChooser.showSaveDialog(root);
 
+    }
+
+    @Override
+    public void setFileExtension(String fileExtension) {
+        extension = fileExtension;
     }
 
 }

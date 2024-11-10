@@ -41,7 +41,8 @@ public class ImageBuilder {
         }
 
         if(imageAdapter!= null){
-            return imageAdapter.rawToArgb(new ImageBusiness(pixels, filePath, magicNumber));
+            long[][] adaptedPixels = imageAdapter.rawToArgb(pixels);
+            return new ImageBusiness(adaptedPixels, filePath, magicNumber);
         }
         return new ImageBusiness(pixels, filePath, magicNumber);
     }

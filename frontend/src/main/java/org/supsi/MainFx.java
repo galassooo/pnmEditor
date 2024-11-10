@@ -24,6 +24,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.supsi.view.image.ExportMenuItem;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -80,7 +82,8 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             Menu menu = loader.load();
-
+            ExportMenuItem exportMenuItem = loader.getController();
+            imageController.setExportEvent(exportMenuItem);
             int indexBeforeHelp = menuBar.getMenus().size();
             menuBar.getMenus().add(indexBeforeHelp, menu);
 

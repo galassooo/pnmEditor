@@ -51,4 +51,8 @@ public class ImageModel implements IImageModel{
         return backendController.getAllSupportedExtension();
     }
 
+    @Override
+    public void export(String extension, String path) throws IOException, IllegalAccessException {
+        backendController.export(extension, path);
+    }
 }

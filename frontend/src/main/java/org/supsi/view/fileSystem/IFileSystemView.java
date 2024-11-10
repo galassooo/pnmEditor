@@ -7,4 +7,6 @@ public interface IFileSystemView {
     File askForFile();
 
     File askForDirectory();
+
+    void setFileExtension(String fileExtension);
 }

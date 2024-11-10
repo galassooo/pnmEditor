@@ -14,9 +14,9 @@ public interface ImageBusinessInterface {
     String getMagicNumber();
 
 
+    /* writable image */ //-> crea nuova interface
     ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException;
-
-    /* modifiable image */ //-> crea nuova interface
+    ImageBusinessInterface export(String extension, String path) throws IOException, IllegalAccessException;
     void setPixels(long[][] rotatedPixels);
 }
 

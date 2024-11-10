@@ -11,4 +11,5 @@ public interface IImageModel {
     String getImageName();
     long[][] getImagePixels();
     List<String> getSupportedExtensions();
+    void export(String extension, String path) throws IOException, IllegalAccessException;
 }

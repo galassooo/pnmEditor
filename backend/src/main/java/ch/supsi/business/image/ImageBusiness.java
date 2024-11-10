@@ -49,14 +49,19 @@ public class ImageBusiness implements ImageBusinessInterface {
         if(path!= null)
             filePath = !filePath.equals(path) ? path : filePath;
         return dac.write(this);
-
     }
 
     public ImageBusinessInterface export(String extension, String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);
-        if(path!= null)
-            filePath = !filePath.equals(path) ? path : filePath;
-        return dac.write(this);
+        String magicNumber = DataAccessFactory.getDefaultMagicNumberFromExtension(extension);
+
+        ImageBusinessInterface exportedImage = new ImageBuilder()
+                .withFilePath(!filePath.equals(path) ? path : filePath)
+                .withMagicNumber(magicNumber)
+                .withPixels(argbPixels)
+                .build();
+
+        return dac.write(exportedImage);
     }
 
     public static ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {

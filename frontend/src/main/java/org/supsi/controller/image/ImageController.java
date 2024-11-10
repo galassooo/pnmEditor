@@ -10,12 +10,14 @@ import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.view.fileSystem.FileSystemView;
 import org.supsi.view.fileSystem.IFileSystemView;
+import org.supsi.view.image.ExportEventListener;
+import org.supsi.view.image.IExportEvent;
 import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
-public class ImageController implements  IImageController {
+public class ImageController implements  IImageController, ExportEventListener {
 
     private IImageView mainImageView;
 
@@ -42,6 +44,7 @@ public class ImageController implements  IImageController {
                 mainImageView.update();
             }
         });
+
     }
 
     @Override
@@ -85,6 +88,13 @@ public class ImageController implements  IImageController {
         loggerModel.addInfo("ui_image_saved");
     }
 
+    //terribile, ma sono obbligata a farlo in quanto il menu export è
+    //parte dell'interfaccia di base dell'applicazione e quindi caricata dal main,
+    @Override
+    public void setExportEvent(IExportEvent eventGenerator) {
+        eventGenerator.registerListener(this);
+    }
+
     @Override
     public void setImage(IImageView image) {
         this.mainImageView = image;
@@ -93,5 +103,23 @@ public class ImageController implements  IImageController {
     @Override
     public void setStage(Stage stage){
         this.root = stage;
+    }
+
+    @Override
+    public void onExportRequested(String extension) {
+        IFileSystemView fsPopUp = new FileSystemView(root);
+        fsPopUp.setFileExtension(extension);
+        File chosen = fsPopUp.askForDirectory();
+
+
+        if(chosen == null){ //popup closed
+            return;
+        }
+        try {
+            model.export(extension, chosen.getPath());
+        }catch(Exception e ){
+            errorController.showError(e.getMessage());
+        }
+        loggerModel.addInfo("ui_image_exported");
     }
 }

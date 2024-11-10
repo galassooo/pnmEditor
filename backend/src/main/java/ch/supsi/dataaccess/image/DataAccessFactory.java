@@ -95,4 +95,13 @@ public class DataAccessFactory {
     public static List<String> getSupportedExtensions() {
         return ciaone.stream().map(e -> e.extension).toList();
     }
+
+    public static String getDefaultMagicNumberFromExtension(String extension) {
+        for(DataAccessComponent component : ciaone) {
+            if(component.extension.equals(extension)) {
+                return component.magicNumber[0];
+            }
+        }
+        return null;
+    }
 }

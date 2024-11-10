@@ -16,7 +16,7 @@ public class ImageAdapter implements ImageAdapterInterface{
     }
 
     @Override
-    public ImageBusinessInterface rawToArgb(ImageBusinessInterface rawImage){
+    public long[][] rawToArgb(long[][] rawImage){
         var function = new Function<Long, Long>() {
             @Override
             public Long apply(Long aLong) {
@@ -27,7 +27,7 @@ public class ImageAdapter implements ImageAdapterInterface{
     }
 
     @Override
-    public ImageBusinessInterface argbToRaw(ImageBusinessInterface rawImage){
+    public long[][] argbToRaw(long[][] rawImage){
         var function = new Function<Long, Long>() {
             @Override
             public Long apply(Long aLong) {
@@ -37,23 +37,22 @@ public class ImageAdapter implements ImageAdapterInterface{
         return process(rawImage, function);
     }
 
-    private ImageBusinessInterface process(ImageBusinessInterface rawImage, Function<Long, Long> function){
-        if(rawImage.getPixels() == null)
-            return rawImage;
-        int height = rawImage.getPixels().length;
+    private long[][] process(long[][] pixels, Function<Long, Long> function){
+        if(pixels == null)
+            return new long[0][];
+        int height = pixels.length;
         if (height == 0) {
-            return rawImage;
+            return new long[0][];
         }
-        int width = rawImage.getPixels()[0].length;
+        int width = pixels[0].length;
 
         long[][] argbMatrix = new long[height][width];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                argbMatrix[y][x] = function.apply(rawImage.getPixels()[y][x]);
+                argbMatrix[y][x] = function.apply(pixels[y][x]);
             }
         }
-        rawImage.setPixels(argbMatrix);
-        return rawImage;
+        return argbMatrix;
     }
 }

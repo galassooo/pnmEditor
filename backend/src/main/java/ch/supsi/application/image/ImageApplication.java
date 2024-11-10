@@ -33,11 +33,10 @@ public class ImageApplication {
         return currentImage;
     }
 
-    public ImageBusinessInterface persist(String path) throws IOException, IllegalAccessException {
+    public void persist(String path) throws IOException, IllegalAccessException {
         stateManager.onLoading();
-        currentImage =  currentImage.persist(path);
+        currentImage.persist(path);
         stateManager.onImageLoaded();
-        return currentImage;
     }
     public List<String> getAllSupportedExtension(){
         return DataAccessFactory.getSupportedExtensions();
@@ -58,4 +57,9 @@ public class ImageApplication {
     public ImageBusinessInterface getCurrentImage() {
         return currentImage;
     }
+
+    public void export(String extension, String path) throws IOException, IllegalAccessException {
+        currentImage.export(extension, path);
+    }
+
 }

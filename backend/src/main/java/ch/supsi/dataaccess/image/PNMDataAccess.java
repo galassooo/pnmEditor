@@ -99,7 +99,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
      * @throws IOException if there's an error writing to the file
      */
     private void writeHeader(ImageBusinessInterface image, OutputStream os) throws IOException {
-        os.write((format + "\n" + image.getWidth() + " " + image.getHeight() + "\n").getBytes());
+        os.write((image.getMagicNumber() + "\n" + image.getWidth() + " " + image.getHeight() + "\n").getBytes());
 
     }
 
@@ -127,7 +127,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
             // Prepare to write pixel data
             ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());
 
-            long[][] pixels = adapter.argbToRaw(image).getPixels();
+            long[][] pixels = adapter.argbToRaw(image.getPixels());
 
             ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 

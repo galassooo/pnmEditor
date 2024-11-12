@@ -27,9 +27,14 @@ public class ImageApplication {
 
     public ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {
         stateManager.onLoading();
-        currentImage =  ImageBusiness.read(path);
-        stateManager.onImageLoaded();
-
+        try {
+            currentImage = ImageBusiness.read(path);
+            stateManager.onImageLoaded();
+        }catch (IllegalAccessException | IOException e){
+            if(currentImage == null) stateManager.onLoadingError(); //first try caricamento
+            else stateManager.onImageLoaded(); //immagine caricata ma seconda apertura fallita
+            throw e; //re-throw
+        }
         return currentImage;
     }
 

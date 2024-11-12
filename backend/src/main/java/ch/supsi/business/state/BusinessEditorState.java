@@ -47,18 +47,24 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
     }
 
     @Override
-    public boolean hasUnsavedChanges() {
-        return currentState.hasUnsavedChanges();
-    }
-
-    @Override
     public boolean isRefreshRequired() {
         return currentState.isRefreshRequired();
     }
 
     @Override
+    public boolean areChangesPending() {
+        return currentState.areChangesPending();
+    }
+
+    @Override
     public void onLoading() {
         currentState = new LoadingState();
+        listeners.forEach(StateChangeListener::onStateChange);
+    }
+
+    @Override
+    public void onLoadingError() {
+        currentState = new NoImageState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
@@ -76,12 +82,12 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
 
     @Override
     public void onFilterProcessed() {
-        currentState = new ImageLoadedState();
+        currentState = new EditedImage();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
     @Override
-    public void onFilterRemoved() {
+    public void onFiltersRemoved() {
         currentState = new ImageLoadedState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
@@ -96,44 +102,49 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         listeners.remove(listener);
     }
 
-
-    static class NoImageState implements EditorState {
+    static abstract class DefaultState implements EditorState {
         @Override public boolean canApplyFilters() { return false; }
         @Override public boolean canSave() { return false; }
         @Override public boolean canSaveAs() { return false; }
         @Override public boolean canAddFilter() { return false; }
         @Override public boolean canExport() {return false;}
-        @Override public boolean hasUnsavedChanges() { return false; }
         @Override public boolean isRefreshRequired() { return false; }
+        @Override public boolean areChangesPending() { return false; }
     }
 
-    static class ImageLoadedState implements EditorState {
+    static class NoImageState extends DefaultState {
+
+    }
+
+    static class ImageLoadedState extends DefaultState {
         @Override public boolean canApplyFilters() { return true; }
         @Override public boolean canSave() { return true; }
         @Override public boolean canSaveAs() { return true; }
         @Override public boolean canAddFilter() { return true; }
         @Override public boolean canExport() { return true; }
-        @Override public boolean hasUnsavedChanges() { return false; }
         @Override public boolean isRefreshRequired() { return true; }
     }
 
-    static class FilterPending implements EditorState {
+    static class FilterPending extends DefaultState {
         @Override public boolean canApplyFilters() { return true; }
         @Override public boolean canSave() { return true; }
         @Override public boolean canSaveAs() { return true; }
         @Override public boolean canAddFilter() { return true; }
         @Override public boolean canExport() { return true; }
-        @Override public boolean hasUnsavedChanges() { return true; }
-        @Override public boolean isRefreshRequired() { return false; }
+        @Override public boolean areChangesPending() { return true; }
     }
 
-    static class LoadingState implements EditorState {
-        @Override public boolean canApplyFilters() { return false; }
-        @Override public boolean canSave() { return false; }
-        @Override public boolean canSaveAs() { return false; }
-        @Override public boolean canAddFilter() { return false; }
-        @Override public boolean canExport() { return false; }
-        @Override public boolean hasUnsavedChanges() { return true; }
-        @Override public boolean isRefreshRequired() { return false; }
+    static class LoadingState extends DefaultState {
+        @Override public boolean areChangesPending() { return true; }
+    }
+
+    static class EditedImage extends DefaultState {
+        @Override public boolean canApplyFilters() { return true; }
+        @Override public boolean canSave() { return true; }
+        @Override public boolean canSaveAs() { return true; }
+        @Override public boolean canAddFilter() { return true; }
+        @Override public boolean canExport() {return true;}
+        @Override public boolean isRefreshRequired() { return true; }
+        @Override public boolean areChangesPending() { return true; }
     }
 }

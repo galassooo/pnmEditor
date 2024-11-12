@@ -46,6 +46,9 @@ public class FilterApplication {
         stateManager.onFilterAdded();
     }
     public String remove(int index){
+        if(model.getSize() == 1){
+            stateManager.onFiltersRemoved();
+        }
         return model.remove(index);
     }
 }

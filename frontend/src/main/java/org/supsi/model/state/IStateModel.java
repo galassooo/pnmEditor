@@ -7,6 +7,6 @@ public interface IStateModel {
     ReadOnlyBooleanProperty canSaveAsProperty();
     ReadOnlyBooleanProperty canExportProperty();
     ReadOnlyBooleanProperty canApplyFiltersProperty();
-    ReadOnlyBooleanProperty canAddFilterProperty();
     ReadOnlyBooleanProperty refreshRequiredProperty();
+    ReadOnlyBooleanProperty areChangesPending();
 }

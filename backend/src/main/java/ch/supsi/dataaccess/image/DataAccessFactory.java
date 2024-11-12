@@ -16,7 +16,7 @@ public class DataAccessFactory {
 
 
     @Register
-    private static List<DataAccessComponent> ciaone;
+    private static List<DataAccessComponent> dataAccessComponents;
 
     //obtain an instance by calling getInstance static method
     private static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
@@ -26,6 +26,7 @@ public class DataAccessFactory {
             if (!java.lang.reflect.Modifier.isPublic(getInstanceMethod.getModifiers())) {
                 getInstanceMethod.setAccessible(true);
             }
+
             return getInstanceMethod.invoke(null);
 
         } catch (NoSuchMethodException | IllegalAccessException ignored) {
@@ -75,7 +76,7 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromMagicNumber(String magicNumber) {
-        for(DataAccessComponent component : ciaone) {
+        for(DataAccessComponent component : dataAccessComponents) {
             if(Arrays.asList(component.magicNumber).contains(magicNumber)) {
                 return component.clazz;
             }
@@ -84,7 +85,7 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromExtension(String extension) {
-        for(DataAccessComponent component : ciaone) {
+        for(DataAccessComponent component : dataAccessComponents) {
             if(component.extension.equals(extension)) {
                 return component.clazz;
             }
@@ -93,11 +94,11 @@ public class DataAccessFactory {
     }
 
     public static List<String> getSupportedExtensions() {
-        return ciaone.stream().map(e -> e.extension).toList();
+        return dataAccessComponents.stream().map(e -> e.extension).toList();
     }
 
     public static String getDefaultMagicNumberFromExtension(String extension) {
-        for(DataAccessComponent component : ciaone) {
+        for(DataAccessComponent component : dataAccessComponents) {
             if(component.extension.equals(extension)) {
                 return component.magicNumber[0];
             }

@@ -16,7 +16,6 @@
         <maven.build.timestamp>${maven.build.timestamp}</maven.build.timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss</maven.build.timestamp.format>
         <javafx.module.path>${project.basedir}/target/dependency</javafx.module.path>
-
     </properties>
 
 

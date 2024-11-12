@@ -5,8 +5,10 @@ import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.filter.chain.FilterChainLink;
 
 public class FilterManager implements FilterPipelineInterface {
+
     private static FilterManager instance;
     private FilterChainLink pipeline;
+    private int size = 0;
 
     public static FilterManager getInstance() {
         if(instance == null) {
@@ -31,13 +33,13 @@ public class FilterManager implements FilterPipelineInterface {
         if(pipeline == null) {
             pipeline = command;
         }else{
+            size++;
             FilterChainLink link = pipeline;
             while((link.getNext()) != null){
                 link = link.getNext();
             }
             link.setNext(command);
         }
-        print();
     }
 
     @Override
@@ -48,6 +50,7 @@ public class FilterManager implements FilterPipelineInterface {
         if (index == 0) {
             command.setNext(pipeline);
             pipeline = command;
+            size++;
             return;
         }
 
@@ -58,11 +61,9 @@ public class FilterManager implements FilterPipelineInterface {
             }
             current = current.getNext();
         }
-
+        size++;
         command.setNext(current.getNext());
         current.setNext(command);
-
-        print();
     }
 
     @Override
@@ -71,9 +72,15 @@ public class FilterManager implements FilterPipelineInterface {
             throw new IndexOutOfBoundsException("invalid index");
         }
 
-        if (index == 0) {
+        if(pipeline == null) {
+            return null;
+        }
+
+        if (index == 0 ) {
+            --size;
+            String tmpName = pipeline.getName();
             pipeline = pipeline.getNext();
-            return pipeline.getName();
+            return tmpName;
         }
         FilterChainLink current = pipeline;
         for (int i = 0; i < index - 1; i++) {
@@ -84,9 +91,15 @@ public class FilterManager implements FilterPipelineInterface {
         }
 
         if (current.getNext() != null) {
+            --size;
             current.setNext(current.getNext().getNext());
         }
         return current.getName();
+    }
+
+    @Override
+    public int getSize(){
+        return size;
     }
 
 

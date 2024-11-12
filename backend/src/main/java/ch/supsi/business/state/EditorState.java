@@ -6,6 +6,6 @@ public interface EditorState {
     boolean canSaveAs();
     boolean canAddFilter();
     boolean canExport();
-    boolean hasUnsavedChanges();
     boolean isRefreshRequired();
+    boolean areChangesPending();
 }

@@ -14,6 +14,7 @@ public class StateModel implements StateChangeListener, IStateModel {
     private final SimpleBooleanProperty canApplyFilters = new SimpleBooleanProperty();
     private final SimpleBooleanProperty canAddFilter = new SimpleBooleanProperty();
     private final SimpleBooleanProperty refreshRequired = new SimpleBooleanProperty();
+    private final SimpleBooleanProperty areChangesPending = new SimpleBooleanProperty();
 
     public static StateModel getInstance() {
         if (myself == null) {
@@ -34,6 +35,7 @@ public class StateModel implements StateChangeListener, IStateModel {
         canApplyFilters.set(stateApp.canApplyFilters());
         canAddFilter.set(stateApp.canAddFilter());
         refreshRequired.set(stateApp.isRefreshRequired());
+        areChangesPending.set(stateApp.areChangesPending());
     }
 
     // property getters per il binding
@@ -49,9 +51,12 @@ public class StateModel implements StateChangeListener, IStateModel {
     @Override
     public ReadOnlyBooleanProperty canApplyFiltersProperty() { return canApplyFilters; }
 
-    @Override
-    public ReadOnlyBooleanProperty canAddFilterProperty() { return canAddFilter; }
 
     @Override
     public ReadOnlyBooleanProperty refreshRequiredProperty() { return refreshRequired; }
+
+    @Override
+    public ReadOnlyBooleanProperty areChangesPending() {
+        return areChangesPending;
+    }
 }

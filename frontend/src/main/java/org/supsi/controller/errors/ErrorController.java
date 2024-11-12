@@ -45,7 +45,7 @@ public class ErrorController implements IErrorController {
         } catch (IOException e) {
             loggerModel.addError("ui_failed_to_load_component");
         }
-        loggerModel.addDebug("ui_help_loaded");
+        loggerModel.addDebug("ui_error_loaded");
     }
 
     public void setStage(Stage stage) {

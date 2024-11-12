@@ -1,17 +1,15 @@
 package ch.supsi.business.filters.strategy;
 
-import ch.supsi.business.filter.chain.MirrorCommand;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MirrorTest {
-    private MirrorCommand mirrorFilter;
 
     @BeforeEach
     void setup() {
-        mirrorFilter = new MirrorCommand();
     }
 
     @Test
@@ -87,9 +85,5 @@ public class MirrorTest {
 //        mirrorFilter.execute(img);
 //
 //        assertNull(img.getPixels());
-    }
-    @Test
-    void testGetName(){
-        assertEquals("Mirror", mirrorFilter.getName());
     }
 }

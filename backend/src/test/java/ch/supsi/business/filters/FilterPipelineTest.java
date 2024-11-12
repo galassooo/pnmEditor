@@ -27,7 +27,6 @@ public class FilterPipelineTest {
     /* --------------- pipeline operations --------------- */
     @Test
     void testAdd(){
-        FilterCommand expected = new MirrorCommand();
 
 
 

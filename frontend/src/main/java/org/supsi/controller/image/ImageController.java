@@ -1,5 +1,7 @@
 package org.supsi.controller.image;
 
+import org.supsi.controller.confirmation.ConfirmationController;
+import org.supsi.controller.confirmation.IConfirmationController;
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.controller.errors.IErrorController;
 import org.supsi.model.state.IStateModel;
@@ -25,6 +27,8 @@ public class ImageController implements  IImageController, ExportEventListener {
     private final IErrorController errorController = ErrorController.getInstance();
     private final ILoggerModel loggerModel = LoggerModel.getInstance();
     private final IStateModel stateModel = StateModel.getInstance();
+    private final IConfirmationController confirmationController = ConfirmationController.getInstance();
+
     private static ImageController myself;
 
 
@@ -49,6 +53,12 @@ public class ImageController implements  IImageController, ExportEventListener {
 
     @Override
     public void open() {
+        confirmationController.requestConfirm((event) -> openImage());
+    }
+
+
+    private void openImage(){
+
         IFileSystemView fsPopUp = new FileSystemView(root);
         File chosen = fsPopUp.askForFile();
 
@@ -63,7 +73,6 @@ public class ImageController implements  IImageController, ExportEventListener {
             errorController.showError(e.getMessage());
         }
     }
-
 
 
     @Override

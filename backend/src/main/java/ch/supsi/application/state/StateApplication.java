@@ -45,14 +45,15 @@ public class StateApplication implements EditorState, StateChangeEvent {
         return businessEditorState.canExport();
     }
 
-    @Override
-    public boolean hasUnsavedChanges() {
-        return businessEditorState.hasUnsavedChanges();
-    }
 
     @Override
     public boolean isRefreshRequired() {
         return businessEditorState.isRefreshRequired();
+    }
+
+    @Override
+    public boolean areChangesPending() {
+        return businessEditorState.areChangesPending();
     }
 
     @Override

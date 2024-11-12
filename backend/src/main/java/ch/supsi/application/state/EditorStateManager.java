@@ -6,6 +6,7 @@ public interface EditorStateManager extends EditorState {
     void onImageLoaded();
     void onFilterAdded();
     void onFilterProcessed();
-    void onFilterRemoved();
+    void onFiltersRemoved();
     void onLoading();
+    void onLoadingError();
 }

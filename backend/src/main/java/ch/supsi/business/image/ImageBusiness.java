@@ -25,10 +25,10 @@ public class ImageBusiness implements ImageBusinessInterface {
     // P + valore nei PNM è semplicemente codificato in ascii e non in byte
 
     //VOLUTAMENTE PACKAGE PRIVATE!!!!! -> obbliga a passare dal builder
-    ImageBusiness(long[][] original, String filePath, String magicNumber) {
-        this.argbPixels = original;
-        this.filePath = filePath;
-        this.magicNumber = magicNumber;
+    public ImageBusiness(ImageBuilder builder) {
+        this.argbPixels = builder.getPixels();
+        this.filePath = builder.getFilePath();
+        this.magicNumber = builder.getMagicNumber();
     }
 
     @Override
@@ -55,13 +55,13 @@ public class ImageBusiness implements ImageBusinessInterface {
         ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);
         String magicNumber = DataAccessFactory.getDefaultMagicNumberFromExtension(extension);
 
-        ImageBusinessInterface exportedImage = new ImageBuilder()
+        ImageBuilder exportedImage = new ImageBuilder()
                 .withFilePath(!filePath.equals(path) ? path : filePath)
                 .withMagicNumber(magicNumber)
                 .withPixels(argbPixels)
                 .build();
 
-        return dac.write(exportedImage);
+        return dac.write(new ImageBusiness(exportedImage));
     }
 
     public static ImageBusinessInterface read(String path) throws IOException, IllegalAccessException {

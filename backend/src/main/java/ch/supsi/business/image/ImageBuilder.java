@@ -28,7 +28,7 @@ public class ImageBuilder {
         return this;
     }
 
-    public ImageBusinessInterface build() {
+    public ImageBuilder build() {
         // Validazione
         if (pixels == null) {
             pixels = new long[0][0];
@@ -41,9 +41,21 @@ public class ImageBuilder {
         }
 
         if(imageAdapter!= null){
-            long[][] adaptedPixels = imageAdapter.rawToArgb(pixels);
-            return new ImageBusiness(adaptedPixels, filePath, magicNumber);
+            pixels = imageAdapter.rawToArgb(pixels);
         }
-        return new ImageBusiness(pixels, filePath, magicNumber);
+        return this;
+    }
+
+    //getters, volutamente package - private
+    long[][] getPixels() {
+        return pixels;
+    }
+
+    String getFilePath() {
+        return filePath;
+    }
+
+    String getMagicNumber() {
+        return magicNumber;
     }
 }

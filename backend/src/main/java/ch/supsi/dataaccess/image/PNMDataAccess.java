@@ -83,12 +83,14 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
 
             ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());
 
-            return  new ImageBuilder()
+            ImageBuilder builder = new ImageBuilder()
                     .withPixels(processedMatrix)
                     .withFilePath(path)
                     .withMagicNumber(format)
                     .withImageAdapter(adapter)
                     .build();
+
+            return new ImageBusiness(builder);
         }
     }
 

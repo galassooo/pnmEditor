@@ -1,6 +1,6 @@
 package ch.supsi.business.filters.strategy;
 
-import ch.supsi.business.filter.chain.RotateRightCommand;
+import ch.supsi.business.filter.chain.command.RotateRightCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -19,4 +19,5 @@ module backend {
     exports ch.supsi.application.state;
 
     opens ch.supsi.business.filter.chain to org.reflections;
+    opens ch.supsi.business.filter.chain.command to org.reflections;
 }

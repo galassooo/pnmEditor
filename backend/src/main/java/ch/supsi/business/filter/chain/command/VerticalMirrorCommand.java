@@ -1,10 +1,10 @@
-package ch.supsi.business.filter.chain;
+package ch.supsi.business.filter.chain.command;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class VerticalMirrorCommand extends FilterChainLink {
+public class VerticalMirrorCommand implements FilterCommand {
     @Override
-    public void executeFilter(ImageBusinessInterface img) {
+    public void execute(ImageBusinessInterface img) {
         long[][] pixels = img.getPixels();
 
         // Controllo validità dell'array di pixel

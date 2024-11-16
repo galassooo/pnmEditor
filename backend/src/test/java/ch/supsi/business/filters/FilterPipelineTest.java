@@ -1,7 +1,7 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.filter.FilterManager;
-import ch.supsi.business.filter.chain.*;
+import ch.supsi.business.filter.chain.command.NegativeCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

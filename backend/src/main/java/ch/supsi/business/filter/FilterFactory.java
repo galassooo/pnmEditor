@@ -1,52 +1,47 @@
 package ch.supsi.business.filter;
 
-import ch.supsi.business.filter.chain.FilterChainLink;
-import ch.supsi.business.filter.chain.FilterCommand;
+import ch.supsi.business.filter.chain.command.FilterCommand;
 import ch.supsi.dataaccess.translations.TranslationsDataAccess;
-import com.sun.jdi.ArrayReference;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FilterFactory {
     private static final List<String> filters = new ArrayList<>();
-    private static final Map<String, Constructor<? extends FilterChainLink>> constructors = new HashMap<>();
+    private static final Map<String, FilterCommand> filterInstances = new ConcurrentHashMap<>();
+
     static {
         load();
     }
 
     private static void load() {
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .forPackages("ch.supsi.business.filter.chain")
+                .forPackages("ch.supsi.business.filter.chain.command")
                 .addScanners(Scanners.SubTypes)
                 .setExpandSuperTypes(false));
 
-        Set<Class<? extends FilterChainLink>> classes = reflections.getSubTypesOf(FilterChainLink.class);
+        Set<Class<? extends FilterCommand>> classes = reflections.getSubTypesOf(FilterCommand.class);
 
-        for(var c : classes){
+        for(var c : classes) {
             try {
-                if(Modifier.isAbstract(c.getModifiers())){
+                if(Modifier.isAbstract(c.getModifiers())) {
                     continue;
                 }
 
-                //verify the filter is buildable
-                var constructor = c.getDeclaredConstructor();
-                constructor.setAccessible(true);
+                // Creiamo una singola istanza per ogni tipo di filtro
+                FilterCommand command = c.getDeclaredConstructor().newInstance();
 
-                FilterChainLink command = constructor.newInstance();
-
-                constructors.put(command.getName(), constructor);
-
+                // Verifica delle traduzioni
                 AtomicBoolean process = new AtomicBoolean(true);
                 TranslationsDataAccess tac = TranslationsDataAccess.getInstance();
                 tac.getSupportedLanguageTags().forEach(tag -> {
                     Properties p = tac.getTranslations(Locale.forLanguageTag(tag));
-                    if(p.get(command.getName()) == null){
+                    if(p.get(command.getName()) == null) {
                         System.out.println("\u001B[33m[WARNING] \u001B[0m" +
                                 "filter " + command.getName() +
                                 " should have a translation associated. Update language bundle(" +
@@ -55,8 +50,9 @@ public class FilterFactory {
                     }
                 });
 
-                if(process.get()){
+                if(process.get()) {
                     filters.add(command.getName());
+                    filterInstances.put(command.getName(), command);
                 }
 
             } catch (Exception e) {
@@ -69,18 +65,13 @@ public class FilterFactory {
         return filters;
     }
 
-    //FATTO PER EVITARE IL SINGLETON!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //sono oggetti NON - stateless -> aggiungere due filtri uguali causa dipendenza circolare
-    public static FilterChainLink getFilter(String name){
-        try {
-            return constructors.get(name).newInstance();
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        } //are checked inside the load method
-        return null;
+    public static FilterCommand getFilter(String name) {
+        return filterInstances.get(name);
     }
 
-    public static void reload(){
+    public static void reload() {
+        filters.clear();
+        filterInstances.clear();
         load();
     }
 }

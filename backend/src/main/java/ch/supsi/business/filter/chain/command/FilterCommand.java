@@ -1,4 +1,4 @@
-package ch.supsi.business.filter.chain;
+package ch.supsi.business.filter.chain.command;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 

@@ -1,32 +1,33 @@
 package ch.supsi.business.filter.chain;
 
 import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.business.filter.chain.command.FilterCommand;
 
-public abstract class FilterChainLink implements FilterCommand{
-
+public class FilterChainLink {
+    private final FilterCommand command;
     private FilterChainLink next;
 
+    public FilterChainLink(FilterCommand command) {
+        this.command = command;
+    }
 
-    @Override
-    public  void execute(ImageBusinessInterface image){
-        executeFilter(image);
-        if(next != null){
+    public void execute(ImageBusinessInterface image) {
+        command.execute(image);
+        if (next != null) {
             next.execute(image);
-            next = null;
+            next = null; // Reset dopo l'esecuzione
         }
     }
 
-    public void setNext(FilterChainLink next){
+    public void setNext(FilterChainLink next) {
         this.next = next;
     }
 
-    public FilterChainLink getNext(){
+    public FilterChainLink getNext() {
         return next;
     }
-    public abstract void executeFilter(ImageBusinessInterface image);
-    @Override
-    public abstract String getName();
 
-
-
+    public String getName() {
+        return command.getName();
+    }
 }

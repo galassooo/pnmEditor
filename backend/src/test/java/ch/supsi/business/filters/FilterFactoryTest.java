@@ -1,7 +1,7 @@
 package ch.supsi.business.filters;
 
 import ch.supsi.business.filter.FilterFactory;
-import ch.supsi.business.filter.chain.FilterCommand;
+import ch.supsi.business.filter.chain.command.FilterCommand;
 import javassist.*;
 import org.junit.jupiter.api.Test;
 

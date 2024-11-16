@@ -1,11 +1,11 @@
-package ch.supsi.business.filter.chain;
+package ch.supsi.business.filter.chain.command;
 
 import ch.supsi.application.image.ImageBusinessInterface;
 
-public class RotateLeftCommand extends FilterChainLink {
+public class RotateLeftCommand implements FilterCommand {
 
     @Override
-    public void executeFilter(ImageBusinessInterface image) {
+    public void execute(ImageBusinessInterface image) {
 
             long[][] pixels = image.getPixels();
             if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {

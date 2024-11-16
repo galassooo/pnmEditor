@@ -4,7 +4,7 @@ import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.application.state.EditorStateManager;
 import ch.supsi.business.filter.FilterFactory;
 import ch.supsi.business.filter.FilterManager;
-import ch.supsi.business.filter.chain.FilterChainLink;
+import ch.supsi.business.filter.chain.command.FilterCommand;
 import ch.supsi.business.state.BusinessEditorState;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class FilterApplication {
     }
 
     public void addFilterToPipeline(String filterName){
-        FilterChainLink filter = FilterFactory.getFilter(filterName);
+        FilterCommand filter = FilterFactory.getFilter(filterName);
         model.addFilter(filter);
         stateManager.onFilterAdded();
     }
@@ -41,7 +41,7 @@ public class FilterApplication {
     }
 
     public void add(String filterName, int index){
-        FilterChainLink filter = FilterFactory.getFilter(filterName);
+        FilterCommand filter = FilterFactory.getFilter(filterName);
         model.addFilter(filter, index);
         stateManager.onFilterAdded();
     }

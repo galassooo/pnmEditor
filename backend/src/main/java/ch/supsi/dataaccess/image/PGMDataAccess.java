@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 /**
  Provides functionality to read and write PPM image files in both ASCII (P2) and binary (P5) formats.
  * Implements a Singleton pattern to ensure a single instance is used throughout the application.
- * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats.
+ * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats with maxvalue.
  */
 @ImageAccess(magicNumber = {"P2", "P5"})
 public final class PGMDataAccess extends PNMWithMaxValueDataAccess {

@@ -13,7 +13,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
+/**
+ * Abstract base class for handling PNM (Portable AnyMap) image formats.
+ * This class provides shared functionality for reading and writing PNM images, including headers,
+ * dimensions, and pixel data in both ASCII and binary formats.
+ * <p>
+ * Permits subclasses for specific PNM types (PBM, PGM, PPM).
+ */
 public abstract sealed class PNMDataAccess implements ImageDataAccess
         permits PBMDataAccess, PNMWithMaxValueDataAccess {
 
@@ -24,14 +30,50 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     protected int height;
     private String format;
 
+
+    /**
+     * Processes binary PNM data. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} containing the binary PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
     protected abstract long[] @NotNull [] processBinary(InputStream is) throws IOException;
 
+    /**
+     * Processes ASCII PNM data. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} containing the ASCII PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
     protected abstract long[] @NotNull [] processAscii(InputStream is) throws IOException;
 
+    /**
+     * Writes ASCII pixel data to the output stream. To be implemented by subclasses.
+     *
+     * @param os      the {@link OutputStream} to write to
+     * @param pixels  the 2D array of pixels to write
+     * @param ex      the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
     protected abstract void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
 
+    /**
+     * Writes binary pixel data to the output stream. To be implemented by subclasses.
+     *
+     * @param os      the {@link OutputStream} to write to
+     * @param pixels  the 2D array of pixels to write
+     * @param ex      the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
     protected abstract void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
 
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on the PNM format.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
     protected abstract ConvertStrategy getArgbConvertStrategy();
 
 

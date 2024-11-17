@@ -21,6 +21,10 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Controls image-related operations and manages interactions between the image view and model.
+ * Handles file operations such as opening, saving, and exporting images.
+ */
 public class ImageController implements IImageController {
 
     private static ImageController myself;
@@ -31,7 +35,13 @@ public class ImageController implements IImageController {
     private IImageView mainImageView;
     private Stage root;
 
-
+    /**
+     * Private constructor for the ImageController.
+     * Initializes the required components and sets up listeners for state changes and events:
+     * - Instantiates the image model, error controller, logger, and confirmation controller.
+     * - Registers a listener to refresh the image view when the state model indicates a refresh is required.
+     * - Subscribes to export events to handle image export requests dynamically.
+     */
     private ImageController() {
         model = ImageModel.getInstance();
         errorController = ErrorController.getInstance();
@@ -48,6 +58,11 @@ public class ImageController implements IImageController {
         subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested);
     }
 
+    /**
+     * Retrieves the singleton instance of the controller.
+     *
+     * @return the singleton instance
+     */
     public static ImageController getInstance() {
         if (myself == null) {
             myself = new ImageController();
@@ -98,6 +113,11 @@ public class ImageController implements IImageController {
         this.root = stage;
     }
 
+    /**
+     * Handles export events, allowing the user to save the image in a different format.
+     *
+     * @param event the export request event containing the desired file extension
+     */
     private void onExportRequested(ExportEvent.ExportRequested event) {
         IFileSystemView fsPopUp = new FileSystemView(root);
         fsPopUp.setFileExtension(event.extension());
@@ -115,6 +135,9 @@ public class ImageController implements IImageController {
         loggerModel.addInfo("ui_image_exported");
     }
 
+    /**
+     * Opens an image file selected by the user and loads it into the model.
+     */
     private void openImage() {
 
         IFileSystemView fsPopUp = new FileSystemView(root);

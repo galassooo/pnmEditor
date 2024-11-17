@@ -13,12 +13,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.function.Consumer;
 
+/**
+ * Controller class for managing confirmation dialogs.
+ * Handles user confirmation requests when changes are pending.
+ */
 public class ConfirmationController implements IConfirmationController {
 
     private static ConfirmationController instance;
     private IConfirmPopup view;
     private boolean changesPending = false;
 
+    /**
+     * Protected constructor to ensure singleton pattern.
+     * Sets up listeners for state changes and initializes the confirmation popup view.
+     */
     protected ConfirmationController() {
 
         IStateModel stateModel = StateModel.getInstance();
@@ -43,8 +51,9 @@ public class ConfirmationController implements IConfirmationController {
     }
 
     /**
+     * Returns the singleton instance of the {@link ConfirmationController}.
      *
-     * @return an instance of this class
+     * @return the singleton instance
      */
     public static ConfirmationController getInstance() {
         if (instance == null) {
@@ -54,7 +63,7 @@ public class ConfirmationController implements IConfirmationController {
     }
 
     /**
-     * handle exit request
+     * {@inheritDoc}
      */
     @Override
     public void requestConfirm(Consumer<?> onConfirm) {

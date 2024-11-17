@@ -11,6 +11,11 @@ import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import java.net.URL;
 
+
+/**
+ * Controller responsible for handling error messages and displaying them to the user through a popup view.
+ * Uses the {@link IErrorModel} to manage error data and the {@link IView} interface to render the popup.
+ */
 public class ErrorController implements IErrorController {
 
     private static ErrorController mySelf;
@@ -18,7 +23,10 @@ public class ErrorController implements IErrorController {
     private final ILoggerModel loggerModel;
     private IView<IErrorModel> errorPopUp;
 
-
+    /**
+     * Private constructor to implement the Singleton pattern.
+     * Loads the error popup view and sets its model.
+     */
     private ErrorController() {
         model  = ErrorModel.getInstance();
         loggerModel = LoggerModel.getInstance();
@@ -41,6 +49,11 @@ public class ErrorController implements IErrorController {
         loggerModel.addDebug("ui_error_loaded");
     }
 
+    /**
+     * Retrieves the singleton instance of the {@code ErrorController}.
+     *
+     * @return The singleton instance.
+     */
     public static ErrorController getInstance() {
         if (mySelf == null) {
             mySelf = new ErrorController();
@@ -48,6 +61,10 @@ public class ErrorController implements IErrorController {
         return mySelf;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param message The error message to be shown.
+     */
     @Override
     public void showError(String message){
         loggerModel.addError(message);

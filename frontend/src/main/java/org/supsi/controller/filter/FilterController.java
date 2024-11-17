@@ -10,20 +10,7 @@ import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 
 /**
- * The FilterController class serves as the controller in the MVC architecture, managing
- * the interaction between the FilterModel and the view (FilterListView).
- * It handles filter actions and updates to synchronize the model and view.
- *<p>
- * Main responsibilities of FilterController include:
- *<p> - Executing filter transformations, such as rotation, mirroring, and inversion.
- *<p> - Observing and reacting to changes in the filter list through the FilterUpdateListener
- *   interface, allowing drag-and-drop or copy-paste operations to update the model.
- *<p> - Registering the view to listen for filter update events, maintaining synchronization
- *   between the UI and the model.
- * <p>
- * This class implements a singleton pattern, ensuring only one instance of the controller
- * is created. Additionally, it follows the observer pattern to notify the model and view
- * of any updates, enhancing modularity and separation of concerns.
+ * Controller class responsible for managing filters and handling filter-related events.
  */
 public class FilterController {
 
@@ -31,7 +18,9 @@ public class FilterController {
     private final IFilterModel model;
     private final ILoggerModel loggerModel;
 
-
+    /**
+     * Constructs the controller and subscribes to filter-related events.
+     */
     protected FilterController() {
         model = FilterModel.getInstance();
         loggerModel  = LoggerModel.getInstance();
@@ -48,9 +37,9 @@ public class FilterController {
     }
 
     /**
-     * Returns the singleton instance of FilterController.
+     * Returns the singleton instance of this controller.
      *
-     * @return The single instance of FilterController.
+     * @return Singleton instance of {@link FilterController}.
      */
     public static FilterController getInstance(){
         if(myself == null){
@@ -60,10 +49,9 @@ public class FilterController {
     }
 
     /**
-     * Handles the addition of a new filter to the filter list at the top position,
-     * updating the model's filter pipeline.
+     * Handles the event for adding a new filter to the top of the filter list.
      *
-     *
+     * @param event Event containing the filter to be added.
      */
     public void onFilterAdded(FilterEvent.FilterAddRequested event) {
         if(ImageModel.getInstance().getImageName() == null){
@@ -74,19 +62,30 @@ public class FilterController {
     }
 
     /**
-     * Moves a filter within the filter list from one index to another, updating
-     * the model's filter pipeline accordingly.
+     * Handles the event for moving a filter in the filter list.
+     *
+     * @param event Event containing the source and destination indexes.
      */
     public void onFilterMoved(FilterEvent.FilterMoveRequested event) {
         loggerModel.addDebug("ui_filter_moved");
         model.moveFilter(event.fromIndex(), event.toIndex());
     }
 
+    /**
+     * Handles the event for executing all filters in the pipeline.
+     *
+     * @param event Event triggering the execution of filters.
+     */
     public void onFiltersActivated(FilterEvent.FilterExecutionRequested event) {
         loggerModel.addInfo("ui_pipeline_processed");
         model.processFilters();
     }
 
+    /**
+     * Handles the event for removing a filter from the filter list.
+     *
+     * @param event Event containing the index of the filter to be removed.
+     */
     public void onFilterRemoved(FilterEvent.FilterRemoveRequested event) {
         loggerModel.addDebug("ui_filter_removed");
         model.removeFilter(event.index());

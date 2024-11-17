@@ -4,7 +4,11 @@ import org.supsi.controller.confirmation.ConfirmationController;
 import org.supsi.controller.confirmation.IConfirmationController;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-
+/**
+ * The `ExitController` manages the application exit process, ensuring proper user confirmation
+ * before shutting down the application. It uses an instance of {@link ConfirmationController}
+ * to handle confirmation dialogs.
+ */
 public class ExitController implements IExitController{
 
     //*NO* EXTENDS CONFIRMATIONCONTROLLER!!!
@@ -21,6 +25,11 @@ public class ExitController implements IExitController{
         this.confirmationController = ConfirmationController.getInstance();
     }
 
+    /**
+     * Returns the Singleton instance of the {@link ExitController}
+     *
+     * @return The singleton instance.
+     */
     public static ExitController getInstance() {
         if (instance == null) {
             instance = new ExitController();
@@ -28,6 +37,12 @@ public class ExitController implements IExitController{
         return instance;
     }
 
+    /**
+     * Handles the application exit process. Requests user confirmation before closing the stage,
+     * exiting the JavaFX platform, and terminating the JVM process.
+     *
+     * @param stage The primary {@link Stage} of the application to be closed. Can be null if no specific stage is involved.
+     */
     @Override
     public void handleExit(Stage stage) {
         confirmationController.requestConfirm(result -> {

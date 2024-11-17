@@ -16,6 +16,12 @@ import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * The {@code PreferencesController} class manages user preferences within the application.
+ * It provides functionalities for displaying the preferences UI, handling preference changes,
+ * and updating the underlying preferences model. This controller also integrates logging and
+ * error reporting functionalities.
+ */
 public class PreferencesController implements IPreferencesController {
 
     private static PreferencesController mySelf;
@@ -23,7 +29,11 @@ public class PreferencesController implements IPreferencesController {
     private final IPreferencesModel model;
     private final ILoggerModel loggerModel;
 
-
+    /**
+     * Protected constructor to enforce the singleton pattern.
+     * Initializes the preferences model, logger model, event subscriptions, and loads the
+     * preferences popup view.
+     */
     protected PreferencesController() {
         model = PreferencesModel.getInstance();
         loggerModel = LoggerModel.getInstance();
@@ -48,6 +58,11 @@ public class PreferencesController implements IPreferencesController {
         }
     }
 
+    /**
+     * Returns the singleton instance of the {@code PreferencesController}.
+     *
+     * @return the singleton instance of the {@code PreferencesController}.
+     */
     public static PreferencesController getInstance() {
         if (mySelf == null) {
             mySelf = new PreferencesController();
@@ -55,6 +70,9 @@ public class PreferencesController implements IPreferencesController {
         return mySelf;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void showPreferencesPopup(){
         loggerModel.addDebug("ui_start_popup_build");
@@ -64,6 +82,13 @@ public class PreferencesController implements IPreferencesController {
         loggerModel.addDebug("ui_popup_show");
     }
 
+    /**
+     * Handles a preference change event.
+     * Updates the preferences model with the new value and logs the event.
+     * If an error occurs, it is reported to the error controller.
+     *
+     * @param parentEvent the {@code PreferenceChanged} event containing the key and new value of the preference.
+     */
     private void preferenceChange(PreferenceEvent.PreferenceChanged parentEvent) {
         try {
             model.setPreference(parentEvent.event().getKey(), parentEvent.event().getNewValue());

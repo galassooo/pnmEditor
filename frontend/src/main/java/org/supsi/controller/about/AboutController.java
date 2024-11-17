@@ -18,6 +18,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Properties;
 
+/**
+ * Controller for managing the "About" section of the application.
+ * Handles the logic to retrieve build information, initialize the model, and display the "About" view.
+ */
 public class AboutController implements IAboutController{
 
     private static AboutController myself;
@@ -26,6 +30,10 @@ public class AboutController implements IAboutController{
     private final ILoggerModel loggerModel;
     private IView<IAboutModel> view;
 
+    /**
+     * protected constructor to initialize the "About" controller.
+     * Loads the FXML, sets up the model-view relationship, and reads build information.
+     */
     protected AboutController(){
         translationsModel = TranslationModel.getInstance();
         model = AboutModel.getInstance();
@@ -49,6 +57,11 @@ public class AboutController implements IAboutController{
         readBuildInfo();
     }
 
+    /**
+     * Retrieves the singleton instance of the {@link AboutController}.
+     *
+     * @return the instance of AboutController.
+     */
     public static AboutController getInstance(){
         if(myself==null){
             myself=new AboutController();
@@ -56,6 +69,10 @@ public class AboutController implements IAboutController{
         return myself;
     }
 
+    /**
+     * Reads build information from a properties file written by maven and populates the model.
+     * Retrieves build-time, version, and developer information from `build.properties`.
+     */
     private void readBuildInfo() {
         try (InputStream propertiesStream = getClass().getResourceAsStream("/build.properties")) {
             if (propertiesStream != null) {
@@ -94,6 +111,9 @@ public class AboutController implements IAboutController{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void showPopup(){
         loggerModel.addDebug("ui_start_popup_build");

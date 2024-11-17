@@ -3,9 +3,50 @@ package org.supsi.model.event;
 import java.util.*;
 
 /**
- * Manages the subscription and publication of events in the application.
- * Acts as a singleton, implementing both {@link EventPublisher} and {@link EventSubscriber}.
- * Allows components to subscribe to specific event types and publish events to notify subscribers.
+ * Central event management system implementing a type-safe event bus pattern.
+ * This class serves as the core message broker for the application, enabling
+ * loose coupling between components through event-based communication.
+ *
+ * <p>The EventManager follows these key design principles:
+ * <ul>
+ *   <li>Singleton pattern for centralized event management</li>
+ *   <li>Type-safe event handling using generics</li>
+ *   <li>Support for multiple handlers per event type</li>
+ * </ul>
+ *
+ * <p>Implementation Details:
+ * <ul>
+ *   <li>Supports dynamic registration and deregistration of handlers</li>
+ *   <li>Provides separate interfaces for publishing and subscribing</li>
+ *   <li>Implements error handling for event processing</li>
+ * </ul>
+ *
+ * <p>Usage Example:
+ * <pre>{@code
+ * // Getting the event manager instances
+ * EventPublisher publisher = EventManager.getPublisher();
+ * EventSubscriber subscriber = EventManager.getSubscriber();
+ *
+ * // Subscribing to events
+ * subscriber.subscribe(MyEvent.class, event -> {
+ *     // Handle the event
+ * });
+ *
+ * // Publishing events
+ * publisher.publish(new MyEvent());
+ * }</pre>
+ *
+ * <p>Event Processing Flow:
+ * <ol>
+ *   <li>Event is published through the publisher interface</li>
+ *   <li>EventManager identifies all handlers registered for the event type</li>
+ *   <li>Each handler is executed in the order of registration</li>
+ *   <li>Exceptions in handlers are caught and logged without affecting other handlers</li>
+ * </ol>
+ *
+ * @see EventPublisher
+ * @see EventSubscriber
+ * @see EventHandler
  */
 public class EventManager implements EventPublisher, EventSubscriber {
 

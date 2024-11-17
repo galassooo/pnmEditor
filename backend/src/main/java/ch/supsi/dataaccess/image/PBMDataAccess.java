@@ -112,22 +112,6 @@ public final class PBMDataAccess extends PNMDataAccess {
         return rowContent.toString().getBytes();
     }
 
-    private void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
-        List<Future<byte[]>> futures = new ArrayList<>();
-        for (int y = 0; y < pixels.length; y++) {
-            final int row = y;
-            futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
-        }
-
-        for (Future<byte[]> future : futures) {
-            try {
-                os.write(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
         int byteWidth = (width + 7) / 8;
         byte[] rowBuffer = new byte[byteWidth];
@@ -142,11 +126,6 @@ public final class PBMDataAccess extends PNMDataAccess {
         }
 
         return rowBuffer;
-    }
-
-    @FunctionalInterface
-    private interface RowGenerator {
-        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
     }
 }
 

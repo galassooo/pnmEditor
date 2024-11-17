@@ -63,7 +63,7 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
      */
     @Override
     public Optional<String> translate(String key) {
-        return Optional.of(this.translations.getProperty(key));
+        return Optional.ofNullable(this.translations.getProperty(key));
     }
 
     /**

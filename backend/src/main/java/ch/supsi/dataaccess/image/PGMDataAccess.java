@@ -15,14 +15,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+/**
+ Provides functionality to read and write PPM image files in both ASCII (P2) and binary (P5) formats.
+ * Implements a Singleton pattern to ensure a single instance is used throughout the application.
+ * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats.
+ */
 @ImageAccess(magicNumber = {"P2", "P5"})
 public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
 
     private static PGMDataAccess instance;
 
-    private PGMDataAccess() {
-    }
-
+    /**
+     * Retrieves the Singleton instance of {@link PGMDataAccess}.
+     *
+     * @return the Singleton instance
+     */
     public static PGMDataAccess getInstance() {
         if (instance == null) {
             instance = new PGMDataAccess();
@@ -30,6 +37,13 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return instance;
     }
 
+    /**
+     * Reads the binary (P5) PGM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the binary PGM data from
+     * @return a 2D array of pixels where each pixel contains a grayscale value
+     * @throws IOException if an error occurs while reading the binary data
+     */
     protected long[] @NotNull [] readBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
 
@@ -67,6 +81,13 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return pixelMatrix;
     }
 
+    /**
+     * Reads the ASCII (P2) PGM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the ASCII PGM data from
+     * @return a 2D array of pixels where each pixel contains a grayscale value
+     * @throws IOException if an error occurs while reading the ASCII data
+     */
     @Override
     protected long[][] readAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
@@ -87,22 +108,51 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return pixelMatrix;
     }
 
+    /**
+     * Writes binary (P5) PGM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
     @Override
     protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
-        writePixels(os, pixels, executor, this::generateBinaryRowBufferPgm);
+        writePixels(os, pixels, executor, this::generateBinaryRowBuffer);
     }
 
+    /**
+     * Writes ASCII (P2) PGM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
     @Override
     protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
-        writePixels(os, pixels, executor, this::generateAsciiRowBufferPgm);
+        writePixels(os, pixels, executor, this::generateAsciiRowBuffer);
     }
 
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on the maximum pixel value.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
     @Override
     protected ConvertStrategy getArgbConvertStrategy() {
         return new SingleChannel(getMaxValue());
     }
 
-    private byte[] generateBinaryRowBufferPgm(long[][] pixels, int row, int width) {
+    /**
+     * Generates a binary row buffer for PGM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the binary data for the row
+     */
+    private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
         boolean is16bit = getMaxValue() > 255;
         byte[] rowBuffer = new byte[width * (is16bit ? 2 : 1)];
         int index = 0;
@@ -116,7 +166,15 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         return rowBuffer;
     }
 
-    private byte[] generateAsciiRowBufferPgm(long[][] pixels, int row, int width) {
+    /**
+     * Generates an ASCII row buffer for PGM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the ASCII data for the row
+     */
+    private byte[] generateAsciiRowBuffer(long[][] pixels, int row, int width) {
         StringBuilder rowContent = new StringBuilder();
         for (int x = 0; x < width; x++) {
             rowContent.append(pixels[row][x]).append(" ");
@@ -124,26 +182,4 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         rowContent.append("\n");
         return rowContent.toString().getBytes();
     }
-
-    private void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
-        List<Future<byte[]>> futures = new ArrayList<>();
-        for (int y = 0; y < pixels.length; y++) {
-            final int row = y;
-            futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
-        }
-
-        for (Future<byte[]> future : futures) {
-            try {
-                os.write(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @FunctionalInterface
-    private interface RowGenerator {
-        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
-    }
-
 }

@@ -16,21 +16,17 @@ import java.util.*;
  * It uses properties files to load translations and handles locale fallback mechanisms.
  */
 public class TranslationsDataAccess implements TranslationsDataAccessInterface {
-
-    /* Singleton instance */
-    private static TranslationsDataAccess myself;
-
-    /* Path to the file where supported languages are stored */
+    /* where the supported languages are stored */
     private static final String SUPPORTED_LANGUAGES_PROPERTIES = "/supported-languages.properties";
-
-    /* Path where translation labels are stored */
+    /* where the labels are stored */
     private static final String LABELS_PATH = "i18n/labels/";
-
-    /* Format of the files containing the translation labels */
+    /* the format of the files containing the labels */
     private static final String LABELS_FORMAT = ".properties";
 
-    /* Path for frontend UI labels */
     private static final String FRONTEND_PATH = "/i18n/ui_labels";
+
+    /* self reference */
+    public static TranslationsDataAccess myself;
 
     protected TranslationsDataAccess() {
     }
@@ -60,7 +56,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         List<ResourceBundle> bundles = loadFrontendResources(locale);
         if (bundles.isEmpty()) {
             Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
-            bundles = handleMissingResource(locale, fallbackLocale);
+            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
         }
         return bundles.isEmpty() ? Optional.empty() : Optional.of(bundles.get(0));
     }
@@ -91,10 +87,12 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
     public Properties getTranslations(Locale locale) {
         Properties translations = new Properties();
 
-        List<ResourceBundle> bundles = getResourceBundlesForLocale(locale);
+        List<ResourceBundle> bundles = getResourceBundlesForLocale(locale, LABELS_PATH);
+        // It means it failed to load translations for the given locale, fallback to a default one
         if (bundles.isEmpty()) {
             Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
-            bundles = handleMissingResource(locale, fallbackLocale);
+            // This assumes that the pathToResources is valid, and the only thing that's not valid is the locale
+            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
         }
         bundles.forEach((b) -> {
             for (String key : b.keySet()) {
@@ -124,17 +122,16 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         return supportedLanguageTags;
     }
 
-
     /**
      * Retrieves all resource bundles for the specified locale.
      *
      * @param locale the locale to load resource bundles for
      * @return a {@link List} of {@link ResourceBundle} objects for the specified locale
      */
-    private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale) {
+    private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale, String pathToResources) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
 
-        resourceBundles.addAll(loadBackendResources(locale));
+        resourceBundles.addAll(loadBackendResources(locale, pathToResources));
         resourceBundles.addAll(loadFrontendResources(locale));
 
         return resourceBundles;
@@ -146,12 +143,12 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @param locale the locale to load backend resources for
      * @return a {@link List} of {@link ResourceBundle} objects from the backend module
      */
-    private @NotNull List<ResourceBundle> loadBackendResources(Locale locale) {
+    private @NotNull List<ResourceBundle> loadBackendResources(Locale locale, String pathToResources) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
-            Resource[] resources = resolver.getResources(String.format("classpath:%s*%s", TranslationsDataAccess.LABELS_PATH, LABELS_FORMAT));
+            Resource[] resources = resolver.getResources(String.format("classpath:%s*%s", pathToResources, LABELS_FORMAT));
             for (Resource resource : resources) {
                 String filename = resource.getFilename();
                 if (filename != null && filename.contains(String.format("_%s%s", locale, LABELS_FORMAT))) {
@@ -162,7 +159,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                 }
             }
         } catch (IOException e) {
-            System.err.printf("Error while loading file %s for locale %s%n", TranslationsDataAccess.LABELS_PATH, locale);
+            System.err.printf("Error while loading file %s for locale %s%n", pathToResources, locale);
         }
 
         return resourceBundles;
@@ -179,9 +176,9 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         Optional<Module> frontendModule = ModuleLayer.boot().findModule("frontend");
 
         if (frontendModule.isPresent()) {
-            Optional<String> frontendPath = loadFrontendPath();
+            String frontendPath = loadFrontendPath();
 
-            if (frontendPath.isPresent()) {
+            if (frontendPath != null) {
                 String localeCode = locale.toLanguageTag().replace('-', '_');
                 String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
 
@@ -196,7 +193,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                     System.err.printf("Error loading resource %s from the frontend module%n", resourceName);
                 }
             }
-        } else { // JAR
+        } else { //jar
             String localeCode = locale.toLanguageTag().replace('-', '_');
             String resourceName = String.format("%s_%s.properties", FRONTEND_PATH.substring(1), localeCode);
 
@@ -220,22 +217,24 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
     /**
      * Loads the path for frontend labels from the `application.properties` file.
      *
-     * @return an {@link Optional} containing the frontend labels path
+     * @return a {@link String} containing the frontend labels path
      */
-    private Optional<String> loadFrontendPath() {
+    private String loadFrontendPath() {
         try (InputStream is = TranslationsDataAccess.class.getClassLoader().getResourceAsStream("application.properties")) {
             Properties properties = new Properties();
             if (is != null) {
                 properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
-                return Optional.of(properties.getProperty("frontend.labels.path"));
+                return properties.getProperty("frontend.labels.path");
             } else {
                 System.err.println("Application.properties file not found.");
             }
         } catch (IOException e) {
             System.err.println("Error while loading application.properties");
         }
-        return Optional.empty();
+        return null;
     }
+
+
 
     /**
      * Handles loading resources when the specified locale is invalid.
@@ -244,8 +243,9 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @param fallbackLocale the fallback locale to use
      * @return a {@link List} of ResourceBundle objects for the fallback locale
      */
-    private @NotNull List<ResourceBundle> handleMissingResource(@NotNull Locale invalidLocale, @NotNull Locale fallbackLocale) {
-        System.err.printf("Invalid locale: %s. Loading new locale: %s%n", invalidLocale, fallbackLocale);
-        return getResourceBundlesForLocale(fallbackLocale);
+    @SuppressWarnings("all")
+    private @NotNull List<ResourceBundle> handleMissingResource(@NotNull Locale invalidLocale, @NotNull Locale fallbackLocale, String pathToResources) {
+        System.err.printf("Invalid locale: %s. Loading new locale: %s\n", invalidLocale, fallbackLocale);
+        return getResourceBundlesForLocale(fallbackLocale, pathToResources);
     }
 }

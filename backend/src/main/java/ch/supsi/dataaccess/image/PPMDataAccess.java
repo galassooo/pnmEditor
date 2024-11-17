@@ -284,12 +284,4 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
         }
         return rgb;
     }
-
-    /**
-     * Functional interface for generating rows of pixel data.
-     */
-    @FunctionalInterface
-    private interface RowGenerator {
-        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
-    }
 }

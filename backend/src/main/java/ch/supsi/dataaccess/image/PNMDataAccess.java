@@ -6,9 +6,12 @@ import ch.supsi.business.strategy.ConvertStrategy;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 public abstract sealed class PNMDataAccess implements ImageDataAccess
@@ -122,6 +125,23 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     }
 
 
+
+    protected void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
+        List<Future<byte[]>> futures = new ArrayList<>();
+        for (int y = 0; y < pixels.length; y++) {
+            final int row = y;
+            futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
+        }
+
+        for (Future<byte[]> future : futures) {
+            try {
+                os.write(future.get());
+            } catch (InterruptedException | ExecutionException ignored) {
+                //unable to test
+            }
+        }
+    }
+
     /**
      * Reads the header of a generic PNM image.
      *
@@ -162,5 +182,13 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     private void writeHeader(WritableImage image, OutputStream os) throws IOException {
         os.write((image.getMagicNumber() + "\n" + image.getWidth() + " " + image.getHeight() + "\n").getBytes());
 
+    }
+
+    /**
+     * Functional interface for generating rows of pixel data.
+     */
+    @FunctionalInterface
+    protected interface RowGenerator {
+        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
     }
 }

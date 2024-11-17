@@ -26,10 +26,10 @@ public class LoggerController implements ILoggerController{
     }
 
     private void loadProperties() {
-        Object debug = preferences.getPreference("show-debug");
-        Object info =  preferences.getPreference("show-info");
-        Object warning = preferences.getPreference("show-warning");
-        Object error = preferences.getPreference("show-error");
+        Object debug = preferences.getPreference("show-debug").orElse(false);
+        Object info =  preferences.getPreference("show-info").orElse(false);
+        Object warning = preferences.getPreference("show-warning").orElse(false);
+        Object error = preferences.getPreference("show-error").orElse(false);
 
         model.setShowDebug(Boolean.parseBoolean(Objects.toString(debug)));
         model.setShowError(Boolean.parseBoolean(Objects.toString(error)));

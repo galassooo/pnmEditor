@@ -6,6 +6,7 @@ import ch.supsi.dataaccess.preferences.PreferencesDataAccess;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 public class PreferencesBusiness implements PreferencesBusinessInterface {
@@ -38,9 +39,9 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
      * @return the current language of the program
      */
     @Override
-    public String getCurrentLanguage() {
+    public Optional<String> getCurrentLanguage() {
         userPreferences = preferencesDao.getPreferences();
-        return userPreferences.getProperty("language-tag");
+        return Optional.of(userPreferences.getProperty("language-tag"));
     }
 
     /**
@@ -61,13 +62,13 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
      * @return the value associated with the given key
      */
     @Override
-    public Object getPreference(String key) {
+    public Optional<Object> getPreference(String key) {
         this.userPreferences = preferencesDao.getPreferences();
         if (key == null || key.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
-        return userPreferences.get(key);
+        return Optional.of(userPreferences.get(key));
     }
 
     /**

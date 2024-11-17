@@ -63,10 +63,10 @@ public class PreferencesView implements IPreferencesView {
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
 
-        debugCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-debug").toString()));
-        infoCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-info").toString()));
-        errorCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-error").toString()));
-        warningCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-warning").toString()));
+        debugCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-debug").orElse("N/A").toString()));
+        infoCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-info").orElse("N/A").toString()));
+        errorCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-error").orElse("N/A").toString()));
+        warningCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-warning").orElse("N/A").toString()));
 
         saveButton.setOnAction(event -> {
             if(choiceBox.getValue()!=null){

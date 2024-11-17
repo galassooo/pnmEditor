@@ -26,6 +26,7 @@ import org.supsi.view.image.ExportMenuItem;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ResourceBundle;
 
 public class MainFx extends Application {
 
@@ -60,7 +61,7 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            FXMLLoader loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle() );
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             BorderPane root = loader.load();
 
 
@@ -68,7 +69,8 @@ public class MainFx extends Application {
             if (fxmlUrl == null) {
                 return;
             }
-            loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
+            ResourceBundle bundle = translationsModel.getUiBundle();
+            loader = new FXMLLoader(fxmlUrl, bundle);
             MenuBar menuBar = loader.load();
 
             MenuDispatcher dispatcher = loader.getController();

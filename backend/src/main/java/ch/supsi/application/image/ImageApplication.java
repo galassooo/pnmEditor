@@ -8,6 +8,7 @@ import ch.supsi.dataaccess.image.DataAccessFactory;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class ImageApplication {
 
@@ -32,7 +33,7 @@ public class ImageApplication {
             stateManager.onImageLoaded();
         }catch (IllegalAccessException | IOException e){
             if(currentImage == null) stateManager.onLoadingError(); //first try caricamento
-            else stateManager.onImageLoaded(); //immagine caricata ma seconda apertura fallita
+            else stateManager.onImageLoaded(); //prima immagine già caricata ma seconda apertura fallita
             throw e; //re-throw
         }
         return currentImage;
@@ -51,16 +52,16 @@ public class ImageApplication {
      * return the image name in the file system
      * @return the file name or null if no image was loaded
      */
-    public @Nullable  String getImageName(){
-        return currentImage == null ? null : currentImage.getName();
+    public Optional<String> getImageName(){
+        return Optional.of(currentImage.getName()); //nullable
     }
 
-    public long[][] getImagePixels(){
-        return currentImage == null ? null : currentImage.getPixels();
+    public Optional<long[][]> getImagePixels(){
+        return Optional.of(currentImage.getPixels()); //nullable
     }
 
-    public ImageBusinessInterface getCurrentImage() {
-        return currentImage;
+    public Optional<ImageBusinessInterface> getCurrentImage() {
+        return Optional.of(currentImage); //nullable
     }
 
     public void export(String extension, String path) throws IOException, IllegalAccessException {

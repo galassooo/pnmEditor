@@ -30,28 +30,28 @@ public class LoggerModel implements ILoggerModel {
 
     public void addInfo(String info){
         if(showInfo){
-            logs.add(new LogEntry(LogEntry.LogType.INFO, translationsApp.translate(info)));
+            logs.add(new LogEntry(LogEntry.LogType.INFO, translationsApp.translate(info).orElse("N/A")));
         }
 
     }
 
     public void addError(String error){
         if(showError){
-            logs.add(new LogEntry(LogEntry.LogType.ERROR, translationsApp.translate(error)));
+            logs.add(new LogEntry(LogEntry.LogType.ERROR, translationsApp.translate(error).orElse("N/A")));
         }
 
     }
 
     public void addWarning(String warning){
         if(showWarning){
-            logs.add(new LogEntry(LogEntry.LogType.WARNING, translationsApp.translate(warning)));
+            logs.add(new LogEntry(LogEntry.LogType.WARNING, translationsApp.translate(warning).orElse("N/A")));
         }
 
     }
 
     public void addDebug(String debug){
         if(showDebug){
-            logs.add(new LogEntry(LogEntry.LogType.DEBUG, translationsApp.translate(debug)));
+            logs.add(new LogEntry(LogEntry.LogType.DEBUG, translationsApp.translate(debug).orElse("N/A")));
         }
     }
 

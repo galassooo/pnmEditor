@@ -8,6 +8,7 @@ import ch.supsi.business.translations.TranslationBusiness;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TranslationsApplication {
@@ -22,7 +23,7 @@ public class TranslationsApplication {
         PreferencesBusinessInterface preferencesModel = PreferencesBusiness.getInstance();
         this.translationsModel = TranslationBusiness.getInstance();
 
-        String currentLanguage = preferencesModel.getCurrentLanguage();
+        String currentLanguage = preferencesModel.getCurrentLanguage().orElse("N/A");
         this.translationsModel.changeLanguage(currentLanguage);
     }
 
@@ -50,7 +51,7 @@ public class TranslationsApplication {
      * @param key the key associated with a key-value pair representing the translation
      * @return the translation associated with the given key (the value in the key-value pair)
      */
-    public String translate(String key) {
+    public Optional<String> translate(String key) {
         return this.translationsModel.translate(key);
     }
 
@@ -60,7 +61,7 @@ public class TranslationsApplication {
      * @param locale selected locale
      * @return UI resource bundle
      */
-    public ResourceBundle getTranslationBundle(Locale locale) {
+    public Optional<ResourceBundle> getTranslationBundle(Locale locale) {
         return this.translationsModel.getUIResourceBundle(locale);
     }
 }

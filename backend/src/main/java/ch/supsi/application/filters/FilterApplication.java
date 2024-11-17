@@ -49,6 +49,6 @@ public class FilterApplication {
         if(model.getSize() == 1){
             stateManager.onFiltersRemoved();
         }
-        return model.remove(index);
+        return model.remove(index); //not nullable -> se errore lancia ex
     }
 }

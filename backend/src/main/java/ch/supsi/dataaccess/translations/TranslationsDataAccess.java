@@ -225,12 +225,12 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @return a resource bundle containing the UI labels
      */
     @Override
-    public ResourceBundle getUIResourceBundle(Locale locale) {
+    public Optional<ResourceBundle> getUIResourceBundle(Locale locale) {
         List<ResourceBundle> bundles = loadFrontendResources(locale);
         if (bundles.isEmpty()) {
             Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
             bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
         }
-        return bundles.get(0);
+        return bundles.isEmpty() ? Optional.empty() : Optional.of(bundles.get(0));
     }
 }

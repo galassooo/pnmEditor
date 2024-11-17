@@ -46,7 +46,7 @@ public class FilterModel implements IFilterModel{
     }
 
     public void addFilterToPipeline(String filter){
-        filterPipeline.add(TranslationsApplication.getInstance().translate(filter)); //local copy for observers
+        filterPipeline.add(TranslationsApplication.getInstance().translate(filter).orElse("N/A")); //local copy for observers
         application.addFilterToPipeline(filter);
     }
 
@@ -54,7 +54,8 @@ public class FilterModel implements IFilterModel{
         appliedFilters.addAll(filterPipeline);
 
         filterPipeline.clear();
-        application.processFilterPipeline(imgApplication.getCurrentImage());
+        application.processFilterPipeline(imgApplication.getCurrentImage()
+                .orElseThrow(() -> new IllegalStateException("Image not set")));
     }
 
     @Override
@@ -73,7 +74,7 @@ public class FilterModel implements IFilterModel{
         return application.getAllAvailableFilters().stream()
                 .collect(Collectors.toMap(
                         filter -> filter,
-                        translationsApplication::translate
+                        f -> translationsApplication.translate(f).orElse(f+" N/A") //unique translation
                 ));
     }
 

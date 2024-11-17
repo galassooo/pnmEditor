@@ -4,6 +4,7 @@ import ch.supsi.application.preferences.PreferencesApplication;
 
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.Optional;
 
 public class PreferencesModel implements IPreferencesModel{
 
@@ -20,7 +21,7 @@ public class PreferencesModel implements IPreferencesModel{
     protected PreferencesModel(){}
 
 
-    public Object getPreference(String key){
+    public Optional<Object> getPreference(String key){
         return application.getPreference(key);
     }
 

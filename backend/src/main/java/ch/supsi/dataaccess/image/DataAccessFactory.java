@@ -97,12 +97,12 @@ public class DataAccessFactory {
         return dataAccessComponents.stream().map(e -> e.extension).toList();
     }
 
-    public static String getDefaultMagicNumberFromExtension(String extension) {
+    public static Optional<String> getDefaultMagicNumberFromExtension(String extension) {
         for(DataAccessComponent component : dataAccessComponents) {
             if(component.extension.equals(extension)) {
-                return component.magicNumber[0];
+                return Optional.of(component.magicNumber[0]);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

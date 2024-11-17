@@ -53,7 +53,7 @@ public class ImageBusiness implements ImageBusinessInterface {
 
     public ImageBusinessInterface export(String extension, String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);
-        String magicNumber = DataAccessFactory.getDefaultMagicNumberFromExtension(extension);
+        String magicNumber = String.valueOf(DataAccessFactory.getDefaultMagicNumberFromExtension(extension));
 
         ImageBuilder exportedImage = new ImageBuilder()
                 .withFilePath(!filePath.equals(path) ? path : filePath)

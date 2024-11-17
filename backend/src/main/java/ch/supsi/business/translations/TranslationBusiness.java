@@ -4,10 +4,7 @@ import ch.supsi.application.translations.TranslationsBusinessInterface;
 import ch.supsi.dataaccess.translations.TranslationsDataAccess;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class TranslationBusiness implements TranslationsBusinessInterface {
 
@@ -33,17 +30,6 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
             myself = new TranslationBusiness();
         }
         return myself;
-    }
-
-    /**
-     * Checks if a given language (provided in the form of a language tag) is supported
-     *
-     * @param languageTag the language tag associated with the language
-     * @return whether the given language is supported
-     */
-    @Override
-    public boolean isSupportedLanguageTag(String languageTag) {
-        return this.supportedLanguageTags.contains(languageTag);
     }
 
     /**
@@ -76,8 +62,8 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
      * @return the translation associated with the given key (the value in the key-value pair)
      */
     @Override
-    public String translate(String key) {
-        return this.translations.getProperty(key);
+    public Optional<String> translate(String key) {
+        return Optional.of(this.translations.getProperty(key));
     }
     /**
      * Return the UI translation bundle with the given locale
@@ -86,7 +72,7 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
      * @return UI resource bundle
      */
     @Override
-    public ResourceBundle getUIResourceBundle(Locale locale) {
+    public Optional<ResourceBundle> getUIResourceBundle(Locale locale) {
         return this.translationsDao.getUIResourceBundle(locale);
     }
 }

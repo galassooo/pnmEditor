@@ -3,6 +3,7 @@ import ch.supsi.business.preferences.PreferencesBusiness;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 public class PreferencesApplication {
 
@@ -31,7 +32,7 @@ public class PreferencesApplication {
      * @param key the key of the key - value pair of the requested preference
      * @return an object representing the value of the preference
      */
-    public Object getPreference(String key) {
+    public Optional<Object> getPreference(String key) {
         return this.preferencesModel.getPreference(key);
     }
 

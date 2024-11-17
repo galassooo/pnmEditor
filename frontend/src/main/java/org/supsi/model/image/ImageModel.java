@@ -33,12 +33,12 @@ public class ImageModel implements IImageModel{
 
     @Override
     public String getImageName(){
-        return backendController.getImageName();
+        return backendController.getImageName().orElse("N/A");
     }
 
     @Override
     public long[][] getImagePixels() {
-        return backendController.getImagePixels();
+        return backendController.getImagePixels().orElse(new long[0][]);
     }
 
     @Override

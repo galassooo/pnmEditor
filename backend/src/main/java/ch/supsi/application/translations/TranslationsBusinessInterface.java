@@ -2,6 +2,7 @@ package ch.supsi.application.translations;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -9,13 +10,11 @@ import java.util.ResourceBundle;
  */
 public interface TranslationsBusinessInterface {
 
-    boolean isSupportedLanguageTag(String languageTag);
-
     List<String> getSupportedLanguages();
 
     boolean changeLanguage(String languageTag);
 
-    String translate(String key);
-    ResourceBundle getUIResourceBundle(Locale locale);
+    Optional<String> translate(String key);
+    Optional<ResourceBundle> getUIResourceBundle(Locale locale);
 
 }

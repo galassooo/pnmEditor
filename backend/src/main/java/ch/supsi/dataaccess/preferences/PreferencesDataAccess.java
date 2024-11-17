@@ -178,7 +178,7 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
             // return the properties object with the loaded preferences
             return userPreferences;
         } catch (IOException e) {
-            return null;
+            return new Properties();
         }
     }
 

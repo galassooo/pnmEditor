@@ -48,7 +48,9 @@ public class TranslationModel implements ITranslationsModel {
      */
     public ResourceBundle getUiBundle() throws IOException {
         if (uiBundle == null) { //load only once
-            uiBundle = translationsController.getTranslationBundle(getLocale());
+            uiBundle = translationsController.getTranslationBundle(getLocale()).orElseThrow(
+                    () -> new IOException("Translation bundle not found")
+            );
         }
         return uiBundle;
     }
@@ -61,7 +63,7 @@ public class TranslationModel implements ITranslationsModel {
     @Override
     public Locale getLocale() {
         if (locale == null) { //load only once
-            locale = Locale.forLanguageTag(preferencesController.getPreference("language-tag").toString());
+            locale = Locale.forLanguageTag(preferencesController.getPreference("language-tag").orElse("N/A").toString());
         }
         return locale;
     }
@@ -74,7 +76,7 @@ public class TranslationModel implements ITranslationsModel {
      */
     @Override
     public String translate(String s) {
-        return translationsController.translate(s);
+        return translationsController.translate(s).orElse("Translation not found");
     }
 
 

@@ -25,6 +25,7 @@ public interface TranslationsBusinessInterface {
      * @param languageTag the language tag (e.g., "en", "it") to set as the current language
      * @return {@code true} if the language was successfully changed, {@code false} otherwise
      */
+    @SuppressWarnings("all") //unused return type
     boolean changeLanguage(String languageTag);
 
     /**

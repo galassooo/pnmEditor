@@ -1,5 +1,7 @@
 package org.supsi.view.filter;
 
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
 import org.supsi.model.filters.FilterModel;
 import org.supsi.model.filters.IFilterModel;
 import javafx.collections.FXCollections;
@@ -38,7 +40,7 @@ import java.util.Objects;
  * The class also includes utility methods to register and deregister
  * FilterUpdateListener instances, which receive notifications on filter updates.
  */
-public class FilterListView implements IFilterEvent {
+public class FilterListView {
 
     /* FXML fields */
     @FXML
@@ -48,7 +50,7 @@ public class FilterListView implements IFilterEvent {
     private ObservableList<CustomCell> items;
     private CustomCell copiedItem;
     private IFilterModel model;
-    private final List<FilterUpdateListener> listeners = new ArrayList<>();
+    private final EventPublisher publisher = EventManager.getPublisher();
 
     /**
      * Initializes the view, sets up list items, listeners, and drag-and-drop functionality.
@@ -171,7 +173,7 @@ public class FilterListView implements IFilterEvent {
                             int modelToIndex = items.size() - 1 - targetIndex;
                             success = true;
                             //notify listeners of the item movement
-                            listeners.forEach(listener -> listener.onFilterMoved(modelFromIndex, modelToIndex));
+                            publisher.publish(new FilterEvent.FilterMoveRequested(modelFromIndex, modelToIndex));
                         }
                     }
                     event.setDropCompleted(success);
@@ -192,7 +194,7 @@ public class FilterListView implements IFilterEvent {
                     CustomCell selectedItem = cell.getItem();
                     if (selectedItem != null) {
                         int index = items.indexOf(selectedItem);
-                        listeners.forEach(listener -> listener.onFilterRemoved(items.size() - 1 - index));
+                        publisher.publish(new FilterEvent.FilterRemoveRequested(items.size() - 1 - index));
                         items.remove(selectedItem);
                     }
                 });
@@ -230,7 +232,7 @@ public class FilterListView implements IFilterEvent {
                     //it notifies all the listener that a paste operation has been requested for the item
                     if (isControlDown && copiedItem != null) {
                         // Notify listeners of a new filter being added
-                        listeners.forEach(listener -> listener.onFilterAdded(copiedItem.getText()));
+                        publisher.publish(new FilterEvent.FilterAddRequested(copiedItem.getText()));
                     }
                     break;
             }
@@ -273,25 +275,5 @@ public class FilterListView implements IFilterEvent {
                 .filter(element -> element.getId() == id)
                 .findFirst()
                 .orElse(null);
-    }
-
-    /**
-     * Registers a FilterUpdateListener to receive filter update events.
-     *
-     * @param listener The listener to register.
-     */
-    @Override
-    public void registerListener(FilterUpdateListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * De registers a FilterUpdateListener from receiving filter update events.
-     *
-     * @param listener The listener to deregister.
-     */
-    @Override
-    public void deregisterListener(FilterUpdateListener listener) {
-        listeners.remove(listener);
     }
 }

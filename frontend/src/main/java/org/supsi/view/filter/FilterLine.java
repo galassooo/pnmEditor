@@ -7,6 +7,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
 import org.supsi.model.filters.FilterModel;
 import org.supsi.model.filters.IFilterModel;
 import org.supsi.model.state.IStateModel;
@@ -14,11 +16,9 @@ import org.supsi.model.state.StateModel;
 import org.supsi.model.translations.ITranslationsModel;
 import org.supsi.model.translations.TranslationModel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class FilterLine implements IFilterEvent {
+public class FilterLine {
 
     @FXML
     public Button activate;
@@ -30,7 +30,7 @@ public class FilterLine implements IFilterEvent {
 
     private final IStateModel stateModel = StateModel.getInstance();
     private final IFilterModel filterModel = FilterModel.getInstance();
-    private final List<FilterUpdateListener> listeners = new ArrayList<>();
+    private final EventPublisher publisher = EventManager.getPublisher();
 
     @FXML
     public void initialize() {
@@ -71,7 +71,7 @@ public class FilterLine implements IFilterEvent {
                     HBox.setMargin(button, new Insets(0, 10, 0, 10));
 
                     button.setOnAction(event -> {
-                        listeners.forEach(listener -> listener.onFilterAdded(filterKey));
+                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey));
                     });
 
                     return button;
@@ -97,18 +97,8 @@ public class FilterLine implements IFilterEvent {
             activate.setMaxSize(30, 30);
 
             activate.setOnAction(event -> {
-                listeners.forEach(FilterUpdateListener::onFiltersActivated);
+                publisher.publish(new FilterEvent.FilterExecutionRequested());
             });
         }
-    }
-
-    @Override
-    public void registerListener(FilterUpdateListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void deregisterListener(FilterUpdateListener listener) {
-        listeners.remove(listener);
     }
 }

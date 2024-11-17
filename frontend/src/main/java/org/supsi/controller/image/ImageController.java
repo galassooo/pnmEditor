@@ -4,6 +4,9 @@ import org.supsi.controller.confirmation.ConfirmationController;
 import org.supsi.controller.confirmation.IConfirmationController;
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.controller.errors.IErrorController;
+import org.supsi.view.image.ExportEvent;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventSubscriber;
 import org.supsi.model.state.IStateModel;
 import org.supsi.model.state.StateModel;
 import org.supsi.model.image.IImageModel;
@@ -12,14 +15,12 @@ import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.view.fileSystem.FileSystemView;
 import org.supsi.view.fileSystem.IFileSystemView;
-import org.supsi.view.image.ExportEventListener;
-import org.supsi.view.image.IExportEvent;
 import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
-public class ImageController implements  IImageController, ExportEventListener {
+public class ImageController implements  IImageController {
 
     private IImageView mainImageView;
 
@@ -28,6 +29,7 @@ public class ImageController implements  IImageController, ExportEventListener {
     private final ILoggerModel loggerModel = LoggerModel.getInstance();
     private final IStateModel stateModel = StateModel.getInstance();
     private final IConfirmationController confirmationController = ConfirmationController.getInstance();
+    private final EventSubscriber subscriber = EventManager.getSubscriber();
 
     private static ImageController myself;
 
@@ -48,7 +50,7 @@ public class ImageController implements  IImageController, ExportEventListener {
                 mainImageView.update();
             }
         });
-
+        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested );
     }
 
     @Override
@@ -97,13 +99,6 @@ public class ImageController implements  IImageController, ExportEventListener {
         loggerModel.addInfo("ui_image_saved");
     }
 
-    //terribile, ma sono obbligata a farlo in quanto il menu export è
-    //parte dell'interfaccia di base dell'applicazione e quindi caricata dal main,
-    @Override
-    public void setExportEvent(IExportEvent eventGenerator) {
-        eventGenerator.registerListener(this);
-    }
-
     @Override
     public void setImage(IImageView image) {
         this.mainImageView = image;
@@ -114,10 +109,9 @@ public class ImageController implements  IImageController, ExportEventListener {
         this.root = stage;
     }
 
-    @Override
-    public void onExportRequested(String extension) {
+    public void onExportRequested(ExportEvent.ExportRequested event) {
         IFileSystemView fsPopUp = new FileSystemView(root);
-        fsPopUp.setFileExtension(extension);
+        fsPopUp.setFileExtension(event.extension());
         File chosen = fsPopUp.askForDirectory();
 
 
@@ -125,7 +119,7 @@ public class ImageController implements  IImageController, ExportEventListener {
             return;
         }
         try {
-            model.export(extension, chosen.getPath());
+            model.export(event.extension(), chosen.getPath());
         }catch(Exception e ){
             errorController.showError(e.getMessage());
         }

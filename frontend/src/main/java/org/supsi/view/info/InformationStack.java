@@ -39,8 +39,8 @@ public class InformationStack {
                             setText(null);
                             setGraphic(null);
                         } else {
-                            Label label = new Label("[" + item.getType().name() + "] ");
-                            Label message = new Label(item.getMessage());
+                            Label label = new Label("[" + item.type().name() + "] ");
+                            Label message = new Label(item.message());
 
                             // Imposta lo stile inline per il colore del testo usando hexColor
                             label.setStyle("-fx-text-fill: " + item.getHexColor() + ";");

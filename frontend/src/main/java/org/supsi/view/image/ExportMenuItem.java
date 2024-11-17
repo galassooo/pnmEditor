@@ -3,24 +3,23 @@ package org.supsi.view.image;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import org.supsi.model.filters.FilterModel;
-import org.supsi.model.filters.IFilterModel;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
 import org.supsi.model.image.IImageModel;
 import org.supsi.model.image.ImageModel;
 import org.supsi.model.state.IStateModel;
 import org.supsi.model.state.StateModel;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class ExportMenuItem implements IExportEvent{
+
+public class ExportMenuItem{
 
     @FXML
     private Menu exportMenu;
 
+    private EventPublisher publisher = EventManager.getPublisher();
 
-    private List<ExportEventListener> listeners = new ArrayList<>();
     @FXML
     private void initialize() {
         IImageModel model = ImageModel.getInstance();
@@ -33,21 +32,11 @@ public class ExportMenuItem implements IExportEvent{
 
             item.disableProperty().bind(stateModel.canExportProperty().not());
             item.setOnAction(actionEvent ->{
-                listeners.forEach(e -> e.onExportRequested(extension));
+                publisher.publish(new ExportEvent.ExportRequested(extension));
 
             });
 
             exportMenu.getItems().add(item);
         });
-    }
-
-    @Override
-    public void registerListener(ExportEventListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void deregisterListener(ExportEventListener listener) {
-        listeners.remove(listener);
     }
 }

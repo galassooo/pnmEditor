@@ -1,5 +1,7 @@
 package org.supsi.view.preferences;
 
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
 import org.supsi.model.preferences.IPreferencesModel;
 import org.supsi.model.preferences.PreferencesModel;
 import org.supsi.model.translations.ITranslationsModel;
@@ -10,15 +12,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
-public class PreferencesView implements IPreferencesView, PreferenceChangedEvent {
+public class PreferencesView implements IPreferencesView {
 
 
     @FXML
@@ -51,9 +51,9 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
 
     private IPreferencesModel preferencesModel = PreferencesModel.getInstance();
 
-    private List<PreferenceChangeListener> listeners = new ArrayList<>();
 
     private final Map<String, String> labelsAndCodesMap = new HashMap<>();
+    private final EventPublisher publisher = EventManager.getPublisher();
 
     @FXML
     private void initialize() {
@@ -73,7 +73,8 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
                 Preferences dummyPreferences = Preferences.userRoot().node("dummy");
                 PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, "language-tag",
                         labelsAndCodesMap.get(choiceBox.getValue()));
-                listeners.forEach(listener -> listener.preferenceChange(pEvent));
+
+                publisher.publish(new PreferenceEvent.PreferenceChanged(pEvent));
             }
 
 
@@ -92,7 +93,8 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
     private void notifyPref(String tag, CheckBox box){
         Preferences dummyPreferences = Preferences.userRoot().node("dummy");
         PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, tag, String.valueOf(box.isSelected()));
-        listeners.forEach(listener -> listener.preferenceChange(pEvent));
+
+        publisher.publish(new PreferenceEvent.PreferenceChanged(pEvent));
     }
 
     public void setModel(ITranslationsModel model) {
@@ -113,15 +115,5 @@ public class PreferencesView implements IPreferencesView, PreferenceChangedEvent
 
             choiceBox.getItems().add(translation);
         });
-    }
-
-    @Override
-    public void registerListener(PreferenceChangeListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void deregisterListener(PreferenceChangeListener listener) {
-        listeners.remove(listener);
     }
 }

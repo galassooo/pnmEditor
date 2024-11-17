@@ -1,6 +1,5 @@
 package org.supsi.controller.image;
 
-import org.supsi.view.image.IExportEvent;
 import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
 
@@ -17,6 +16,4 @@ public interface IImageController {
     void setImage(IImageView image);
 
     void setStage(Stage stage);
-
-    void setExportEvent(IExportEvent eventGenerator);
 }

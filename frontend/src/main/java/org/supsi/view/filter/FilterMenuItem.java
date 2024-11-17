@@ -1,21 +1,21 @@
 package org.supsi.view.filter;
 
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
 import org.supsi.model.filters.FilterModel;
 import org.supsi.model.filters.IFilterModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-public class FilterMenuItem implements IFilterEvent{
+public class FilterMenuItem{
 
     @FXML
     private Menu menu;
 
-    private final List<FilterUpdateListener> listeners = new ArrayList<>();
+    private final EventPublisher publisher = EventManager.getPublisher();
 
     @FXML
     void initialize() {
@@ -27,31 +27,10 @@ public class FilterMenuItem implements IFilterEvent{
             MenuItem item = new MenuItem(translatedFilter);
 
             item.setOnAction(actionEvent ->
-                    listeners.forEach(listener -> listener.onFilterAdded(filterKey))
+                    publisher.publish(new FilterEvent.FilterAddRequested(filterKey))
             );
 
             menu.getItems().add(item);
         });
     }
-
-    /**
-     * Registers a FilterUpdateListener to receive filter update events.
-     *
-     * @param listener The listener to register.
-     */
-    @Override
-    public void registerListener(FilterUpdateListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * De registers a FilterUpdateListener from receiving filter update events.
-     *
-     * @param listener The listener to deregister.
-     */
-    @Override
-    public void deregisterListener(FilterUpdateListener listener) {
-        listeners.remove(listener);
-    }
-
 }

@@ -11,8 +11,6 @@ import org.supsi.controller.logger.LoggerController;
 import org.supsi.dispatcher.MenuDispatcher;
 import org.supsi.model.translations.ITranslationsModel;
 import org.supsi.model.translations.TranslationModel;
-import org.supsi.view.filter.FilterUpdateListener;
-import org.supsi.view.filter.IFilterEvent;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -43,11 +41,11 @@ public class MainFx extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        FilterUpdateListener filterController = FilterController.getInstance();
         IImageController imageController = ImageController.getInstance();
         IErrorController errorController = ErrorController.getInstance();
         ITranslationsModel translationsModel = TranslationModel.getInstance();
         ILoggerController loggerController = LoggerController.getInstance();
+        FilterController filterController = FilterController.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
@@ -87,7 +85,6 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             Menu menu = loader.load();
             ExportMenuItem exportMenuItem = loader.getController();
-            imageController.setExportEvent(exportMenuItem);
             int indexBeforeHelp = menuBar.getMenus().size();
             menuBar.getMenus().add(indexBeforeHelp, menu);
 
@@ -99,8 +96,6 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             Menu filterMenu = loader.load();
 
-            IFilterEvent menuItemCtrl = loader.getController();
-            filterController.addEventPublisher(menuItemCtrl);
             menuBar.getMenus().add(filterMenu);
 
 
@@ -110,9 +105,7 @@ public class MainFx extends Application {
             }
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             VBox filterLine = loader.load();
-            IFilterEvent filterLineCtrl = loader.getController();
 
-            filterController.addEventPublisher(filterLineCtrl);
             centerPane.setTop(filterLine);
 
             VBox filterColumn = new VBox();
@@ -129,8 +122,6 @@ public class MainFx extends Application {
             loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());
             ScrollPane filterList = loader.load();
 
-            IFilterEvent controller = loader.getController();
-            filterController.addEventPublisher(controller);
 
             filterColumn.getChildren().add(0, filterList);
 

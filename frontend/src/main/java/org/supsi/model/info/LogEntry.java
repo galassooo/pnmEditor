@@ -1,6 +1,6 @@
 package org.supsi.model.info;
 
-public class LogEntry {
+public record LogEntry(org.supsi.model.info.LogEntry.LogType type, String message) {
 
     public enum LogType {
         INFO("#61addc"),
@@ -17,22 +17,6 @@ public class LogEntry {
         public String getHexColor() {
             return hexColor;
         }
-    }
-
-    private final LogType type;
-    private final String message;
-
-    public LogEntry(LogType type, String message) {
-        this.type = type;
-        this.message = message;
-    }
-
-    public LogType getType() {
-        return type;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public String getHexColor() {

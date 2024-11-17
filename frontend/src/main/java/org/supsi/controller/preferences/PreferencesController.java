@@ -1,6 +1,9 @@
 package org.supsi.controller.preferences;
 
 import org.supsi.controller.errors.ErrorController;
+import org.supsi.view.preferences.PreferenceEvent;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventSubscriber;
 import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.model.preferences.IPreferencesModel;
@@ -8,15 +11,12 @@ import org.supsi.model.preferences.PreferencesModel;
 import org.supsi.model.translations.ITranslationsModel;
 import org.supsi.model.translations.TranslationModel;
 import org.supsi.view.preferences.IPreferencesView;
-import org.supsi.view.preferences.PreferenceChangedEvent;
 import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
-public class PreferencesController implements IPreferencesController, PreferenceChangeListener {
+public class PreferencesController implements IPreferencesController {
 
     private static PreferencesController mySelf;
 
@@ -24,6 +24,7 @@ public class PreferencesController implements IPreferencesController, Preference
     private final IPreferencesModel model = PreferencesModel.getInstance();
     private final ILoggerModel loggerModel = LoggerModel.getInstance();
     private final ITranslationsModel translationsModel = TranslationModel.getInstance();
+    private final EventSubscriber subscriber = EventManager.getSubscriber();
 
     public static PreferencesController getInstance() {
         if (mySelf == null) {
@@ -33,6 +34,8 @@ public class PreferencesController implements IPreferencesController, Preference
     }
 
     public PreferencesController() {
+            subscriber.subscribe(PreferenceEvent.PreferenceChanged.class,
+                    this::preferenceChange);
             URL fxmlUrl = getClass().getResource("/layout/PreferencesPopup.fxml");
             if (fxmlUrl == null) {
                 return;
@@ -43,11 +46,6 @@ public class PreferencesController implements IPreferencesController, Preference
                 loader.load();
                 view = loader.getController();
                 view.setModel(translationsModel);
-
-                if(PreferenceChangedEvent.class.isAssignableFrom(view.getClass())){
-                    PreferenceChangedEvent event = (PreferenceChangedEvent) view;
-                    event.registerListener(this);
-                }
 
             } catch (IOException ignored) {
 
@@ -63,10 +61,9 @@ public class PreferencesController implements IPreferencesController, Preference
         loggerModel.addDebug("ui_popup_show");
     }
 
-    @Override
-    public void preferenceChange(PreferenceChangeEvent evt) {
+    public void preferenceChange(PreferenceEvent.PreferenceChanged parentEvent) {
         try {
-            model.setPreference(evt.getKey(), evt.getNewValue());
+            model.setPreference(parentEvent.event().getKey(), parentEvent.event().getNewValue());
         } catch (IOException e) {
             ErrorController.getInstance().showError(e.getMessage());
         }

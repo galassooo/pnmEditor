@@ -30,7 +30,6 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     protected int height;
     private String format;
 
-
     /**
      * Processes binary PNM data. To be implemented by subclasses.
      *
@@ -52,9 +51,9 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     /**
      * Writes ASCII pixel data to the output stream. To be implemented by subclasses.
      *
-     * @param os      the {@link OutputStream} to write to
-     * @param pixels  the 2D array of pixels to write
-     * @param ex      the {@link ExecutorService} for parallel processing
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
      * @throws IOException if an error occurs while writing the data
      */
     protected abstract void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
@@ -62,9 +61,9 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     /**
      * Writes binary pixel data to the output stream. To be implemented by subclasses.
      *
-     * @param os      the {@link OutputStream} to write to
-     * @param pixels  the 2D array of pixels to write
-     * @param ex      the {@link ExecutorService} for parallel processing
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
      * @throws IOException if an error occurs while writing the data
      */
     protected abstract void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
@@ -143,7 +142,6 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
 
             executor.shutdown();
         }
-
         return image;
     }
 
@@ -166,7 +164,6 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
     protected boolean isBinaryFormat(String imgFormat) {
         return ALL_BINARY_HEADERS.contains(imgFormat);
     }
-
 
 
     protected void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {

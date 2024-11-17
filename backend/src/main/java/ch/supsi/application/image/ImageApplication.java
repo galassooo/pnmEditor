@@ -4,6 +4,7 @@ import ch.supsi.business.image.ImageBusiness;
 import ch.supsi.business.state.BusinessEditorState;
 import ch.supsi.application.state.EditorStateManager;
 import ch.supsi.dataaccess.image.DataAccessFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +88,6 @@ public class ImageApplication {
     public void export(String extension, String path) throws IOException, IllegalAccessException {
         currentImage.export(extension, path);
     }
-
 
     /**
      * Retrieves a {@link List} of all supported file extensions for images.

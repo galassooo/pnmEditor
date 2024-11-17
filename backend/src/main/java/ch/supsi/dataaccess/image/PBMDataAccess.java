@@ -85,7 +85,6 @@ public final class PBMDataAccess extends PNMDataAccess {
             }
         }
         return pixelMatrix;
-
     }
 
     /**

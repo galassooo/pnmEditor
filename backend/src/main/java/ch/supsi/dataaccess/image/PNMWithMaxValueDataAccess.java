@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
+
 /**
  * Abstract base class for handling PNM image formats that include a "max value" field in their headers.
  * This class extends {@link PNMDataAccess} and provides shared functionality for formats like PPM and PGM,
@@ -45,9 +46,9 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
     /**
      * Writes binary PNM data, including the max value in the header, and delegates pixel writing to the specific implementation.
      *
-     * @param os      the {@link OutputStream} to write to
-     * @param pixels  the 2D array of pixels to write
-     * @param ex      the {@link ExecutorService} for parallel processing
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
      * @throws IOException if an error occurs while writing the data
      */
     @Override
@@ -60,9 +61,9 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
     /**
      * Writes ASCII PNM data, including the max value in the header, and delegates pixel writing to the specific implementation.
      *
-     * @param os      the {@link OutputStream} to write to
-     * @param pixels  the 2D array of pixels to write
-     * @param ex      the {@link ExecutorService} for parallel processing
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
      * @throws IOException if an error occurs while writing the data
      */
     @Override

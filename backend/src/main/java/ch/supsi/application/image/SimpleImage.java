@@ -6,6 +6,7 @@ package ch.supsi.application.image;
  * pixel data, and file information without modifying the underlying image.
  */
 public interface SimpleImage {
+
     /**
      * Gets the width of the image in pixels.
      *

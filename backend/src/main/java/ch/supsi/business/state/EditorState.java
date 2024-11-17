@@ -6,6 +6,7 @@ package ch.supsi.business.state;
  * are allowed in that state.
  */
 public interface EditorState {
+
     /**
      * Checks if filters can be applied to the current image.
      *

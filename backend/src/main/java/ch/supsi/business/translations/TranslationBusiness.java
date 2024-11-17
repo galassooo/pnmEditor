@@ -19,7 +19,9 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
     private final List<String> supportedLanguageTags;
     private Properties translations;
 
-    /** Protected constructor to enforce Singleton pattern */
+    /**
+     * Protected constructor to enforce Singleton pattern
+     */
     protected TranslationBusiness() {
         this.translationsDao = TranslationsDataAccess.getInstance();
         this.supportedLanguageTags = translationsDao.getSupportedLanguageTags();
@@ -58,7 +60,6 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
         this.translations = translationsDao.getTranslations(Locale.forLanguageTag(languageTag));
         return this.translations != null;
     }
-
 
     /**
      * Retrieves the translation associated with the specified key.

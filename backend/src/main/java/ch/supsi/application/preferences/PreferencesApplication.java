@@ -1,6 +1,7 @@
 package ch.supsi.application.preferences;
 
 import ch.supsi.business.preferences.PreferencesBusiness;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +13,6 @@ import java.util.Optional;
 public class PreferencesApplication {
 
     private static PreferencesApplication myself;
-
     private final PreferencesBusinessInterface preferencesModel;
 
     /**

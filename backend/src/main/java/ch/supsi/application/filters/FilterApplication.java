@@ -6,6 +6,7 @@ import ch.supsi.business.filter.FilterFactory;
 import ch.supsi.business.filter.FilterManager;
 import ch.supsi.business.filter.chain.command.FilterCommand;
 import ch.supsi.business.state.BusinessEditorState;
+
 import java.util.List;
 
 /**
@@ -16,11 +17,9 @@ import java.util.List;
 public class FilterApplication {
 
     private static FilterApplication myself;
-
     private final List<String> allFilters;
     private final FilterPipelineInterface model;
     private final EditorStateManager stateManager;
-
 
     /**
      * Private constructor to enforce the singleton pattern.

@@ -16,17 +16,12 @@ import java.util.*;
  * It uses properties files to load translations and handles locale fallback mechanisms.
  */
 public class TranslationsDataAccess implements TranslationsDataAccessInterface {
-    /* where the supported languages are stored */
-    private static final String SUPPORTED_LANGUAGES_PROPERTIES = "/supported-languages.properties";
-    /* where the labels are stored */
-    private static final String LABELS_PATH = "i18n/labels/";
-    /* the format of the files containing the labels */
-    private static final String LABELS_FORMAT = ".properties";
 
-    private static final String FRONTEND_PATH = "/i18n/ui_labels";
-
-    /* self reference */
     public static TranslationsDataAccess myself;
+    private static final String SUPPORTED_LANGUAGES_PROPERTIES = "/supported-languages.properties";
+    private static final String LABELS_PATH = "i18n/labels/";
+    private static final String LABELS_FORMAT = ".properties";
+    private static final String FRONTEND_PATH = "/i18n/ui_labels";
 
     protected TranslationsDataAccess() {
     }
@@ -99,7 +94,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                 translations.setProperty(key, b.getString(key));
             }
         });
-
         return translations;
     }
 
@@ -118,7 +112,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         } catch (IOException e) {
             System.err.printf("Error while loading file %s%n", SUPPORTED_LANGUAGES_PROPERTIES);
         }
-
         return supportedLanguageTags;
     }
 
@@ -161,7 +154,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         } catch (IOException e) {
             System.err.printf("Error while loading file %s for locale %s%n", pathToResources, locale);
         }
-
         return resourceBundles;
     }
 
@@ -210,7 +202,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                 System.err.printf("Error loading resource %s from JAR%n", resourceName);
             }
         }
-
         return resourceBundles;
     }
 
@@ -233,7 +224,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         }
         return null;
     }
-
 
 
     /**

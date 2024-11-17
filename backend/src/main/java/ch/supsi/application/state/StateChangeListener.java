@@ -5,6 +5,7 @@ package ch.supsi.application.state;
  * Implements the Observer pattern to notify components when the editor's state changes.
  */
 public interface StateChangeListener {
+
     /**
      * Called when the editor's state changes.
      * Implementing classes should handle the state change appropriately.

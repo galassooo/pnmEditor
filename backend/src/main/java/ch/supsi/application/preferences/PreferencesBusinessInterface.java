@@ -14,7 +14,7 @@ public interface PreferencesBusinessInterface {
      * Retrieves the current language setting of the application.
      *
      * @return an {@link Optional} containing the current language code (e.g., "en-US", "it-Ch"),
-     *         or empty if no language is set
+     * or empty if no language is set
      */
     Optional<String> getCurrentLanguage();
 

@@ -18,10 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FilterFactory {
 
-    /** List of loaded filter names. */
     private static final List<String> filters;
-
-    /** Map of filter names to their corresponding {@link FilterCommand} instances. */
     private static final Map<String, FilterCommand> filterInstances;
 
     static {

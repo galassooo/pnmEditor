@@ -11,11 +11,13 @@ import ch.supsi.business.filter.chain.command.FilterCommand;
  * and can be executed sequentially on an image.
  */
 public class FilterManager implements FilterPipelineInterface {
+
     private static FilterManager instance;
     private FilterChainLink pipeline;
     private int size = 0;
 
-    private FilterManager() {}
+    private FilterManager() {
+    }
 
     /**
      * Retrieves the Singleton instance of {@link FilterManager}.
@@ -23,7 +25,7 @@ public class FilterManager implements FilterPipelineInterface {
      * @return the Singleton instance
      */
     public static FilterManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new FilterManager();
         }
         return instance;
@@ -50,12 +52,12 @@ public class FilterManager implements FilterPipelineInterface {
     @Override
     public void addFilter(FilterCommand command) {
         FilterChainLink link = new FilterChainLink(command);
-        if(pipeline == null) {
+        if (pipeline == null) {
             pipeline = link;
         } else {
             size++;
             FilterChainLink current = pipeline;
-            while(current.getNext() != null) {
+            while (current.getNext() != null) {
                 current = current.getNext();
             }
             current.setNext(link);

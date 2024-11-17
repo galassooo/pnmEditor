@@ -15,17 +15,11 @@ import java.util.Properties;
  */
 public class PreferencesDataAccess implements PreferencesDataAccessInterface {
 
-    /* Path to the default user preferences file */
     private static final String DEFAULT_USER_PREFERENCES_PROPERTIES = "/default-user-preferences.properties";
-    /* The user's home directory */
     private static String USER_HOME_DIRECTORY;
-    /* Directory to store preferences in the user's filesystem */
     private static final String PREFERENCES_DIRECTORY = ".imageEditor";
-    /* Name of the preferences file in the user's filesystem */
     private static final String PREFERENCES_FILE = "/user-preferences.properties";
-    /* Singleton instance */
     private static PreferencesDataAccess dao;
-    /* In-memory representation of the user preferences modified at runtime */
     private Properties newProperties;
 
     /**
@@ -122,7 +116,7 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
      * @return a {@link Properties} object containing the default preferences
      * @throws IOException if an error occurs while loading the default preferences
      */
-    private  Properties loadDefaultPreferences() throws IOException {
+    private Properties loadDefaultPreferences() throws IOException {
         Properties defaultPreferences = new Properties();
         try {
             InputStream defaultPreferencesStream = getPreferencesResourceAsStream(DEFAULT_USER_PREFERENCES_PROPERTIES);

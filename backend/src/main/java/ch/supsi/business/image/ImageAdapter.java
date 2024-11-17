@@ -1,13 +1,15 @@
 package ch.supsi.business.image;
 
 import ch.supsi.business.strategy.ConvertStrategy;
+
 import java.util.function.Function;
 
 /*
 Non implementa il pattern adapter, perchè non abbiamo un'incompatibilità tra i tipi
 in quanto abbiamo un long[][] come input e un long[][] come output.
  */
-public class ImageAdapter implements ImageAdapterInterface{
+public class ImageAdapter implements ImageAdapterInterface {
+
     private final ConvertStrategy strategy;
 
     public ImageAdapter(ConvertStrategy strategy) {
@@ -15,7 +17,7 @@ public class ImageAdapter implements ImageAdapterInterface{
     }
 
     @Override
-    public long[][] rawToArgb(long[][] rawImage){
+    public long[][] rawToArgb(long[][] rawImage) {
         var function = new Function<Long, Long>() {
             @Override
             public Long apply(Long aLong) {
@@ -26,7 +28,7 @@ public class ImageAdapter implements ImageAdapterInterface{
     }
 
     @Override
-    public long[][] argbToRaw(long[][] rawImage){
+    public long[][] argbToRaw(long[][] rawImage) {
         var function = new Function<Long, Long>() {
             @Override
             public Long apply(Long aLong) {
@@ -36,8 +38,8 @@ public class ImageAdapter implements ImageAdapterInterface{
         return process(rawImage, function);
     }
 
-    private long[][] process(long[][] pixels, Function<Long, Long> function){
-        if(pixels == null)
+    private long[][] process(long[][] pixels, Function<Long, Long> function) {
+        if (pixels == null)
             return new long[0][];
         int height = pixels.length;
         if (height == 0) {

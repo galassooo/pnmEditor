@@ -2,6 +2,7 @@ package ch.supsi.business.filter.chain;
 
 import ch.supsi.application.image.WritableImage;
 import ch.supsi.business.filter.chain.command.FilterCommand;
+
 import java.util.Objects;
 
 /**
@@ -9,6 +10,7 @@ import java.util.Objects;
  * Each link contains a {@link FilterCommand} and may point to the next link in the chain.
  */
 public class FilterChainLink {
+
     private final FilterCommand command;
     private FilterChainLink next;
 

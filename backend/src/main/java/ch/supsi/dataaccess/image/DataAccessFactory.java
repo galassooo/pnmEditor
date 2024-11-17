@@ -20,7 +20,9 @@ import java.lang.reflect.InvocationTargetException;
 @ImageAccessFactory
 public class DataAccessFactory {
 
-    /** List of registered data access components. */
+    /**
+     * List of registered data access components.
+     */
     @Register
     private static List<DataAccessComponent> dataAccessComponents;
 
@@ -54,7 +56,7 @@ public class DataAccessFactory {
      *
      * @param path the path to the image file
      * @return an instance of {@link ImageDataAccess}
-     * @throws IOException if the file cannot be read or the file type is unsupported
+     * @throws IOException            if the file cannot be read or the file type is unsupported
      * @throws IllegalAccessException if an error occurs while creating the instance
      */
     public static ImageDataAccess getInstance(String path) throws IOException, IllegalAccessException {
@@ -75,7 +77,7 @@ public class DataAccessFactory {
      *
      * @param magicNumber the magic number of the image file
      * @return an instance of {@link ImageDataAccess}
-     * @throws IOException if the magic number is unsupported
+     * @throws IOException            if the magic number is unsupported
      * @throws IllegalAccessException if an error occurs while creating the instance
      */
     public static ImageDataAccess getInstanceFromMagicNumber(String magicNumber) throws IOException, IllegalAccessException {
@@ -91,7 +93,7 @@ public class DataAccessFactory {
      *
      * @param extension the file extension
      * @return an instance of {@link ImageDataAccess}
-     * @throws IOException if the file extension is unsupported
+     * @throws IOException            if the file extension is unsupported
      * @throws IllegalAccessException if an error occurs while creating the instance
      */
     public static ImageDataAccess getInstanceFromExtension(String extension) throws IOException, IllegalAccessException {

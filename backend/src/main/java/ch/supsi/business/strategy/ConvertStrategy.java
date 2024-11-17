@@ -5,6 +5,7 @@ package ch.supsi.business.strategy;
  * Provides methods to convert between different channel formats and ARGB.
  */
 public interface ConvertStrategy {
+
     /**
      * Converts a pixel value from its original format to ARGB.
      *

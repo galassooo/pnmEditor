@@ -6,6 +6,7 @@ package ch.supsi.business.image;
  * a valid image object in the system.
  */
 public interface ImageBuilderInterface {
+
     /**
      * Gets the pixel data for the image being built.
      *

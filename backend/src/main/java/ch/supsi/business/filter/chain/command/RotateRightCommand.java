@@ -31,7 +31,6 @@ public class RotateRightCommand implements FilterCommand {
 
             }
         }
-
         return rotated;
     }
 }

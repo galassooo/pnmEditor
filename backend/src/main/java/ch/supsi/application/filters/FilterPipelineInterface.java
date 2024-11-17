@@ -21,7 +21,7 @@ public interface FilterPipelineInterface {
      * Adds a filter at a specific index in the filter pipeline.
      *
      * @param filterStrategy the filter to add, represented as a {@code FilterCommand}.
-     * @param index the position in the pipeline where the filter should be added.
+     * @param index          the position in the pipeline where the filter should be added.
      */
     void addFilter(FilterCommand filterStrategy, int index);
 

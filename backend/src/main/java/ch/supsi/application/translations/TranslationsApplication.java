@@ -16,7 +16,6 @@ import java.util.ResourceBundle;
 public class TranslationsApplication {
 
     private static TranslationsApplication myself;
-
     private final TranslationsBusinessInterface translationsModel;
 
     /**

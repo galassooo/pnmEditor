@@ -5,6 +5,7 @@ package ch.supsi.business.image;
  * Provides methods to convert between raw image formats and ARGB color space.
  */
 public interface ImageAdapterInterface {
+
     /**
      * Converts raw image pixel data to ARGB format.
      *

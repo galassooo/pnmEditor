@@ -22,5 +22,4 @@ public interface FilterCommand {
      * @return the name of the filter as a {@link String}
      */
     String getName();
-
 }

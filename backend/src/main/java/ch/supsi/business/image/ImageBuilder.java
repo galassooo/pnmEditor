@@ -8,7 +8,8 @@ import java.util.Objects;
  * Implements {@link ImageBuilderInterface} to provide methods for setting image attributes,
  * performing validation, and supporting optional pixel conversion via an adapter.
  */
-public class ImageBuilder implements ImageBuilderInterface{
+public class ImageBuilder implements ImageBuilderInterface {
+
     private long[][] pixels;
     private String filePath;
     private String magicNumber;
@@ -93,7 +94,7 @@ public class ImageBuilder implements ImageBuilderInterface{
             throw new IllegalStateException("MagicNumber is required");
         }
 
-        if(imageAdapter!= null){
+        if (imageAdapter != null) {
             pixels = imageAdapter.rawToArgb(pixels);
         }
         return this;

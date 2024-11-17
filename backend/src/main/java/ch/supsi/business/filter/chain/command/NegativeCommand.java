@@ -3,6 +3,7 @@ package ch.supsi.business.filter.chain.command;
 import ch.supsi.application.image.WritableImage;
 
 public class NegativeCommand implements FilterCommand {
+
     @Override
     public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
@@ -13,12 +14,11 @@ public class NegativeCommand implements FilterCommand {
 
         int maxValue = 0xFFFFFF;
 
-        for(int i = 0; i < pixels.length; i++){
-            for(int j = 0; j < pixels[i].length; j++){
+        for (int i = 0; i < pixels.length; i++) {
+            for (int j = 0; j < pixels[i].length; j++) {
                 pixels[i][j] ^= maxValue;
             }
         }
-
         img.setPixels(pixels);
     }
 

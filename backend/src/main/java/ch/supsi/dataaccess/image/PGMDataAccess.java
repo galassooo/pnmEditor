@@ -73,7 +73,6 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
                 pixelMatrix[y][x] = grayValue;
             }
         }
-
         return pixelMatrix;
     }
 

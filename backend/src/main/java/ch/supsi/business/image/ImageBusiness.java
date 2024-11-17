@@ -2,6 +2,7 @@ package ch.supsi.business.image;
 
 import ch.supsi.application.image.WritableImage;
 import ch.supsi.dataaccess.image.DataAccessFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class ImageBusiness implements WritableImage {
      *
      * @param path the path of the image file to read
      * @return a {@link WritableImage} representing the image
-     * @throws IOException if an error occurs while reading the file
+     * @throws IOException            if an error occurs while reading the file
      * @throws IllegalAccessException if there is an issue accessing the data access component
      */
     public static WritableImage read(String path) throws IOException, IllegalAccessException {
@@ -46,7 +47,7 @@ public class ImageBusiness implements WritableImage {
      * Persists the current image to the file system at the specified path.
      *
      * @param path the path where the image should be saved
-     * @throws IOException if an error occurs while writing the file
+     * @throws IOException            if an error occurs while writing the file
      * @throws IllegalAccessException if there is an issue accessing the data access component
      */
     @Override
@@ -62,7 +63,7 @@ public class ImageBusiness implements WritableImage {
      *
      * @param extension the desired file extension for the exported image
      * @param path      the path where the exported image should be saved
-     * @throws IOException if an error occurs while writing the file
+     * @throws IOException            if an error occurs while writing the file
      * @throws IllegalAccessException if there is an issue accessing the data access component
      */
     @Override

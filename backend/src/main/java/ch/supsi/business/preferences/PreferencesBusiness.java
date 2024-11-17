@@ -3,6 +3,7 @@ package ch.supsi.business.preferences;
 
 import ch.supsi.application.preferences.PreferencesBusinessInterface;
 import ch.supsi.dataaccess.preferences.PreferencesDataAccess;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,6 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
     private static PreferencesBusiness myself;
     private final PreferencesDataAccessInterface preferencesDao;
     private Properties userPreferences;
-
 
     protected PreferencesBusiness() {
         this.preferencesDao = PreferencesDataAccess.getInstance();
@@ -77,7 +77,6 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
 
         return Optional.of(userPreferences.get(key));
     }
-
 
     /**
      * Sets a preference in the application by storing the specified key-value pair.

@@ -135,7 +135,6 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
         writeFuturesToStream(futures, os);
     }
 
-
     /**
      * Retrieves the conversion strategy for ARGB representation based on the maximum pixel value.
      *
@@ -146,12 +145,11 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
         return new ThreeChannel(super.getMaxValue());
     }
 
-
     /**
      * Creates tasks for generating pixel rows in parallel using the provided executor and row generator.
      *
-     * @param pixels   the 2D array of pixels to process
-     * @param executor the {@link ExecutorService} to use for parallel task execution
+     * @param pixels    the 2D array of pixels to process
+     * @param executor  the {@link ExecutorService} to use for parallel task execution
      * @param generator a {@link RowGenerator} to generate each row
      * @return a {@link List} of {@link Future} objects representing the tasks for each row
      */
@@ -164,7 +162,6 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
         }
         return futures;
     }
-
 
     /**
      * Generates a binary buffer for a single row of pixels.
@@ -184,7 +181,6 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
             long pixel = pixels[row][x];
             index = writeRgbToBuffer(rowBuffer, index, pixel, is16bit);
         }
-
         return rowBuffer;
     }
 
@@ -216,10 +212,10 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
     /**
      * Writes the RGB data of a pixel to the buffer.
      *
-     * @param buffer   the byte array buffer to write to
-     * @param index    the starting index in the buffer
-     * @param pixel    the pixel containing combined RGB data
-     * @param is16bit  whether the pixel data is 16-bit
+     * @param buffer  the byte array buffer to write to
+     * @param index   the starting index in the buffer
+     * @param pixel   the pixel containing combined RGB data
+     * @param is16bit whether the pixel data is 16-bit
      * @return the updated index after writing the pixel data
      */
     private int writeRgbToBuffer(byte[] buffer, int index, long pixel, boolean is16bit) {

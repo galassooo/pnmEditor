@@ -3,6 +3,7 @@ package ch.supsi.business.filter.chain.command;
 import ch.supsi.application.image.WritableImage;
 
 public class HorizontalMirrorCommand implements FilterCommand {
+
     @Override
     public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
@@ -21,7 +22,6 @@ public class HorizontalMirrorCommand implements FilterCommand {
                 pixels[i][width - j - 1] = temp;
             }
         }
-
         img.setPixels(pixels);
     }
 

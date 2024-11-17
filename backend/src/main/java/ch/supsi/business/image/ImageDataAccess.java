@@ -1,6 +1,7 @@
 package ch.supsi.business.image;
 
 import ch.supsi.application.image.WritableImage;
+
 import java.io.IOException;
 
 /**

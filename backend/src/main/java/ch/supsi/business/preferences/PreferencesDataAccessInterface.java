@@ -3,6 +3,7 @@ package ch.supsi.business.preferences;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+
 /**
  * Interface defining the contract between data access operations and business
  * for managing user preferences.

@@ -14,7 +14,6 @@ import ch.supsi.business.state.StateChangeEvent;
 public class StateApplication implements EditorState, StateChangeEvent {
 
     private static StateApplication myself;
-
     private final EditorStateManager businessEditorState;
 
     /**

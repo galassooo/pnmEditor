@@ -10,7 +10,6 @@ public class SingleBit implements ConvertStrategy {
         return pixel == 1 ? ARGB_BLACK : ARGB_WHITE;
     }
 
-
     @Override
     public long ArgbToOriginal(long pixel) {
         // Estrai i componenti
@@ -28,7 +27,6 @@ public class SingleBit implements ConvertStrategy {
             return b > 127 ? 0 : 1;
         }
     }
-
 }
 
 

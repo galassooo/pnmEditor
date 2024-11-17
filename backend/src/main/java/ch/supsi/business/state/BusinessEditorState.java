@@ -9,6 +9,7 @@ import java.util.List;
  * Manages editor states and notifies listeners of state changes.
  */
 public class BusinessEditorState implements EditorStateManager, StateChangeEvent {
+
     private static BusinessEditorState instance;
 
     private static EditorState currentState;

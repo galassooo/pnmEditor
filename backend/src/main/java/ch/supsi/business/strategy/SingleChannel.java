@@ -22,7 +22,6 @@ public class SingleChannel implements ConvertStrategy {
         int g = (int) ((pixel >> 8) & 0xFF);
         int b = (int) (pixel & 0xFF);
 
-
         //è un idea geniale, non ho bisogno di componenti extra, e
         // l'informazione sul numero di canali originali è intrinseca nei dati,
         // quindi non mi servono flag, classi di supporto e bla bla bla

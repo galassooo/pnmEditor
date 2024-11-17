@@ -5,6 +5,11 @@ import ch.supsi.application.image.WritableImage;
 import ch.supsi.business.filter.chain.FilterChainLink;
 import ch.supsi.business.filter.chain.command.FilterCommand;
 
+/**
+ * Manages a chain of filters applied to an image. Implements the Singleton pattern to ensure
+ * a single instance is used throughout the application. Filters are organized in a chain structure
+ * and can be executed sequentially on an image.
+ */
 public class FilterManager implements FilterPipelineInterface {
     private static FilterManager instance;
     private FilterChainLink pipeline;
@@ -12,6 +17,11 @@ public class FilterManager implements FilterPipelineInterface {
 
     private FilterManager() {}
 
+    /**
+     * Retrieves the Singleton instance of {@link FilterManager}.
+     *
+     * @return the Singleton instance
+     */
     public static FilterManager getInstance() {
         if(instance == null) {
             instance = new FilterManager();
@@ -19,6 +29,12 @@ public class FilterManager implements FilterPipelineInterface {
         return instance;
     }
 
+    /**
+     * Executes the entire filter pipeline on the given image.
+     * Clears the pipeline after execution.
+     *
+     * @param image the {@link WritableImage} to process
+     */
     @Override
     public void executePipeline(WritableImage image) {
         if (image == null || pipeline == null) return;
@@ -26,6 +42,11 @@ public class FilterManager implements FilterPipelineInterface {
         pipeline = null;
     }
 
+    /**
+     * Adds a filter to the end of the pipeline.
+     *
+     * @param command the {@link FilterCommand} to add
+     */
     @Override
     public void addFilter(FilterCommand command) {
         FilterChainLink link = new FilterChainLink(command);
@@ -42,7 +63,10 @@ public class FilterManager implements FilterPipelineInterface {
     }
 
     /**
+     * Adds a filter to a specific position in the pipeline.
      *
+     * @param command the {@link FilterCommand} to add
+     * @param index   the position in the pipeline where the filter should be inserted
      * @throws IndexOutOfBoundsException if the index is invalid
      */
     @Override
@@ -74,7 +98,10 @@ public class FilterManager implements FilterPipelineInterface {
     }
 
     /**
+     * Removes a filter from a specific position in the pipeline.
      *
+     * @param index the position of the filter to remove
+     * @return the name of the removed filter
      * @throws IndexOutOfBoundsException if the index is invalid
      */
     @Override

@@ -3,6 +3,11 @@ package ch.supsi.business.image;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Builder class for creating and configuring instances of images.
+ * Implements {@link ImageBuilderInterface} to provide methods for setting image attributes,
+ * performing validation, and supporting optional pixel conversion via an adapter.
+ */
 public class ImageBuilder implements ImageBuilderInterface{
     private long[][] pixels;
     private String filePath;
@@ -25,26 +30,57 @@ public class ImageBuilder implements ImageBuilderInterface{
     }
 
 
+    /**
+     * Sets the pixel data for the image.
+     *
+     * @param pixels a 2D array of pixels
+     * @return the {@link ImageBuilder} instance for method chaining
+     */
     public ImageBuilder withPixels(long[][] pixels) {
         this.pixels = pixels;
         return this;
     }
 
+    /**
+     * Sets the file path for the image.
+     *
+     * @param filePath the file path as a {@link String}
+     * @return the {@link ImageBuilder} instance for method chaining
+     */
     public ImageBuilder withFilePath(String filePath) {
         this.filePath = filePath;
         return this;
     }
 
+    /**
+     * Sets the magic number representing the image format.
+     *
+     * @param magicNumber the magic number as a {@link String}
+     * @return the {@link ImageBuilder} instance for method chaining
+     */
     public ImageBuilder withMagicNumber(String magicNumber) {
         this.magicNumber = magicNumber;
         return this;
     }
 
+    /**
+     * Sets an optional adapter for converting raw pixel data to ARGB format.
+     *
+     * @param imageAdapter the {@link ImageAdapterInterface} to use for pixel conversion
+     * @return the {@link ImageBuilder} instance for method chaining
+     */
     public ImageBuilder withImageAdapter(ImageAdapterInterface imageAdapter) {
         this.imageAdapter = imageAdapter;
         return this;
     }
 
+    /**
+     * Builds the image after validating the provided attributes.
+     * If an adapter is provided, it converts the raw pixel data to ARGB format.
+     *
+     * @return the {@link ImageBuilder} instance
+     * @throws IllegalStateException if required attributes (filePath or magicNumber) are missing
+     */
     public ImageBuilder build() {
         // Validazione
         if (pixels == null) {

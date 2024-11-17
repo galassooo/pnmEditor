@@ -7,31 +7,48 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Represents an image with pixel data, file path, and format information.
+ * Implements {@link WritableImage} to provide methods for retrieving data,
+ * persisting, and exporting images.
+ */
 public class ImageBusiness implements WritableImage {
 
-    /* instance field */
     private long[][] argbPixels;
     private String filePath;
     private final String magicNumber;
 
-    // Tutti i formati di immagine
-    // (PNG, BMP, GIF, JPEG, TIFF, ICO, PPM, PGM, PBM etc...)
-    // hanno un magicNumber che permette al software di riconoscerne
-    // il tipo senza basarsi sull'estensione. Di conseguenza va incluso
-    // come attributo di un immagine generica
-    // P + valore nei PNM è semplicemente codificato in ascii e non in byte
-
+    /**
+     * Constructs an {@link ImageBusiness} object using the specified {@link ImageBuilderInterface}.
+     *
+     * @param builder the {@link ImageBuilderInterface} containing the image attributes
+     */
     public ImageBusiness(ImageBuilderInterface builder) {
         this.argbPixels = builder.getPixels();
         this.filePath = builder.getFilePath();
         this.magicNumber = builder.getMagicNumber();
     }
 
+    /**
+     * Reads an image from the specified file path.
+     *
+     * @param path the path of the image file to read
+     * @return a {@link WritableImage} representing the image
+     * @throws IOException if an error occurs while reading the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
     public static WritableImage read(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(path);
         return dac.read(path);
     }
 
+    /**
+     * Persists the current image to the file system at the specified path.
+     *
+     * @param path the path where the image should be saved
+     * @throws IOException if an error occurs while writing the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
     @Override
     public void persist(String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstance(filePath);
@@ -40,6 +57,14 @@ public class ImageBusiness implements WritableImage {
         dac.write(this);
     }
 
+    /**
+     * Exports the current image to a different format and saves it at the specified path.
+     *
+     * @param extension the desired file extension for the exported image
+     * @param path      the path where the exported image should be saved
+     * @throws IOException if an error occurs while writing the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
     @Override
     public void export(String extension, String path) throws IOException, IllegalAccessException {
         ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);
@@ -54,20 +79,16 @@ public class ImageBusiness implements WritableImage {
         dac.write(new ImageBusiness(exportedImage));
     }
 
-
+    /* getters / setters */
     @Override
     public long[][] getPixels() {
         return argbPixels;
     }
 
-
     @Override
     public int getWidth() {
-        //argbPixels sempre diverso da null perchè viene convertito in long[0][0]
-        //dal builder in caso sia null
         return argbPixels.length > 0 ? argbPixels[0].length : 0;
     }
-
 
     @Override
     public int getHeight() {
@@ -99,7 +120,9 @@ public class ImageBusiness implements WritableImage {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ImageBusiness that)) return false;
-        return Objects.deepEquals(argbPixels, that.argbPixels) && Objects.equals(getFilePath(), that.getFilePath()) && Objects.equals(getMagicNumber(), that.getMagicNumber());
+        return Objects.deepEquals(argbPixels, that.argbPixels) &&
+                Objects.equals(getFilePath(), that.getFilePath()) &&
+                Objects.equals(getMagicNumber(), that.getMagicNumber());
     }
 
     @Override
@@ -107,4 +130,3 @@ public class ImageBusiness implements WritableImage {
         return Objects.hash(Arrays.deepHashCode(argbPixels), getFilePath(), getMagicNumber());
     }
 }
-

@@ -5,6 +5,9 @@ import ch.supsi.application.state.StateChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages editor states and notifies listeners of state changes.
+ */
 public class BusinessEditorState implements EditorStateManager, StateChangeEvent {
     private static BusinessEditorState instance;
 
@@ -20,6 +23,9 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         listeners = new ArrayList<>();
     }
 
+    /**
+     * Returns the Singleton instance.
+     */
     public static BusinessEditorState getInstance() {
         if (instance == null) {
             instance = new BusinessEditorState();

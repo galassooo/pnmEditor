@@ -1,9 +1,12 @@
 package org.supsi.dispatcher;
 
+import javafx.stage.Stage;
 import org.supsi.controller.about.AboutController;
 import org.supsi.controller.about.IAboutController;
 import org.supsi.controller.confirmation.ConfirmationController;
 import org.supsi.controller.confirmation.IConfirmationController;
+import org.supsi.controller.exit.ExitController;
+import org.supsi.controller.exit.IExitController;
 import org.supsi.controller.image.IImageController;
 import org.supsi.controller.image.ImageController;
 import org.supsi.controller.preferences.IPreferencesController;
@@ -20,7 +23,7 @@ public class MenuDispatcher {
     private static final IImageController imageController;
     private static final IPreferencesController preferencesController;
     private static final IAboutController aboutController;
-    private static final IConfirmationController confirmationController;
+    private static final IExitController exitController;
 
     private final IStateModel stateModel = StateModel.getInstance();
 
@@ -29,16 +32,16 @@ public class MenuDispatcher {
         imageController = ImageController.getInstance();
         preferencesController = PreferencesController.getInstance();
         aboutController = AboutController.getInstance();
-        confirmationController = ConfirmationController.getInstance();
+        exitController = ExitController.getInstance();
     }
 
     @FXML
-    public MenuItem saveMenuItem;
+    private MenuItem saveMenuItem;
 
     @FXML
-    public MenuItem saveAsMenuItem;
+    private MenuItem saveAsMenuItem;
 
-
+    private Stage stage;
 
     @FXML
     private void initialize(){
@@ -46,6 +49,9 @@ public class MenuDispatcher {
         saveAsMenuItem.disableProperty().bind(stateModel.canSaveAsProperty().not());
     }
 
+    public void setStage(Stage stage){
+        this.stage = stage;
+    }
 
     public void save() throws IOException, IllegalAccessException {
         imageController.save();
@@ -63,12 +69,7 @@ public class MenuDispatcher {
     }
 
     public void close(){
-        confirmationController.requestConfirm(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) {
-                System.out.println("uscita");
-            }
-        });
+        exitController.handleExit(stage);
     }
 
     public void about(){

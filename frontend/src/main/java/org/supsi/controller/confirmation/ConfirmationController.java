@@ -29,7 +29,7 @@ public class ConfirmationController implements IConfirmationController {
 
     private boolean changesPending = false;
 
-    private ConfirmationController() {
+    protected ConfirmationController() {
 
         stateModel.areChangesPending().addListener((obs, old, newValue) -> {
             changesPending = newValue;

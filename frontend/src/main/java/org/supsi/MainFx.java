@@ -3,6 +3,8 @@ package org.supsi;
 import ch.supsi.application.preferences.PreferencesApplication;
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.controller.errors.IErrorController;
+import org.supsi.controller.exit.ExitController;
+import org.supsi.controller.exit.IExitController;
 import org.supsi.controller.filter.FilterController;
 import org.supsi.controller.image.IImageController;
 import org.supsi.controller.image.ImageController;
@@ -47,11 +49,12 @@ public class MainFx extends Application {
         ITranslationsModel translationsModel = TranslationModel.getInstance();
         ILoggerController loggerController = LoggerController.getInstance();
         FilterController filterController = FilterController.getInstance();
+        IExitController exitController = ExitController.getInstance();
 
         //VA CHIAMATO PER GESTIRE L'EVENTO 'MANUALMENTE'
         primaryStage.setOnCloseRequest(e -> {
             e.consume();
-            primaryStage.close();
+            exitController.handleExit(primaryStage);
         });
 
         PreferencesApplication.getInstance().getPreference("language-tag");
@@ -74,6 +77,7 @@ public class MainFx extends Application {
             MenuBar menuBar = loader.load();
 
             MenuDispatcher dispatcher = loader.getController();
+            dispatcher.setStage(primaryStage);
 
             root.setTop(menuBar);
 

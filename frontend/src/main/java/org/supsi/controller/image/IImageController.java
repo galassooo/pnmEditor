@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface IImageController {
 
-    void save() throws IOException, IllegalAccessException;
+    void save();
 
     void saveAs();
 

@@ -18,6 +18,11 @@ import org.supsi.model.translations.TranslationModel;
 
 import java.util.Optional;
 
+/**
+ * Represents a UI component for managing filters in the application.
+ * Displays buttons for each available filter and an "Activate" button for applying them.
+ * Handles the state and interactions for filters using model bindings.
+ */
 public class FilterLine {
 
     private static final String FILTER_IMAGE_PATH = "/images/buttons/top/%s.png";
@@ -31,15 +36,23 @@ public class FilterLine {
     @FXML
     public HBox hbox;
 
+    /**
+     * Constructs a new {@code FilterLine} and initializes required models and the event publisher.
+     */
     private FilterLine(){
         stateModel = StateModel.getInstance();
         filterModel = FilterModel.getInstance();
         publisher = EventManager.getPublisher();
     }
 
+    /**
+     * Initializes the filter line UI.
+     * Sets up the HBox layout and creates buttons for each filter.
+     * Binds the "Activate" button's enabled state to the application's filter application capability.
+     */
     @FXML
     public void initialize() {
-        ITranslationsModel translationsModel = TranslationModel.getMyself();
+        ITranslationsModel translationsModel = TranslationModel.getInstance();
 
         hbox.setSpacing(5);
         hbox.setPadding(new Insets(5));
@@ -55,6 +68,14 @@ public class FilterLine {
         setupActivateButton();
     }
 
+    /**
+     * Creates a button for a specific filter, including its tooltip and actions.
+     *
+     * @param filterKey        the key identifying the filter
+     * @param translatedFilter the translated name of the filter
+     * @param translationsModel the model for retrieving UI translations
+     * @return an {@link Optional} containing the created {@link Button}, or {@code Optional.empty()} if the button couldn't be created
+     */
     private Optional<Button> createFilterButton(String filterKey, String translatedFilter, ITranslationsModel translationsModel) {
         return loadImage(filterKey)
                 .map(imageView -> {
@@ -81,6 +102,12 @@ public class FilterLine {
                 });
     }
 
+    /**
+     * Loads the image associated with a filter.
+     *
+     * @param filterName the name of the filter
+     * @return an {@link Optional} containing the {@link ImageView} for the filter, or {@code Optional.empty()} if the image could not be loaded
+     */
     private Optional<ImageView> loadImage(String filterName) {
         try {
             Image image = new Image(String.format(FILTER_IMAGE_PATH, filterName));
@@ -93,6 +120,10 @@ public class FilterLine {
         }
     }
 
+    /**
+     * Configures the "Activate" button.
+     * Sets its size and action to publish a filter execution request.
+     */
     private void setupActivateButton() {
         if (activate != null) {
             activate.setPrefSize(30, 30);

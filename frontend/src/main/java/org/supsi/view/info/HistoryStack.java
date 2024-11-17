@@ -8,6 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
+/**
+ * Represents a history stack view that displays the list of filters applied in reverse order.
+ * The view dynamically updates whenever the list of applied filters changes.
+ */
 public class HistoryStack {
 
     @FXML
@@ -15,10 +19,18 @@ public class HistoryStack {
 
     private final IFilterModel model;
 
+    /**
+     * Constructs a new {@code HistoryStack} and initializes the associated filter model.
+     */
     private HistoryStack() {
         model = FilterModel.getInstance();
     }
 
+    /**
+     * Initializes the history stack view.
+     * Sets up the {@link ListView} to display filters in reverse order and listens for updates
+     * in the underlying filter model to dynamically refresh the view.
+     */
     @FXML
     private void initialize() {
         ObservableList<String> reversedList = FXCollections.observableArrayList(model.getLastApplied());

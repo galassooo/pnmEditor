@@ -9,6 +9,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.supsi.view.IView;
 
+/**
+ * Represents the "About" view in the application.
+ * Displays information about the application such as the developer, version, and release date.
+ */
 public class AboutView implements IView<IAboutModel> {
 
     @FXML
@@ -30,6 +34,10 @@ public class AboutView implements IView<IAboutModel> {
 
     private IAboutModel model;
 
+    /**
+     * Initializes the "About" view.
+     * Sets up the stage and defines the behavior for the close button.
+     */
     @FXML
     private void initialize(){
         myStage = new Stage();
@@ -39,11 +47,18 @@ public class AboutView implements IView<IAboutModel> {
         closeButton.setOnAction(event -> myStage.close());
     }
 
+    /**
+     * Displays the "About" view to the user.
+     */
     @Override
     public void show() {
         myStage.show();
     }
 
+    /**
+     * Builds or updates the "About" view with data from the associated model.
+     * Sets the text of labels to the application's developer, version, and release date.
+     */
     @Override
     public void build(){
         developer.setText(model.getDeveloper());
@@ -51,6 +66,11 @@ public class AboutView implements IView<IAboutModel> {
         date.setText(model.getDate());
     }
 
+    /**
+     * Sets the model for the "About" view.
+     *
+     * @param model the {@link IAboutModel} providing data for the view
+     */
     @Override
     public void setModel(IAboutModel model) {
         this.model = model;

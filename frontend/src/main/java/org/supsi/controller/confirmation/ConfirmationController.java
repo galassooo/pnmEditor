@@ -31,7 +31,7 @@ public class ConfirmationController implements IConfirmationController {
 
         ILoggerModel loggerModel = LoggerModel.getInstance();
         try {
-            ITranslationsModel translationsModel = TranslationModel.getMyself();
+            ITranslationsModel translationsModel = TranslationModel.getInstance();
             FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());
             loader.load();
             view = loader.getController();

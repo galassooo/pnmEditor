@@ -17,10 +17,11 @@ import org.supsi.view.fileSystem.FileSystemView;
 import org.supsi.view.fileSystem.IFileSystemView;
 import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 
-public class ImageController implements  IImageController {
+public class ImageController implements IImageController {
 
     private static ImageController myself;
     private final IImageModel model;
@@ -44,12 +45,12 @@ public class ImageController implements  IImageController {
             }
         });
         EventSubscriber subscriber = EventManager.getSubscriber();
-        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested );
+        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested);
     }
 
-    public static ImageController getInstance(){
-        if(myself==null){
-            myself=new ImageController();
+    public static ImageController getInstance() {
+        if (myself == null) {
+            myself = new ImageController();
         }
         return myself;
     }
@@ -60,11 +61,15 @@ public class ImageController implements  IImageController {
     }
 
 
-
     @Override
-    public void save() throws IOException, IllegalAccessException {
+    public void save() {
+        try {
             model.writeImage(null);
-            loggerModel.addInfo("ui_image_saved");
+        } catch (Exception e) {
+            errorController.showError(e.getMessage());
+        }
+        loggerModel.addInfo("ui_image_saved");
+        loggerModel.addInfo("ui_image_saved");
     }
 
     @Override
@@ -72,12 +77,12 @@ public class ImageController implements  IImageController {
         IFileSystemView fsPopUp = new FileSystemView(root);
         File chosen = fsPopUp.askForDirectory();
 
-        if(chosen == null){ //popup closed
+        if (chosen == null) { //popup closed
             return;
         }
         try {
             model.writeImage(chosen.getPath());
-        }catch(Exception e ){
+        } catch (Exception e) {
             errorController.showError(e.getMessage());
         }
         loggerModel.addInfo("ui_image_saved");
@@ -89,7 +94,7 @@ public class ImageController implements  IImageController {
     }
 
     @Override
-    public void setStage(Stage stage){
+    public void setStage(Stage stage) {
         this.root = stage;
     }
 
@@ -99,30 +104,30 @@ public class ImageController implements  IImageController {
         File chosen = fsPopUp.askForDirectory();
 
 
-        if(chosen == null){ //popup closed
+        if (chosen == null) { //popup closed
             return;
         }
         try {
             model.export(event.extension(), chosen.getPath());
-        }catch(Exception e ){
+        } catch (Exception e) {
             errorController.showError(e.getMessage());
         }
         loggerModel.addInfo("ui_image_exported");
     }
 
-    private void openImage(){
+    private void openImage() {
 
         IFileSystemView fsPopUp = new FileSystemView(root);
         File chosen = fsPopUp.askForFile();
 
-        if(chosen == null){ //popup closed
+        if (chosen == null) { //popup closed
             return;
         }
 
         try {
             model.readImage(chosen.getPath());
             loggerModel.addInfo("ui_image_loaded");
-        }catch(Exception e ){
+        } catch (Exception e) {
             errorController.showError(e.getMessage());
         }
     }

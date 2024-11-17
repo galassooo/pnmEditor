@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Represents the model for managing translations and language settings in the application.
+ * Utilizes the controllers to retrieve and cache translations and user preferences.
+ */
 public class TranslationModel implements ITranslationsModel {
 
     private static TranslationModel myself;
@@ -25,9 +29,11 @@ public class TranslationModel implements ITranslationsModel {
     private TranslationModel() {}
 
     /**
-     * @return an instance of this class
+     * Retrieves the singleton instance of this class.
+     *
+     * @return the singleton instance of {@code TranslationModel}
      */
-    public static TranslationModel getMyself() {
+    public static TranslationModel getInstance() {
         if (myself == null) {
             myself = new TranslationModel();
         }
@@ -35,9 +41,7 @@ public class TranslationModel implements ITranslationsModel {
     }
 
     /**
-     * Attempts to load the resource bundle containing the labels useful for the FXML components of the frontend
-     *
-     * @return The bundle, null if it wasn't found
+     * {@inheritDoc}
      */
     @Override
     public ResourceBundle getUiBundle() throws IOException {
@@ -50,9 +54,7 @@ public class TranslationModel implements ITranslationsModel {
     }
 
     /**
-     * Attempts to load the current locale based on user's preferences
-     *
-     * @return The Locale, null if it wasn't found
+     * {@inheritDoc}
      */
     @Override
     public Locale getLocale() {
@@ -63,21 +65,15 @@ public class TranslationModel implements ITranslationsModel {
     }
 
     /**
-     * Returns a translated string in the selected language given the associated key
-     *
-     * @param s string key
-     * @return translated string
+     * {@inheritDoc}
      */
     @Override
     public String translate(String s) {
         return translationsController.translate(s).orElse("Translation not found");
     }
 
-
     /**
-     * Retrieves the list of supported languages available for translation.
-     *
-     * @return A list of language tags representing supported languages.
+     * {@inheritDoc}
      */
     @Override
     public List<String> getSupportedLanguages() {
@@ -85,9 +81,7 @@ public class TranslationModel implements ITranslationsModel {
     }
 
     /**
-     * Retrieves the current language selected by the user based on preferences.
-     *
-     * @return The Locale object representing the current language.
+     * {@inheritDoc}
      */
     @Override
     public Locale getCurrentLanguage() {

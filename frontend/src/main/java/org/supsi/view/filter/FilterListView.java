@@ -22,8 +22,44 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A specialized ListView implementation for managing and displaying a pipeline of image filters.
+ * This class provides a drag-and-drop interface for reordering filters and supports copy-paste operations
+ * through keyboard shortcuts.
+ *
+ * <p>Key features:
+ * <ul>
+ *   <li>Bi-directional synchronization with the filter model pipeline</li>
+ *   <li>Drag-and-drop functionality for filter reordering with visual feedback</li>
+ *   <li>Copy-paste support through keyboard shortcuts (Ctrl/Cmd + C/V)</li>
+ *   <li>Context menu for filter deletion</li>
+ *   <li>Dynamic visual indicators showing filter pipeline flow</li>
+ * </ul>
+ *
+ * <p>The view maintains a reverse order relationship with the model's filter pipeline:
+ * the first filter in the model appears at the bottom of the list view, creating a
+ * visual representation of the filter processing flow from top to bottom.
+ *
+ * <p>Implementation details:
+ * <ul>
+ *   <li>Uses JavaFX ListView with custom cell rendering</li>
+ *   <li>Implements drag-and-drop using JavaFX's drag events</li>
+ *   <li>Maintains visual consistency through dynamic arrow indicators</li>
+ *   <li>Publishes filter-related events through the EventManager system</li>
+ * </ul>
+ *
+ * <p>Event publishing:
+ * <ul>
+ *   <li>{@code FilterAddRequested} - When a filter is copied and pasted</li>
+ *   <li>{@code FilterRemoveRequested} - When a filter is deleted via context menu</li>
+ *   <li>{@code FilterMoveRequested} - When a filter is moved via drag and drop</li>
+ * </ul>
+ *
+ * @see CustomCell
+ * @see FilterEvent
+ * @see org.supsi.model.filters.FilterModel
+ */
 public class FilterListView {
-
 
     @FXML
     private ListView<CustomCell> list;

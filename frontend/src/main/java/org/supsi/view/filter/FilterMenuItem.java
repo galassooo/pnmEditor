@@ -10,6 +10,10 @@ import javafx.scene.control.MenuItem;
 
 import java.util.Map;
 
+/**
+ * Represents a menu component for selecting and applying filters.
+ * Dynamically populates the menu with filter options and handles filter selection events.
+ */
 public class FilterMenuItem{
 
     private final EventPublisher publisher;
@@ -17,10 +21,17 @@ public class FilterMenuItem{
     @FXML
     private Menu menu;
 
+    /**
+     * Constructs a new {@code FilterMenuItem} and initializes the event publisher.
+     */
     private FilterMenuItem() {
         publisher = EventManager.getPublisher();
     }
 
+    /**
+     * Initializes the filter menu.
+     * Populates the menu with filter options and associates actions to publish filter-related events.
+     */
     @FXML
     void initialize() {
         IFilterModel model = FilterModel.getInstance();

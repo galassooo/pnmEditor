@@ -7,6 +7,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+/**
+ * Represents the main view for displaying the current image in the application.
+ * Updates the view based on changes in the image model by rendering the image pixel data.
+ */
 public class MainImageView implements IImageView {
     @FXML
     private ImageView image;
@@ -17,7 +21,10 @@ public class MainImageView implements IImageView {
         model = ImageModel.getInstance();
     }
 
-
+    /**
+     * Updates the image view to reflect changes in the image model.
+     * Converts the raw pixel data from the model into a {@link WritableImage} and displays it.
+     */
     @Override
     public void update() {
         long[][] pixels = model.getImagePixels();

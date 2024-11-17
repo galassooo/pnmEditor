@@ -27,7 +27,7 @@ public class AboutController implements IAboutController{
     private IView<IAboutModel> view;
 
     protected AboutController(){
-        translationsModel = TranslationModel.getMyself();
+        translationsModel = TranslationModel.getInstance();
         model = AboutModel.getInstance();
         loggerModel = LoggerModel.getInstance();
 

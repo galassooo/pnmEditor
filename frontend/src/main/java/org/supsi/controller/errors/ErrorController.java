@@ -29,7 +29,7 @@ public class ErrorController implements IErrorController {
         }
 
         try {
-            ITranslationsModel translationsModel = TranslationModel.getMyself();
+            ITranslationsModel translationsModel = TranslationModel.getInstance();
             FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());
             loader.load();
             errorPopUp = loader.getController();

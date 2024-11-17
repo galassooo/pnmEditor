@@ -37,7 +37,7 @@ public class PreferencesController implements IPreferencesController {
         }
 
         try {
-            ITranslationsModel translationsModel = TranslationModel.getMyself();
+            ITranslationsModel translationsModel = TranslationModel.getInstance();
             FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());
             loader.load();
             view = loader.getController();

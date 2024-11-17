@@ -58,7 +58,7 @@ public class MainFx extends Application {
      */
     private void initializeControllers() {
         imageController = ImageController.getInstance();
-        translationsModel = TranslationModel.getMyself();
+        translationsModel = TranslationModel.getInstance();
         loggerController = LoggerController.getInstance();
         FilterController.getInstance(); // Force initialize filter controller
         ErrorController.getInstance();

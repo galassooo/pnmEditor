@@ -7,13 +7,22 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+/**
+ * Represents a file system view for interacting with file and directory dialogs in the application.
+ * Provides functionality to open and save files using a {@link FileChooser}.
+ */
 public class FileSystemView implements IFileSystemView {
 
     private final Stage root;
     private final IImageModel model;
     private String extension;
 
-
+    /**
+     * Constructs a new {@code FileSystemView} with the given root stage.
+     *
+     * @param root the {@link Stage} used as the owner for file dialogs
+     * @throws IllegalArgumentException if the provided {@code root} is {@code null}
+     */
     public FileSystemView(Stage root) {
         model = ImageModel.getInstance();
 

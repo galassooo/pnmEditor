@@ -6,6 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * Represents a confirmation popup dialog.
+ * Provides a user interface with "Confirm" and "Cancel" buttons to determine whether the user wants to proceed.
+ */
 public class ConfirmPopup implements IConfirmPopup{
 
     @FXML
@@ -21,6 +25,10 @@ public class ConfirmPopup implements IConfirmPopup{
 
     private boolean wantsToContinue;
 
+    /**
+     * Initializes the confirmation popup.
+     * Sets up the stage and defines the behavior for the "Confirm" and "Cancel" buttons.
+     */
     @FXML
     void initialize() {
         myStage = new Stage();
@@ -39,6 +47,11 @@ public class ConfirmPopup implements IConfirmPopup{
         });
     }
 
+    /**
+     * Displays the confirmation dialog and waits for the user's response.
+     *
+     * @return {@code true} if the user clicked "Confirm", {@code false} if the user clicked "Cancel"
+     */
     @Override
     public boolean showConfirmationDialog() {
         myStage.showAndWait();

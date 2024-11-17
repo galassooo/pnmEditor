@@ -11,6 +11,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
+/**
+ * Represents the information stack view that displays a list of log entries.
+ * The view listens for updates in the log model and dynamically updates the displayed list.
+ * Each log entry is styled based on its type.
+ */
 public class InformationStack {
 
     @FXML
@@ -18,10 +23,18 @@ public class InformationStack {
 
     private final ILoggerModel model;
 
+    /**
+     * Constructs a new {@code InformationStack} and initializes the associated logger model.
+     */
     private InformationStack() {
         model = LoggerModel.getInstance();
     }
 
+    /**
+     * Initializes the information stack view.
+     * Sets up the {@link ListView} to display log entries and listens for changes in the log model.
+     * Configures a custom cell factory for styling log entries based on their type.
+     */
     @FXML
     private void initialize() {
         model.getLogs().addListener((ListChangeListener<LogEntry>) change -> {

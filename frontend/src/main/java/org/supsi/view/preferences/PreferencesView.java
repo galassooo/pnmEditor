@@ -19,6 +19,11 @@ import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
+/**
+ * Represents the Preferences View in the application.
+ * This view allows users to update language preferences and toggle various debug and logging options.
+ * It interacts with the {@link ITranslationsModel} for translations and the {@link IPreferencesModel} for preference management.
+ */
 public class PreferencesView implements IView<ITranslationsModel> {
 
     @FXML
@@ -52,13 +57,17 @@ public class PreferencesView implements IView<ITranslationsModel> {
     private final Map<String, String> labelsAndCodesMap;
     private final EventPublisher publisher;
 
-
+    /** Constructs a new PreferencesView and initializes dependencies. */
     private PreferencesView() {
         preferencesModel = PreferencesModel.getInstance();
         publisher = EventManager.getPublisher();
         labelsAndCodesMap = new HashMap<>();
     }
 
+    /**
+     * Initializes the preferences view.
+     * Sets up event handlers for buttons and loads the current preferences.
+     */
     @FXML
     private void initialize() {
         closeButton.setOnAction(event -> myStage.close());
@@ -81,12 +90,10 @@ public class PreferencesView implements IView<ITranslationsModel> {
                 publisher.publish(new PreferenceEvent.PreferenceChanged(pEvent));
             }
 
-
-            notifyPref("show-debug", debugCB );
-            notifyPref("show-info", infoCB );
-            notifyPref("show-warning", warningCB );
-            notifyPref("show-error", errorCB );
-
+            notifyPreferenceChange("show-debug", debugCB );
+            notifyPreferenceChange("show-info", infoCB );
+            notifyPreferenceChange("show-warning", warningCB );
+            notifyPreferenceChange("show-error", errorCB );
 
             myStage.close();
         });
@@ -94,15 +101,28 @@ public class PreferencesView implements IView<ITranslationsModel> {
 
     }
 
+    /**
+     * Sets the translations model for the view.
+     *
+     * @param model the translations model to be used
+     */
+    @Override
     public void setModel(ITranslationsModel model) {
         this.model = model;
     }
 
+    /**
+     * Displays the preferences view to the user.
+     */
     @Override
     public void show() {
         myStage.show();
     }
 
+    /**
+     * Builds or updates the preferences view based on the current model data.
+     * Populates the language choice box with supported languages.
+     */
     @Override
     public void build() {
         choiceBox.getItems().removeAll(choiceBox.getItems());
@@ -114,7 +134,13 @@ public class PreferencesView implements IView<ITranslationsModel> {
         });
     }
 
-    private void notifyPref(String tag, CheckBox box){
+    /**
+     * Publishes a preference change event for the specified preference and checkbox state.
+     *
+     * @param tag the preference key
+     * @param box the checkbox controlling the preference
+     */
+    private void notifyPreferenceChange(String tag, CheckBox box){
         Preferences dummyPreferences = Preferences.userRoot().node("dummy");
         PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, tag, String.valueOf(box.isSelected()));
 

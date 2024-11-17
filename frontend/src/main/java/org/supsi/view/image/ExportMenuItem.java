@@ -12,7 +12,10 @@ import org.supsi.model.state.StateModel;
 
 import java.util.List;
 
-
+/**
+ * Represents a menu component for exporting images in different formats.
+ * Dynamically populates the export menu with supported file extensions and handles export events.
+ */
 public class ExportMenuItem{
 
     private final EventPublisher publisher;
@@ -20,10 +23,18 @@ public class ExportMenuItem{
     @FXML
     private Menu exportMenu;
 
+    /**
+     * Constructs a new {@code ExportMenuItem} and initializes the event publisher.
+     */
     private ExportMenuItem() {
         publisher = EventManager.getPublisher();
     }
 
+    /**
+     * Initializes the export menu.
+     * Populates the menu with supported file extensions and binds their enabled state
+     * to the application's export capability.
+     */
     @FXML
     private void initialize() {
         IImageModel model = ImageModel.getInstance();

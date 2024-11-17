@@ -1,12 +1,11 @@
 package ch.supsi.business.image;
 
-import ch.supsi.application.image.ImageBusinessInterface;
 import ch.supsi.business.strategy.ConvertStrategy;
 import java.util.function.Function;
 
 /*
 Non implementa il pattern adapter, perchè non abbiamo un'incompatibilità tra i tipi
-in quanto abbiamo un image come input e un image come output.
+in quanto abbiamo un long[][] come input e un long[][] come output.
  */
 public class ImageAdapter implements ImageAdapterInterface{
     private final ConvertStrategy strategy;

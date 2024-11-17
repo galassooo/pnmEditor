@@ -1,8 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.application.image.ImageBusinessInterface;
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.SingleBit;
+import ch.supsi.application.image.WritableImage;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +62,7 @@ class PBMDataAccessTest {
 
         Files.write(tempFile, fileContent);
 
-        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -97,7 +95,7 @@ class PBMDataAccessTest {
                 {0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
 
         long[][] actualMatrix = img.getPixels();
         assertArrayEquals(expectedMatrix, actualMatrix);
@@ -124,7 +122,7 @@ class PBMDataAccessTest {
                 {0xFF000000L, 0xFFFFFFFFL, 0xFFFFFFFFL, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
 
         long[][] actualMatrix = img.getPixels();
 
@@ -285,7 +283,7 @@ class PBMDataAccessTest {
 
         Files.write(tempFile, fileContent);
 
-        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(() -> pbmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
@@ -299,7 +297,7 @@ class PBMDataAccessTest {
         String asciiData = "P1\n2 2\n1 0\n0 1\n";
         Files.write(tempFile, asciiData.getBytes());
 
-        ImageBusinessInterface img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pbmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(() -> pbmDataAccess.write(img));
 
         String actualContent = new String(Files.readAllBytes(tempFile));

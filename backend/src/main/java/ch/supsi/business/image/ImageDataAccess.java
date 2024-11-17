@@ -1,12 +1,10 @@
 package ch.supsi.business.image;
 
-import ch.supsi.application.image.ImageBusinessInterface;
-
+import ch.supsi.application.image.WritableImage;
 import java.io.IOException;
 
 public interface ImageDataAccess {
-
-    ImageBusinessInterface read(String path) throws IOException;
-    ImageBusinessInterface write(ImageBusinessInterface image) throws IOException ;
+    WritableImage read(String path) throws IOException;
+    WritableImage write(WritableImage image) throws IOException ;
 }
 

@@ -4,6 +4,7 @@ import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.SingleBit;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +31,8 @@ public final class PBMDataAccess extends PNMDataAccess {
     }
 
     /* constructor */
-    private PBMDataAccess() {}
+    private PBMDataAccess() {
+    }
 
     /**
      * Processes binary PBM image data
@@ -69,7 +71,7 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @throws IOException if there is an error in reading the ASCII data
      */
     @Override
-    protected long[] @NotNull [] processAscii(InputStream is)throws IOException {
+    protected long[] @NotNull [] processAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {
@@ -94,6 +96,11 @@ public final class PBMDataAccess extends PNMDataAccess {
     @Override
     protected void writeAscii(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
         writePixels(os, pixels, executor, this::generateAsciiRowBufferPbm);
+    }
+
+    @Override
+    protected ConvertStrategy getArgbConvertStrategy() {
+        return new SingleBit();
     }
 
     private byte[] generateAsciiRowBufferPbm(long[][] pixels, int row, int width) {
@@ -140,11 +147,6 @@ public final class PBMDataAccess extends PNMDataAccess {
     @FunctionalInterface
     private interface RowGenerator {
         byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
-    }
-
-    @Override
-    protected ConvertStrategy getArgbConvertStrategy() {
-        return new SingleBit();
     }
 }
 

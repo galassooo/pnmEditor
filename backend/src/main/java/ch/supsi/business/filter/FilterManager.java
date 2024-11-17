@@ -1,7 +1,7 @@
 package ch.supsi.business.filter;
 
 import ch.supsi.application.filters.FilterPipelineInterface;
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 import ch.supsi.business.filter.chain.FilterChainLink;
 import ch.supsi.business.filter.chain.command.FilterCommand;
 
@@ -10,6 +10,8 @@ public class FilterManager implements FilterPipelineInterface {
     private FilterChainLink pipeline;
     private int size = 0;
 
+    private FilterManager() {}
+
     public static FilterManager getInstance() {
         if(instance == null) {
             instance = new FilterManager();
@@ -17,10 +19,8 @@ public class FilterManager implements FilterPipelineInterface {
         return instance;
     }
 
-    private FilterManager() {}
-
     @Override
-    public void executePipeline(ImageBusinessInterface image) {
+    public void executePipeline(WritableImage image) {
         if (image == null || pipeline == null) return;
         pipeline.execute(image);
         pipeline = null;
@@ -41,6 +41,10 @@ public class FilterManager implements FilterPipelineInterface {
         }
     }
 
+    /**
+     *
+     * @throws IndexOutOfBoundsException if the index is invalid
+     */
     @Override
     public void addFilter(FilterCommand command, int index) {
         if (index < 0) {
@@ -69,6 +73,10 @@ public class FilterManager implements FilterPipelineInterface {
         current.setNext(newLink);
     }
 
+    /**
+     *
+     * @throws IndexOutOfBoundsException if the index is invalid
+     */
     @Override
     public String remove(int index) {
         if (index < 0 || pipeline == null) {

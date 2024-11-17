@@ -1,12 +1,29 @@
 package ch.supsi.business.image;
 
-import ch.supsi.application.image.ImageBusinessInterface;
+import java.util.Arrays;
+import java.util.Objects;
 
-public class ImageBuilder {
+public class ImageBuilder implements ImageBuilderInterface{
     private long[][] pixels;
     private String filePath;
     private String magicNumber;
     private ImageAdapterInterface imageAdapter;
+
+    @Override
+    public long[][] getPixels() {
+        return pixels;
+    }
+
+    @Override
+    public String getFilePath() {
+        return filePath;
+    }
+
+    @Override
+    public String getMagicNumber() {
+        return magicNumber;
+    }
+
 
     public ImageBuilder withPixels(long[][] pixels) {
         this.pixels = pixels;
@@ -46,16 +63,15 @@ public class ImageBuilder {
         return this;
     }
 
-    //getters, volutamente package - private
-    long[][] getPixels() {
-        return pixels;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImageBuilder that)) return false;
+        return Objects.deepEquals(getPixels(), that.getPixels()) && Objects.equals(getFilePath(), that.getFilePath()) && Objects.equals(getMagicNumber(), that.getMagicNumber()) && Objects.equals(imageAdapter, that.imageAdapter);
     }
 
-    String getFilePath() {
-        return filePath;
-    }
-
-    String getMagicNumber() {
-        return magicNumber;
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.deepHashCode(getPixels()), getFilePath(), getMagicNumber(), imageAdapter);
     }
 }

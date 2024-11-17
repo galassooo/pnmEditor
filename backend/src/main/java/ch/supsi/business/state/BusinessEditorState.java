@@ -2,16 +2,23 @@ package ch.supsi.business.state;
 
 import ch.supsi.application.state.EditorStateManager;
 import ch.supsi.application.state.StateChangeListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessEditorState implements EditorStateManager, StateChangeEvent {
     private static BusinessEditorState instance;
 
-    private static EditorState currentState = new NoImageState();
+    private static EditorState currentState;
 
-    private final List<StateChangeListener> listeners = new ArrayList<>();
+    private final List<StateChangeListener> listeners;
+
+    static{
+        currentState = new DefaultState();
+    }
+
+    private BusinessEditorState() {
+        listeners = new ArrayList<>();
+    }
 
     public static BusinessEditorState getInstance() {
         if (instance == null) {
@@ -64,7 +71,7 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
 
     @Override
     public void onLoadingError() {
-        currentState = new NoImageState();
+        currentState = new DefaultState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
@@ -102,7 +109,7 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         listeners.remove(listener);
     }
 
-    static abstract class DefaultState implements EditorState {
+    static class DefaultState implements EditorState {
         @Override public boolean canApplyFilters() { return false; }
         @Override public boolean canSave() { return false; }
         @Override public boolean canSaveAs() { return false; }
@@ -110,10 +117,6 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
         @Override public boolean canExport() {return false;}
         @Override public boolean isRefreshRequired() { return false; }
         @Override public boolean areChangesPending() { return false; }
-    }
-
-    static class NoImageState extends DefaultState {
-
     }
 
     static class ImageLoadedState extends DefaultState {

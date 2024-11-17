@@ -5,17 +5,19 @@ import ch.supsi.dataaccess.translations.TranslationsDataAccess;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
-
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FilterFactory {
-    private static final List<String> filters = new ArrayList<>();
-    private static final Map<String, FilterCommand> filterInstances = new ConcurrentHashMap<>();
+    private static final List<String> filters;
+    private static final Map<String, FilterCommand> filterInstances;
 
     static {
+        filters = new ArrayList<>();
+        filterInstances = new ConcurrentHashMap<>();
+
         load();
     }
 
@@ -27,9 +29,9 @@ public class FilterFactory {
 
         Set<Class<? extends FilterCommand>> classes = reflections.getSubTypesOf(FilterCommand.class);
 
-        for(var c : classes) {
+        for (var c : classes) {
             try {
-                if(Modifier.isAbstract(c.getModifiers())) {
+                if (Modifier.isAbstract(c.getModifiers())) {
                     continue;
                 }
 
@@ -41,7 +43,7 @@ public class FilterFactory {
                 TranslationsDataAccess tac = TranslationsDataAccess.getInstance();
                 tac.getSupportedLanguageTags().forEach(tag -> {
                     Properties p = tac.getTranslations(Locale.forLanguageTag(tag));
-                    if(p.get(command.getName()) == null) {
+                    if (p.get(command.getName()) == null) {
                         System.out.println("\u001B[33m[WARNING] \u001B[0m" +
                                 "filter " + command.getName() +
                                 " should have a translation associated. Update language bundle(" +
@@ -50,7 +52,7 @@ public class FilterFactory {
                     }
                 });
 
-                if(process.get()) {
+                if (process.get()) {
                     filters.add(command.getName());
                     filterInstances.put(command.getName(), command);
                 }
@@ -69,7 +71,7 @@ public class FilterFactory {
         return filterInstances.get(name);
     }
 
-    public static void reload() {
+    public static void reload() { //useful for runtime code insertion
         filters.clear();
         filterInstances.clear();
         load();

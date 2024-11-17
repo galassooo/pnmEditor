@@ -1,7 +1,5 @@
 package org.supsi.model.image;
 
-import ch.supsi.application.image.ImageBusinessInterface;
-
 import java.io.IOException;
 import java.util.List;
 

@@ -1,8 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.SingleChannel;
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +58,7 @@ class PGMDataAccessTest {
                 {0xFF828282L, 0xFF8C8C8CL, 0xFF969696L, 0xFFA0A0A0L}
         };
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -84,7 +82,7 @@ class PGMDataAccessTest {
                 {0xFF000000L, 0xFF000000L, 0xFFFFFFFFL, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -106,7 +104,7 @@ class PGMDataAccessTest {
         };
 
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -125,7 +123,7 @@ class PGMDataAccessTest {
         };
 
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
     @Test
@@ -140,7 +138,7 @@ class PGMDataAccessTest {
                 {0xFF000000L, 0xFF000000L, 0xFF000000L, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -369,7 +367,7 @@ class PGMDataAccessTest {
 
         long[][] expected = {{0xFF0A0A0AL}};
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expected, img.getPixels());
     }
 
@@ -384,7 +382,7 @@ class PGMDataAccessTest {
 
         long[][] expected = {{0xFF0A0A0AL}};
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expected, img.getPixels());
     }
 
@@ -415,7 +413,7 @@ class PGMDataAccessTest {
         System.arraycopy(binaryData, 0, fileContent, header.getBytes().length, binaryData.length);
         Files.write(tempFile, fileContent);
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(() -> pgmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
@@ -441,7 +439,7 @@ class PGMDataAccessTest {
         String asciiData = "P2\n2 2\n65535\n65535 0\n0 65535\n";
         Files.write(tempFile, asciiData.getBytes());
 
-        ImageBusinessInterface img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = pgmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(() -> pgmDataAccess.write(img));
 
         String actualContent = new String(Files.readAllBytes(tempFile));

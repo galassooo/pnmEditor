@@ -1,10 +1,10 @@
 package ch.supsi.business.filter.chain.command;
 
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 
 public class VerticalMirrorCommand implements FilterCommand {
     @Override
-    public void execute(ImageBusinessInterface img) {
+    public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
 
         // Controllo validità dell'array di pixel

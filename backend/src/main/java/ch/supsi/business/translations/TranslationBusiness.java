@@ -35,7 +35,7 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
     /**
      * Retrieves all supported languages of this application
      *
-     * @return a list containing all supported languages
+     * @return a {@link List} containing all supported languages
      */
     @Override
     public List<String> getSupportedLanguages() {
@@ -65,11 +65,12 @@ public class TranslationBusiness implements TranslationsBusinessInterface {
     public Optional<String> translate(String key) {
         return Optional.of(this.translations.getProperty(key));
     }
+
     /**
      * Return the UI translation bundle with the given locale
      *
      * @param locale selected locale
-     * @return UI resource bundle
+     * @return UI {@link ResourceBundle}
      */
     @Override
     public Optional<ResourceBundle> getUIResourceBundle(Locale locale) {

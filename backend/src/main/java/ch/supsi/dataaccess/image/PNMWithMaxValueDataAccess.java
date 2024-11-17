@@ -1,6 +1,7 @@
 package ch.supsi.dataaccess.image;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,7 +57,10 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
     }
 
     protected abstract long[] @NotNull [] readBinary(InputStream is) throws IOException;
+
     protected abstract long[] @NotNull [] readAscii(InputStream is) throws IOException;
+
     protected abstract void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
+
     protected abstract void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
 }

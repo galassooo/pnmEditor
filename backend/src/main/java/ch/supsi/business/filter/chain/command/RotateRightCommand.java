@@ -1,11 +1,11 @@
 package ch.supsi.business.filter.chain.command;
 
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 
 public class RotateRightCommand implements FilterCommand {
 
     @Override
-    public void execute(ImageBusinessInterface img) {
+    public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
         if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {
             return;

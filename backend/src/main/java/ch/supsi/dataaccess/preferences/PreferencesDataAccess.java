@@ -1,38 +1,47 @@
 package ch.supsi.dataaccess.preferences;
 
 import ch.supsi.business.preferences.PreferencesDataAccessInterface;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
+/**
+ * Provides access to user preferences, including loading, saving, and creating default preferences.
+ * This class handles preferences stored in the user's filesystem and ensures that they are available
+ * for the application runtime. It uses a singleton pattern to guarantee a single instance.
+ */
 public class PreferencesDataAccess implements PreferencesDataAccessInterface {
 
-    /* where the default user preferences are located */
+    /* Path to the default user preferences file */
     private static final String DEFAULT_USER_PREFERENCES_PROPERTIES = "/default-user-preferences.properties";
-    /* the user home directory */
+    /* The user's home directory */
     private static String USER_HOME_DIRECTORY;
-    /* the default directory that will be created on the user's filesystem */
+    /* Directory to store preferences in the user's filesystem */
     private static final String PREFERENCES_DIRECTORY = ".imageEditor";
-    /* the name of the preferences file that will be created on the user's filesystem */
+    /* Name of the preferences file in the user's filesystem */
     private static final String PREFERENCES_FILE = "/user-preferences.properties";
-    /* self reference */
+    /* Singleton instance */
     private static PreferencesDataAccess dao;
-    /* an object representation of the user preferences modified at runtime */
+    /* In-memory representation of the user preferences modified at runtime */
     private Properties newProperties;
 
-    // Protected default constructor to avoid a new instance being requested from clients
+    /**
+     * Protected default constructor to avoid instantiation from external clients.
+     * Initializes the user's home directory.
+     */
     protected PreferencesDataAccess() {
         USER_HOME_DIRECTORY = System.getProperty("user.home");
     }
 
-    // singleton instantiation of this data access object
-    // guarantees only a single instance exists in the life of the application
+    /**
+     * Singleton method to retrieve the instance of PreferencesDataAccess.
+     *
+     * @return the singleton instance of {@link PreferencesDataAccess}
+     */
     public static PreferencesDataAccess getInstance() {
         if (dao == null) {
             dao = new PreferencesDataAccess();
@@ -42,22 +51,27 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
     }
 
     /**
-     * Builds the path associated with the preferences directory in the user's filesystem
+     * Builds the path to the preferences directory in the user's filesystem.
      *
-     * @return a path associated with the preferences directory in the user's filesystem
+     * @return the {@link Path} to the preferences directory
      */
-    @Contract(pure = true)
-    private @NotNull Path getUserPreferencesDirectoryPath() {
+    private Path getUserPreferencesDirectoryPath() {
         return Path.of(USER_HOME_DIRECTORY, PREFERENCES_DIRECTORY);
     }
 
-
+    /**
+     * Checks if the preferences directory exists in the user's filesystem.
+     *
+     * @return true if the directory exists, false otherwise
+     */
     private boolean userPreferencesDirectoryExists() {
         return Files.exists(this.getUserPreferencesDirectoryPath());
     }
 
     /**
-     * Tries to create the user preferences directory
+     * Creates the user preferences directory in the filesystem.
+     *
+     * @throws IOException if an error occurs while creating the directory
      */
     private void createUserPreferencesDirectory() throws IOException {
         try {
@@ -67,106 +81,97 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
         }
     }
 
-
     /**
-     * Builds the path associated with the preferences file in the user's filesystem
+     * Builds the path to the preferences file in the user's filesystem.
      *
-     * @return a path associated with the preferences file in the user's filesystem
+     * @return the {@link Path} to the preferences file
      */
-    @Contract(pure = true)
-    private @NotNull Path getUserPreferencesFilePath() {
+    private Path getUserPreferencesFilePath() {
         return Path.of(USER_HOME_DIRECTORY, PREFERENCES_DIRECTORY, PREFERENCES_FILE);
     }
 
-    // Whether the user preferences file exists
+    /**
+     * Checks if the user preferences file exists in the filesystem.
+     *
+     * @return {@code true} if the file exists, {@code false} otherwise
+     */
     private boolean userPreferencesFileExists() {
         return Files.exists(this.getUserPreferencesFilePath());
     }
 
     /**
-     * Tries to create a user preferences file in the users filesystem
+     * Creates a user preferences file with the default preferences.
      *
-     * @param defaultPreferences a properties file representing the default preferences
+     * @param defaultPreferences the default preferences to be stored in the file
+     * @throws IOException if an error occurs while creating the file
      */
     private void createUserPreferencesFile(Properties defaultPreferences) throws IOException {
-
-        // Default properties cannot be null because the properties.load(inputStream) method
-        // never returns null. In case of failure, it throws an exception instead of returning a null value.
-        // doc: https://docs.oracle.com/javase/6/docs/api/java/util/Properties.html#load(java.io.InputStream)
-
         if (!userPreferencesDirectoryExists()) {
-            // user preferences directory does not exist
-            // create it
             this.createUserPreferencesDirectory();
         }
-        //user preferences file exists, checked in getPreferences
         try {
-            // create user preferences file (with default preferences)
             FileOutputStream outputStream = new FileOutputStream(String.valueOf(this.getUserPreferencesFilePath()));
             defaultPreferences.store(outputStream, null);
-
         } catch (IOException e) {
             throw new IOException(String.format("Unable to create user preferences file: %s\n", getUserPreferencesFilePath()));
         }
-
     }
 
     /**
-     * Tries loading the default user preferences
+     * Loads the default user preferences from the properties file.
      *
-     * @return a properties object representing the default preferences
+     * @return a {@link Properties} object containing the default preferences
+     * @throws IOException if an error occurs while loading the default preferences
      */
-    private @NotNull Properties loadDefaultPreferences() throws IOException {
+    private  Properties loadDefaultPreferences() throws IOException {
         Properties defaultPreferences = new Properties();
         try {
             InputStream defaultPreferencesStream = getPreferencesResourceAsStream(DEFAULT_USER_PREFERENCES_PROPERTIES);
             defaultPreferences.load(defaultPreferencesStream);
-
         } catch (IOException e) {
             throw new IOException(String.format("Unable to load user preferences file: %s\n", getUserPreferencesFilePath()));
         }
-
-        // return the properties object with the loaded preferences
         return defaultPreferences;
     }
 
-    //per testing, non esisteva altro modo di testare l'exception in loaddefaultpreferences
-    //dato che accede ai file nelle risorse e i metodi load e getResourceAs stream non sono mockabili
+    /**
+     * Provides an InputStream for the given resource path. Can be overridden for testing purposes.
+     *
+     * @param resource the path to the resource
+     * @return an {@link InputStream} for the resource
+     */
     protected InputStream getPreferencesResourceAsStream(String resource) {
         return this.getClass().getResourceAsStream(resource);
     }
 
     /**
-     * Loads and returns the preferences stored in the preferences file
+     * Loads and returns the preferences from the specified file path.
      *
      * @param path the path to the preferences file
-     * @return a properties file representing the preferences, null if an exception was thrown
+     * @return a {@link Properties} object containing the loaded preferences
+     * @throws IOException if an error occurs while loading the preferences
      */
-    private @Nullable Properties loadPreferences(Path path) throws IOException {
+    private Properties loadPreferences(Path path) throws IOException {
         Properties preferences = new Properties();
         try {
             preferences.load(Files.newInputStream(path));
         } catch (IOException e) {
-            throw new IOException(String.format("Unable to load user preferences file from the specified path: %s\n", path.toString()));
+            throw new IOException(String.format("Unable to load user preferences file from the specified path: %s\n", path));
         }
         return preferences;
     }
 
     /**
-     * Retrieves the properties object associated with the user's preferences. If no preferences file
-     * exists yet, a new one is created.
+     * Retrieves the user's preferences. If no preferences file exists, a new one is created with default preferences.
      *
-     * @return a properties object representing the user preferences
+     * @return a {@link Properties} object containing the user's preferences
      */
     @Override
     public Properties getPreferences() {
-
         try {
-            /* an object representation of the user preferences in the filesystem */
             Properties userPreferences;
             if (userPreferencesFileExists()) {
                 userPreferences = this.loadPreferences(this.getUserPreferencesFilePath());
-                // the user preferences exist if we're here..
                 newProperties = (Properties) userPreferences.clone();
                 return userPreferences;
             }
@@ -174,8 +179,6 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
             userPreferences = this.loadDefaultPreferences();
             newProperties = (Properties) userPreferences.clone();
             createUserPreferencesFile(userPreferences);
-
-            // return the properties object with the loaded preferences
             return userPreferences;
         } catch (IOException e) {
             return new Properties();
@@ -183,24 +186,21 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
     }
 
     /**
-     * Stores the preference in the user preferences. This method works on a copy of the user preferences
-     * stored in newProperties to only have an impact on the actual properties file in the filesystem and the copy
-     * so that the current settings are not affected until an application restart
+     * Stores a preference in the user preferences file.
+     * Updates a copy of the user preferences and writes it to the filesystem.
      *
-     * @param preference the key-value pair representing the preference to be stored
-     * @return true if the operation succeeded, false otherwise
+     * @param preference a key-value pair representing the preference to be stored
+     * @return {@code true} if the operation succeeds, {@code false} false otherwise
+     * @throws IOException if an error occurs while storing the preference
      */
     @Override
-    public boolean storePreference(Map.@NotNull Entry<String, String> preference) throws IOException {
-        // Inizializza newProperties se non è già stato fatto
+    public boolean storePreference(Map.Entry<String, String> preference) throws IOException {
         if (newProperties == null) {
             newProperties = getPreferences();
         }
 
-        // Imposta la preferenza specificata
         newProperties.setProperty(preference.getKey(), preference.getValue());
 
-        // Usa try-with-resources per garantire la chiusura del FileOutputStream
         try {
             OutputStream outputStream = Files.newOutputStream(this.getUserPreferencesFilePath());
             newProperties.store(outputStream, null);
@@ -210,7 +210,4 @@ public class PreferencesDataAccess implements PreferencesDataAccessInterface {
         }
         return true;
     }
-
-
 }
-

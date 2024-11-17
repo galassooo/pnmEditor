@@ -14,9 +14,9 @@ public class SingleBit implements ConvertStrategy {
     @Override
     public long ArgbToOriginal(long pixel) {
         // Estrai i componenti
-        int r = (int)((pixel >> 16) & 0xFF);
-        int g = (int)((pixel >> 8) & 0xFF);
-        int b = (int)(pixel & 0xFF);
+        int r = (int) ((pixel >> 16) & 0xFF);
+        int g = (int) ((pixel >> 8) & 0xFF);
+        int b = (int) (pixel & 0xFF);
 
         // Se è un'immagine a colori, converti prima in grayscale
         if (r != g || g != b) {

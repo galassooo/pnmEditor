@@ -4,6 +4,7 @@ import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.SingleChannel;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,7 +20,8 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
 
     private static PGMDataAccess instance;
 
-    private PGMDataAccess() {}
+    private PGMDataAccess() {
+    }
 
     public static PGMDataAccess getInstance() {
         if (instance == null) {
@@ -95,6 +97,11 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         writePixels(os, pixels, executor, this::generateAsciiRowBufferPgm);
     }
 
+    @Override
+    protected ConvertStrategy getArgbConvertStrategy() {
+        return new SingleChannel(getMaxValue());
+    }
+
     private byte[] generateBinaryRowBufferPgm(long[][] pixels, int row, int width) {
         boolean is16bit = getMaxValue() > 255;
         byte[] rowBuffer = new byte[width * (is16bit ? 2 : 1)];
@@ -139,8 +146,4 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
         byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
     }
 
-    @Override
-    protected ConvertStrategy getArgbConvertStrategy() {
-        return new SingleChannel(getMaxValue());
-    }
 }

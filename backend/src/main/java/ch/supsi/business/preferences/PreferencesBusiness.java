@@ -3,7 +3,6 @@ package ch.supsi.business.preferences;
 
 import ch.supsi.application.preferences.PreferencesBusinessInterface;
 import ch.supsi.dataaccess.preferences.PreferencesDataAccess;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;

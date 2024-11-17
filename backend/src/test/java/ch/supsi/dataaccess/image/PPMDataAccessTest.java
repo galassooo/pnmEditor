@@ -1,8 +1,6 @@
 package ch.supsi.dataaccess.image;
 
-import ch.supsi.business.image.ImageBusiness;
-import ch.supsi.business.strategy.ThreeChannel;
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +61,7 @@ class PPMDataAccessTest {
                 {0xFF46505AL, 0xFF646E78L}
         };
 
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -88,7 +86,7 @@ class PPMDataAccessTest {
                 {0xFF000000L, 0xFF000000L}
         };
 
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -112,7 +110,7 @@ class PPMDataAccessTest {
                 {0xFF0A141EL, 0xFF28323CL, 0xFF46505AL}
         };
 
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -126,7 +124,7 @@ class PPMDataAccessTest {
                 {0xFF0A141EL, 0xFF28323CL},
                 {0xFF46505AL, 0xFF646E78L}
         };
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -140,7 +138,7 @@ class PPMDataAccessTest {
                 {0xFF000000L, 0xFF000000L},
                 {0xFF000000L, 0xFF000000L}
         };
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertArrayEquals(expectedMatrix, img.getPixels());
     }
 
@@ -354,7 +352,7 @@ class PPMDataAccessTest {
 
         //devo leggere e scrivere nel caso del test write 16 bit perche la variabile maxvalue rimane scritta
         //nella classe dopo la lettura e viene usata nella scrittura
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(()->ppmDataAccess.write(img));
 
         byte[] actualFileContent = Files.readAllBytes(tempFile.toAbsolutePath());
@@ -383,7 +381,7 @@ class PPMDataAccessTest {
         String asciiData = "P3\n2 2\n65535\n65535 0 0\n0 0 65535\n0 0 0\n65535 65535 65535\n";
         Files.write(tempFile, asciiData.getBytes());
 
-        ImageBusinessInterface img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
+        WritableImage img = ppmDataAccess.read(tempFile.toAbsolutePath().toString());
         assertDoesNotThrow(() -> ppmDataAccess.write(img));
 
         String actualContent = new String(Files.readAllBytes(tempFile));

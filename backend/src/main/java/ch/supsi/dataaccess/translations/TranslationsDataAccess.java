@@ -11,23 +11,35 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Provides access to translations and supported languages for both backend and frontend modules.
+ * It uses properties files to load translations and handles locale fallback mechanisms.
+ */
 public class TranslationsDataAccess implements TranslationsDataAccessInterface {
-    /* where the supported languages are stored */
+
+    /* Singleton instance */
+    private static TranslationsDataAccess myself;
+
+    /* Path to the file where supported languages are stored */
     private static final String SUPPORTED_LANGUAGES_PROPERTIES = "/supported-languages.properties";
-    /* where the labels are stored */
+
+    /* Path where translation labels are stored */
     private static final String LABELS_PATH = "i18n/labels/";
-    /* the format of the files containing the labels */
+
+    /* Format of the files containing the translation labels */
     private static final String LABELS_FORMAT = ".properties";
 
-    private static String FRONTEND_PATH = "/i18n/ui_labels";
-
-    /* self reference */
-    public static TranslationsDataAccess myself;
+    /* Path for frontend UI labels */
+    private static final String FRONTEND_PATH = "/i18n/ui_labels";
 
     protected TranslationsDataAccess() {
     }
 
-    // Singleton instantiation
+    /**
+     * Singleton instantiation method for TranslationsDataAccess.
+     *
+     * @return the singleton instance of TranslationsDataAccess
+     */
     public static TranslationsDataAccess getInstance() {
         if (myself == null) {
             myself = new TranslationsDataAccess();
@@ -35,30 +47,28 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
 
         return myself;
     }
-    /**
-     * Loads and returns the supported language tags. The supported language tags are loaded from a
-     * default properties file
-     *
-     * @return a properties file representing the supported language tags properties file
-     */
-    private @NotNull Properties loadSupportedLanguageTags() {
-        Properties supportedLanguageTags = new Properties();
-        try (InputStream supportedLanguageTagsStream = this.getClass().getResourceAsStream(SUPPORTED_LANGUAGES_PROPERTIES)) {
-            if (supportedLanguageTagsStream != null) {
-                supportedLanguageTags.load(supportedLanguageTagsStream);
-            }
-        } catch (IOException e) {
-            System.err.printf("Error while loading file %s%n", SUPPORTED_LANGUAGES_PROPERTIES);
-            e.printStackTrace();
-        }
 
-        return supportedLanguageTags;
+    /**
+     * Retrieves the resource bundle containing UI labels for the specified locale.
+     * If the locale is invalid, a fallback locale is used.
+     *
+     * @param locale the locale to load UI labels for
+     * @return an {@link Optional} containing the ResourceBundle for the specified locale, or empty if not found
+     */
+    @Override
+    public Optional<ResourceBundle> getUIResourceBundle(Locale locale) {
+        List<ResourceBundle> bundles = loadFrontendResources(locale);
+        if (bundles.isEmpty()) {
+            Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
+            bundles = handleMissingResource(locale, fallbackLocale);
+        }
+        return bundles.isEmpty() ? Optional.empty() : Optional.of(bundles.get(0));
     }
 
     /**
-     * Retrieves a list of strings representing the supported language tags, retrieved from a properties file
+     * Retrieves a list of supported language tags loaded from a properties file.
      *
-     * @return a list of strings representing the supported language tags
+     * @return a {@link List} of strings representing the supported language tags
      */
     @Override
     public List<String> getSupportedLanguageTags() {
@@ -71,23 +81,20 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
     }
 
     /**
-     * Tries loading the translations for the given locale. If the locale is not valid, this method has a fallback
-     * mechanism that loads a default, valid language if the provided locale is not valid
+     * Loads translations for the given locale. If the locale is invalid, a fallback
+     * mechanism loads the default locale translations.
      *
-     * @param locale the locale that we want to load the translations for
-     * @return a properties object representing all the translations for the given locale, or for the fallback locale if the
-     * provided locale was not valid
+     * @param locale the locale to load translations for
+     * @return a {@link Properties} object containing the translations for the specified locale
      */
     @Override
     public Properties getTranslations(Locale locale) {
         Properties translations = new Properties();
 
-        List<ResourceBundle> bundles = getResourceBundlesForLocale(locale, LABELS_PATH);
-        // It means it failed to load translations for the given locale, fallback to a default one
+        List<ResourceBundle> bundles = getResourceBundlesForLocale(locale);
         if (bundles.isEmpty()) {
             Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
-            // This assumes that the pathToResources is valid, and the only thing that's not valid is the locale
-            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
+            bundles = handleMissingResource(locale, fallbackLocale);
         }
         bundles.forEach((b) -> {
             for (String key : b.keySet()) {
@@ -98,27 +105,53 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         return translations;
     }
 
-    private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale, String pathToResources) {
+    /**
+     * Loads and returns the supported language tags.
+     * The supported language tags are loaded from a default properties file.
+     *
+     * @return a {@link Properties} object representing the supported language tags
+     */
+    private @NotNull Properties loadSupportedLanguageTags() {
+        Properties supportedLanguageTags = new Properties();
+        try (InputStream supportedLanguageTagsStream = this.getClass().getResourceAsStream(SUPPORTED_LANGUAGES_PROPERTIES)) {
+            if (supportedLanguageTagsStream != null) {
+                supportedLanguageTags.load(supportedLanguageTagsStream);
+            }
+        } catch (IOException e) {
+            System.err.printf("Error while loading file %s%n", SUPPORTED_LANGUAGES_PROPERTIES);
+        }
+
+        return supportedLanguageTags;
+    }
+
+
+    /**
+     * Retrieves all resource bundles for the specified locale.
+     *
+     * @param locale the locale to load resource bundles for
+     * @return a {@link List} of {@link ResourceBundle} objects for the specified locale
+     */
+    private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
 
-
-        resourceBundles.addAll(loadBackendResources(locale, pathToResources));
-
-        // Carica risorse dal modulo frontend
+        resourceBundles.addAll(loadBackendResources(locale));
         resourceBundles.addAll(loadFrontendResources(locale));
 
         return resourceBundles;
     }
 
     /**
-     * Carica tutte le risorse associate al locale specificato dal modulo backend.
+     * Loads all resources associated with the specified locale from the backend module.
+     *
+     * @param locale the locale to load backend resources for
+     * @return a {@link List} of {@link ResourceBundle} objects from the backend module
      */
-    private @NotNull List<ResourceBundle> loadBackendResources(Locale locale, String pathToResources) {
+    private @NotNull List<ResourceBundle> loadBackendResources(Locale locale) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
-            Resource[] resources = resolver.getResources(String.format("classpath:%s*%s", pathToResources, LABELS_FORMAT));
+            Resource[] resources = resolver.getResources(String.format("classpath:%s*%s", TranslationsDataAccess.LABELS_PATH, LABELS_FORMAT));
             for (Resource resource : resources) {
                 String filename = resource.getFilename();
                 if (filename != null && filename.contains(String.format("_%s%s", locale, LABELS_FORMAT))) {
@@ -129,24 +162,26 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                 }
             }
         } catch (IOException e) {
-            System.err.printf("Error while loading file %s for locale %s%n", pathToResources, locale);
-            e.printStackTrace();
+            System.err.printf("Error while loading file %s for locale %s%n", TranslationsDataAccess.LABELS_PATH, locale);
         }
 
         return resourceBundles;
     }
 
     /**
-     * Carica tutte le risorse associate al locale specificato dal modulo frontend.
+     * Loads all resources associated with the specified locale from the frontend module.
+     *
+     * @param locale the locale to load frontend resources for
+     * @return a {@link List} of {@link ResourceBundle} objects from the frontend module
      */
     private @NotNull List<ResourceBundle> loadFrontendResources(Locale locale) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
         Optional<Module> frontendModule = ModuleLayer.boot().findModule("frontend");
 
         if (frontendModule.isPresent()) {
-            String frontendPath = loadFrontendPath();
+            Optional<String> frontendPath = loadFrontendPath();
 
-            if (frontendPath != null) {
+            if (frontendPath.isPresent()) {
                 String localeCode = locale.toLanguageTag().replace('-', '_');
                 String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
 
@@ -158,11 +193,10 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                         }
                     }
                 } catch (IOException e) {
-                    System.err.printf("Errore nel caricamento della risorsa %s dal modulo frontend%n", resourceName);
-                    e.printStackTrace();
+                    System.err.printf("Error loading resource %s from the frontend module%n", resourceName);
                 }
             }
-        } else { //jar
+        } else { // JAR
             String localeCode = locale.toLanguageTag().replace('-', '_');
             String resourceName = String.format("%s_%s.properties", FRONTEND_PATH.substring(1), localeCode);
 
@@ -173,11 +207,10 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                         resourceBundles.add(resourceBundle);
                     }
                 } else {
-                    System.err.printf("Risorsa non trovata: %s nel JAR%n", resourceName);
+                    System.err.printf("Resource not found: %s in the JAR%n", resourceName);
                 }
             } catch (IOException e) {
-                System.err.printf("Errore nel caricamento della risorsa %s dal JAR%n", resourceName);
-                e.printStackTrace();
+                System.err.printf("Error loading resource %s from JAR%n", resourceName);
             }
         }
 
@@ -185,52 +218,34 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
     }
 
     /**
-     * Carica il percorso `frontend.labels.path` dal file `application.properties`.
+     * Loads the path for frontend labels from the `application.properties` file.
+     *
+     * @return an {@link Optional} containing the frontend labels path
      */
-    private String loadFrontendPath() {
+    private Optional<String> loadFrontendPath() {
         try (InputStream is = TranslationsDataAccess.class.getClassLoader().getResourceAsStream("application.properties")) {
             Properties properties = new Properties();
             if (is != null) {
                 properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
-                return properties.getProperty("frontend.labels.path");
+                return Optional.of(properties.getProperty("frontend.labels.path"));
             } else {
-                System.err.println("File application.properties non trovato.");
+                System.err.println("Application.properties file not found.");
             }
         } catch (IOException e) {
-            System.err.println("Errore durante il caricamento di application.properties.");
-            e.printStackTrace();
+            System.err.println("Error while loading application.properties");
         }
-        return null;
-    }
-
-
-
-    /**
-     * This method handles loading resources in case of an invalid locale
-     *
-     * @param invalidLocale   the invalid locale
-     * @param fallbackLocale  a new locale
-     * @param pathToResources the path to the resources to be loaded
-     * @return a list of resource bundles associated with the given fallbackLocale
-     */
-    private @NotNull List<ResourceBundle> handleMissingResource(@NotNull Locale invalidLocale, @NotNull Locale fallbackLocale, String pathToResources) {
-        System.err.printf("Invalid locale: %s. Loading new locale: %s\n", invalidLocale, fallbackLocale);
-        return getResourceBundlesForLocale(fallbackLocale, pathToResources);
+        return Optional.empty();
     }
 
     /**
-     * Retrieves the resource bundle containing the UI labels
+     * Handles loading resources when the specified locale is invalid.
      *
-     * @param locale the locale that we want to load the translations for
-     * @return a resource bundle containing the UI labels
+     * @param invalidLocale  the invalid locale
+     * @param fallbackLocale the fallback locale to use
+     * @return a {@link List} of ResourceBundle objects for the fallback locale
      */
-    @Override
-    public Optional<ResourceBundle> getUIResourceBundle(Locale locale) {
-        List<ResourceBundle> bundles = loadFrontendResources(locale);
-        if (bundles.isEmpty()) {
-            Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));
-            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);
-        }
-        return bundles.isEmpty() ? Optional.empty() : Optional.of(bundles.get(0));
+    private @NotNull List<ResourceBundle> handleMissingResource(@NotNull Locale invalidLocale, @NotNull Locale fallbackLocale) {
+        System.err.printf("Invalid locale: %s. Loading new locale: %s%n", invalidLocale, fallbackLocale);
+        return getResourceBundlesForLocale(fallbackLocale);
     }
 }

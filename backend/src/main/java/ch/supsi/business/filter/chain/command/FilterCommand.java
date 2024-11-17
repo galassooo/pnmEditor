@@ -1,8 +1,8 @@
 package ch.supsi.business.filter.chain.command;
 
-import ch.supsi.application.image.ImageBusinessInterface;
+import ch.supsi.application.image.WritableImage;
 
 public interface FilterCommand {
-    void execute(ImageBusinessInterface image);
+    void execute(WritableImage image);
     String getName();
 }

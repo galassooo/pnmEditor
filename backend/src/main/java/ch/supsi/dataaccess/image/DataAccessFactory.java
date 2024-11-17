@@ -4,6 +4,7 @@ import ch.supsi.DataAccessComponent;
 import ch.supsi.annotation.ImageAccessFactory;
 import ch.supsi.annotation.Register;
 import ch.supsi.business.image.ImageDataAccess;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +18,49 @@ public class DataAccessFactory {
 
     @Register
     private static List<DataAccessComponent> dataAccessComponents;
+
+    public static List<String> getSupportedExtensions() {
+        return dataAccessComponents.stream().map(e -> e.extension).toList();
+    }
+
+    public static Optional<String> getDefaultMagicNumberFromExtension(String extension) {
+        for (DataAccessComponent component : dataAccessComponents) {
+            if (component.extension.equals(extension)) {
+                return Optional.of(component.magicNumber[0]);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static ImageDataAccess getInstance(String path) throws IOException, IllegalAccessException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+
+
+            String firstLine = reader.readLine();
+
+            while (firstLine.isEmpty()) { //skip empty line
+                firstLine = reader.readLine();
+            }
+            return getInstanceFromMagicNumber(firstLine);
+        }
+    }
+
+
+    public static ImageDataAccess getInstanceFromMagicNumber(String magicNumber) throws IOException, IllegalAccessException {
+        Class<?> clazz = getFromMagicNumber(magicNumber);
+        if (clazz == null) {
+            throw new IOException("Unsupported file type");
+        }
+        return loadClazz(clazz);
+    }
+
+    public static ImageDataAccess getInstanceFromExtension(String extension) throws IOException, IllegalAccessException {
+        Class<?> clazz = getFromExtension(extension);
+        if (clazz == null) {
+            throw new IOException("Unsupported file type");
+        }
+        return loadClazz(clazz);
+    }
 
     //obtain an instance by calling getInstance static method
     private static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
@@ -36,35 +80,6 @@ public class DataAccessFactory {
         }
     }
 
-    public static ImageDataAccess getInstance(String path) throws IOException, IllegalAccessException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-
-
-            String firstLine = reader.readLine();
-
-            while (firstLine.isEmpty()) { //skip empty line
-                firstLine = reader.readLine();
-            }
-            return getInstanceFromMagicNumber(firstLine);
-        }
-    }
-
-    public static ImageDataAccess getInstanceFromMagicNumber(String magicNumber) throws IOException, IllegalAccessException {
-        Class<?> clazz = getFromMagicNumber(magicNumber);
-        if (clazz == null) {
-            throw new IOException("Unsupported file type");
-        }
-        return loadClazz(clazz);
-    }
-
-    public static ImageDataAccess getInstanceFromExtension(String extension) throws IOException, IllegalAccessException {
-        Class<?> clazz = getFromExtension(extension);
-        if (clazz == null) {
-            throw new IOException("Unsupported file type");
-        }
-        return loadClazz(clazz);
-    }
-
     private static ImageDataAccess loadClazz(Class<?> clazz) throws IllegalAccessException {
         ImageDataAccess instance;
         try {
@@ -76,8 +91,8 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromMagicNumber(String magicNumber) {
-        for(DataAccessComponent component : dataAccessComponents) {
-            if(Arrays.asList(component.magicNumber).contains(magicNumber)) {
+        for (DataAccessComponent component : dataAccessComponents) {
+            if (Arrays.asList(component.magicNumber).contains(magicNumber)) {
                 return component.clazz;
             }
         }
@@ -85,24 +100,11 @@ public class DataAccessFactory {
     }
 
     private static Class<?> getFromExtension(String extension) {
-        for(DataAccessComponent component : dataAccessComponents) {
-            if(component.extension.equals(extension)) {
+        for (DataAccessComponent component : dataAccessComponents) {
+            if (component.extension.equals(extension)) {
                 return component.clazz;
             }
         }
         return null;
-    }
-
-    public static List<String> getSupportedExtensions() {
-        return dataAccessComponents.stream().map(e -> e.extension).toList();
-    }
-
-    public static Optional<String> getDefaultMagicNumberFromExtension(String extension) {
-        for(DataAccessComponent component : dataAccessComponents) {
-            if(component.extension.equals(extension)) {
-                return Optional.of(component.magicNumber[0]);
-            }
-        }
-        return Optional.empty();
     }
 }

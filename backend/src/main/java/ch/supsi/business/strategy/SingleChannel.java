@@ -1,5 +1,7 @@
 package ch.supsi.business.strategy;
 
+import java.util.Objects;
+
 public class SingleChannel implements ConvertStrategy {
 
     private final int maxValue;
@@ -16,9 +18,9 @@ public class SingleChannel implements ConvertStrategy {
 
     @Override
     public long ArgbToOriginal(long pixel) {
-        int r = (int)((pixel >> 16) & 0xFF);
-        int g = (int)((pixel >> 8) & 0xFF);
-        int b = (int)(pixel & 0xFF);
+        int r = (int) ((pixel >> 16) & 0xFF);
+        int g = (int) ((pixel >> 8) & 0xFF);
+        int b = (int) (pixel & 0xFF);
 
 
         //è un idea geniale, non ho bisogno di componenti extra, e
@@ -39,6 +41,18 @@ public class SingleChannel implements ConvertStrategy {
             // È già in scala di grigi, usa il valore diretto
             return (long) ((b / 255.0) * maxValue);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SingleChannel that)) return false;
+        return maxValue == that.maxValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(maxValue);
     }
 }
 

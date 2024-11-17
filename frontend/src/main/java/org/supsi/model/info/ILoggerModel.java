@@ -1,14 +1,7 @@
 package org.supsi.model.info;
 
-import javafx.collections.ObservableList;
 
-public interface ILoggerModel {
-    void addInfo(String info);
-    void addError(String error);
-    void addWarning(String warning);
-    void addDebug(String debug);
-    void clear();
-    ObservableList<LogEntry> getLogs();
+public interface ILoggerModel extends BasicLogModel{
 
     void setShowDebug(boolean showDebug);
     void setShowWarning(boolean showWarning);

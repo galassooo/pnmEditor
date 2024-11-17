@@ -7,12 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.supsi.view.IView;
 
-public class AboutView implements IAboutView {
-
+public class AboutView implements IView<IAboutModel> {
 
     @FXML
     private BorderPane root;
+
     @FXML
     private Label date;
 

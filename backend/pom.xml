@@ -154,14 +154,12 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.11.1</version>
                 <configuration>
-                    <sourcepath>src/main/java</sourcepath> <!-- Specifica il percorso sorgenti -->
-                    <doclint>none</doclint> <!-- Disabilita i controlli di conformità Javadoc -->
-                    <show>protected</show> <!-- Mostra membri pubblici e protetti -->
+                    <sourcepath>src/main/java</sourcepath>
+                    <doclint>none</doclint>
+                    <show>private</show>
                 </configuration>
             </plugin>
         </plugins>
     </reporting>
-
-
 
 </project>

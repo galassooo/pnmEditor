@@ -6,25 +6,37 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public class StateModel implements StateChangeListener, IStateModel {
+
     private static StateModel myself;
-    private final StateApplication stateApp = StateApplication.getInstance();
-    private final SimpleBooleanProperty canSave = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty canSaveAs = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty canExport = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty canApplyFilters = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty canAddFilter = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty refreshRequired = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty areChangesPending = new SimpleBooleanProperty();
+    private final StateApplication stateApp;
+    private final SimpleBooleanProperty canSave;
+    private final SimpleBooleanProperty canSaveAs;
+    private final SimpleBooleanProperty canExport;
+    private final SimpleBooleanProperty canApplyFilters;
+    private final SimpleBooleanProperty canAddFilter;
+    private final SimpleBooleanProperty refreshRequired;
+    private final SimpleBooleanProperty areChangesPending;
+
+
+    protected StateModel() {
+        stateApp = StateApplication.getInstance();
+
+        canSave = new SimpleBooleanProperty();
+        canSaveAs = new SimpleBooleanProperty();
+        canExport = new SimpleBooleanProperty();
+        canApplyFilters = new SimpleBooleanProperty();
+        canAddFilter  = new SimpleBooleanProperty();
+        refreshRequired = new SimpleBooleanProperty();
+        areChangesPending = new SimpleBooleanProperty();
+
+        stateApp.registerStateListener(this);
+    }
 
     public static StateModel getInstance() {
         if (myself == null) {
             myself = new StateModel();
         }
         return myself;
-    }
-
-    private StateModel() {
-        stateApp.registerStateListener(this);
     }
 
     @Override
@@ -50,7 +62,6 @@ public class StateModel implements StateChangeListener, IStateModel {
 
     @Override
     public ReadOnlyBooleanProperty canApplyFiltersProperty() { return canApplyFilters; }
-
 
     @Override
     public ReadOnlyBooleanProperty refreshRequiredProperty() { return refreshRequired; }

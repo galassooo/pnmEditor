@@ -22,20 +22,30 @@ import java.io.IOException;
 
 public class ImageController implements  IImageController {
 
-    private IImageView mainImageView;
-
-    private final IImageModel model = ImageModel.getInstance();
-    private final IErrorController errorController = ErrorController.getInstance();
-    private final ILoggerModel loggerModel = LoggerModel.getInstance();
-    private final IStateModel stateModel = StateModel.getInstance();
-    private final IConfirmationController confirmationController = ConfirmationController.getInstance();
-    private final EventSubscriber subscriber = EventManager.getSubscriber();
-
     private static ImageController myself;
-
-
+    private final IImageModel model;
+    private final IErrorController errorController;
+    private final ILoggerModel loggerModel;
+    private final IConfirmationController confirmationController;
+    private IImageView mainImageView;
     private Stage root;
 
+
+    private ImageController() {
+        model = ImageModel.getInstance();
+        errorController = ErrorController.getInstance();
+        loggerModel = LoggerModel.getInstance();
+        confirmationController = ConfirmationController.getInstance();
+
+        IStateModel stateModel = StateModel.getInstance();
+        stateModel.refreshRequiredProperty().addListener((obs, old, newValue) -> {
+            if (newValue) {
+                mainImageView.update();
+            }
+        });
+        EventSubscriber subscriber = EventManager.getSubscriber();
+        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested );
+    }
 
     public static ImageController getInstance(){
         if(myself==null){
@@ -44,37 +54,11 @@ public class ImageController implements  IImageController {
         return myself;
     }
 
-    private ImageController() {
-        stateModel.refreshRequiredProperty().addListener((obs, old, newValue) -> {
-            if (newValue) {
-                mainImageView.update();
-            }
-        });
-        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested );
-    }
-
     @Override
     public void open() {
         confirmationController.requestConfirm((event) -> openImage());
     }
 
-
-    private void openImage(){
-
-        IFileSystemView fsPopUp = new FileSystemView(root);
-        File chosen = fsPopUp.askForFile();
-
-        if(chosen == null){ //popup closed
-            return;
-        }
-
-        try {
-            model.readImage(chosen.getPath());
-            loggerModel.addInfo("ui_image_loaded");
-        }catch(Exception e ){
-            errorController.showError(e.getMessage());
-        }
-    }
 
 
     @Override
@@ -109,7 +93,7 @@ public class ImageController implements  IImageController {
         this.root = stage;
     }
 
-    public void onExportRequested(ExportEvent.ExportRequested event) {
+    private void onExportRequested(ExportEvent.ExportRequested event) {
         IFileSystemView fsPopUp = new FileSystemView(root);
         fsPopUp.setFileExtension(event.extension());
         File chosen = fsPopUp.askForDirectory();
@@ -124,5 +108,22 @@ public class ImageController implements  IImageController {
             errorController.showError(e.getMessage());
         }
         loggerModel.addInfo("ui_image_exported");
+    }
+
+    private void openImage(){
+
+        IFileSystemView fsPopUp = new FileSystemView(root);
+        File chosen = fsPopUp.askForFile();
+
+        if(chosen == null){ //popup closed
+            return;
+        }
+
+        try {
+            model.readImage(chosen.getPath());
+            loggerModel.addInfo("ui_image_loaded");
+        }catch(Exception e ){
+            errorController.showError(e.getMessage());
+        }
     }
 }

@@ -8,11 +8,10 @@ import java.util.List;
 public class ImageModel implements IImageModel{
 
     private static ImageModel myself;
+    private final ImageApplication backendController;
 
-    private static final ImageApplication backendController;
 
-
-    static {
+    protected ImageModel() {
         backendController = ImageApplication.getInstance();
     }
 
@@ -23,8 +22,6 @@ public class ImageModel implements IImageModel{
         return myself;
     }
 
-    protected ImageModel() {
-    }
 
     @Override
     public void readImage(String path) throws IOException, IllegalAccessException {

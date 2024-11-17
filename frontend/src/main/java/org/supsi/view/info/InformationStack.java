@@ -13,10 +13,14 @@ import javafx.util.Callback;
 
 public class InformationStack {
 
-    private ILoggerModel model = LoggerModel.getInstance();
-
     @FXML
     private ListView<LogEntry> list;
+
+    private final ILoggerModel model;
+
+    private InformationStack() {
+        model = LoggerModel.getInstance();
+    }
 
     @FXML
     private void initialize() {

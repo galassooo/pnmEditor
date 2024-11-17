@@ -17,7 +17,7 @@ public class ExitController implements IExitController{
     private static ExitController instance;
     private final IConfirmationController confirmationController;
 
-    private ExitController() {
+    protected ExitController() {
         this.confirmationController = ConfirmationController.getInstance();
     }
 

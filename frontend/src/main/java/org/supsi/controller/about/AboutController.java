@@ -6,8 +6,8 @@ import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.model.translations.ITranslationsModel;
 import org.supsi.model.translations.TranslationModel;
-import org.supsi.view.info.IAboutView;
 import javafx.fxml.FXMLLoader;
+import org.supsi.view.IView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,21 +21,16 @@ import java.util.Properties;
 public class AboutController implements IAboutController{
 
     private static AboutController myself;
-
-    private final ITranslationsModel translationsModel = TranslationModel.getInstance();
-    private final IAboutModel model = AboutModel.getInstance();
-    private final ILoggerModel loggerModel = LoggerModel.getInstance();
-
-    private IAboutView view;
-
-    public static AboutController getInstance(){
-        if(myself==null){
-            myself=new AboutController();
-        }
-        return myself;
-    }
+    private final ITranslationsModel translationsModel;
+    private final IAboutModel model;
+    private final ILoggerModel loggerModel;
+    private IView<IAboutModel> view;
 
     protected AboutController(){
+        translationsModel = TranslationModel.getMyself();
+        model = AboutModel.getInstance();
+        loggerModel = LoggerModel.getInstance();
+
         URL fxmlUrl = getClass().getResource("/layout/About.fxml");
         if (fxmlUrl == null) {
             return;
@@ -52,6 +47,13 @@ public class AboutController implements IAboutController{
         }
         loggerModel.addDebug("ui_about_loaded");
         readBuildInfo();
+    }
+
+    public static AboutController getInstance(){
+        if(myself==null){
+            myself=new AboutController();
+        }
+        return myself;
     }
 
     private void readBuildInfo() {
@@ -92,6 +94,7 @@ public class AboutController implements IAboutController{
         }
     }
 
+    @Override
     public void showPopup(){
         loggerModel.addDebug("ui_start_popup_build");
         view.build();

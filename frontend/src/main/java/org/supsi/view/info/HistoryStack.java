@@ -13,7 +13,11 @@ public class HistoryStack {
     @FXML
     private ListView<String> list;
 
-    private IFilterModel model = FilterModel.getInstance();
+    private final IFilterModel model;
+
+    private HistoryStack() {
+        model = FilterModel.getInstance();
+    }
 
     @FXML
     private void initialize() {

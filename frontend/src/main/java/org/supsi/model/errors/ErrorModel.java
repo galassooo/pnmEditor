@@ -3,9 +3,11 @@ package org.supsi.model.errors;
 import java.util.List;
 
 public class ErrorModel implements IErrorModel {
-    private static ErrorModel mySelf;
 
+    private static ErrorModel mySelf;
     private String message;
+
+    protected ErrorModel() {}
 
     public static ErrorModel getInstance() {
         if (mySelf == null) {
@@ -21,12 +23,9 @@ public class ErrorModel implements IErrorModel {
     }
 
     @Override
-    public void setLogs(List<String> logs) {
-
-    }
+    public void setLogs(List<String> logs) {}
 
     public String getMessage() {
         return message;
     }
-
 }

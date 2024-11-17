@@ -15,10 +15,14 @@ import java.util.List;
 
 public class ExportMenuItem{
 
+    private final EventPublisher publisher;
+
     @FXML
     private Menu exportMenu;
 
-    private EventPublisher publisher = EventManager.getPublisher();
+    private ExportMenuItem() {
+        publisher = EventManager.getPublisher();
+    }
 
     @FXML
     private void initialize() {
@@ -31,10 +35,7 @@ public class ExportMenuItem{
             MenuItem item = new MenuItem(extension);
 
             item.disableProperty().bind(stateModel.canExportProperty().not());
-            item.setOnAction(actionEvent ->{
-                publisher.publish(new ExportEvent.ExportRequested(extension));
-
-            });
+            item.setOnAction(actionEvent -> publisher.publish(new ExportEvent.ExportRequested(extension)));
 
             exportMenu.getItems().add(item);
         });

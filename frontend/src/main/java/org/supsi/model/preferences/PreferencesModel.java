@@ -9,7 +9,12 @@ import java.util.Optional;
 public class PreferencesModel implements IPreferencesModel{
 
     private static PreferencesModel myself;
-    private final PreferencesApplication application = PreferencesApplication.getInstance();
+    private final PreferencesApplication application;
+
+
+    protected PreferencesModel(){
+        application = PreferencesApplication.getInstance();
+    }
 
     public static PreferencesModel getInstance(){
         if(myself==null){
@@ -18,9 +23,7 @@ public class PreferencesModel implements IPreferencesModel{
         return myself;
     }
 
-    protected PreferencesModel(){}
-
-
+    @Override
     public Optional<Object> getPreference(String key){
         return application.getPreference(key);
     }

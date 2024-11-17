@@ -10,35 +10,28 @@ import java.util.ResourceBundle;
 
 public class TranslationModel implements ITranslationsModel {
 
-    /* backend controllers */
-    private static TranslationsApplication translationsController;
+    private static TranslationModel myself;
+    private static final TranslationsApplication translationsController;
     private static final PreferencesApplication preferencesController;
-    /* self reference */
-    private static TranslationModel instance;
 
-    // Initialize controllers
-    static {
-
-        translationsController = TranslationsApplication.getInstance();
-
-        preferencesController = PreferencesApplication.getInstance();
-    }
-
-    /* data */
     private ResourceBundle uiBundle;
     private Locale locale;
 
-    private TranslationModel() {
+    static {
+        translationsController = TranslationsApplication.getInstance();
+        preferencesController = PreferencesApplication.getInstance();
     }
+
+    private TranslationModel() {}
 
     /**
      * @return an instance of this class
      */
-    public static TranslationModel getInstance() {
-        if (instance == null) {
-            instance = new TranslationModel();
+    public static TranslationModel getMyself() {
+        if (myself == null) {
+            myself = new TranslationModel();
         }
-        return instance;
+        return myself;
     }
 
     /**
@@ -46,6 +39,7 @@ public class TranslationModel implements ITranslationsModel {
      *
      * @return The bundle, null if it wasn't found
      */
+    @Override
     public ResourceBundle getUiBundle() throws IOException {
         if (uiBundle == null) { //load only once
             uiBundle = translationsController.getTranslationBundle(getLocale()).orElseThrow(

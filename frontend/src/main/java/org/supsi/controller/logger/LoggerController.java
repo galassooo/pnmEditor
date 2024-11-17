@@ -1,28 +1,30 @@
 package org.supsi.controller.logger;
 
-import ch.supsi.application.preferences.PreferencesApplication;
 import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
+import org.supsi.model.preferences.IPreferencesModel;
+import org.supsi.model.preferences.PreferencesModel;
 
 import java.util.Objects;
 
 public class LoggerController implements ILoggerController{
 
-    private final ILoggerModel model = LoggerModel.getInstance();
-    private final PreferencesApplication preferences = PreferencesApplication.getInstance();
-
-
     private static LoggerController myself;
+    private final ILoggerModel model;
+    private final IPreferencesModel preferences;
+
+    protected LoggerController() {
+        model = LoggerModel.getInstance();
+        preferences = PreferencesModel.getInstance();
+
+        loadProperties();
+    }
 
     public static LoggerController getInstance() {
         if (myself == null) {
             myself = new LoggerController();
         }
         return myself;
-    }
-
-    protected LoggerController() {
-        loadProperties();
     }
 
     private void loadProperties() {

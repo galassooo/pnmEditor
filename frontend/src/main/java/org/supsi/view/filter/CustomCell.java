@@ -11,30 +11,14 @@ import javafx.scene.layout.StackPane;
 
 import java.util.Objects;
 
-/**
- * The CustomCell class is a custom component used to represent a cell in a
- * ListView. Each cell includes a label for text, an arrow icon, and a 'change order' icon.
- * It is designed with a unique identifier for easy management
- * <p>
- * Main responsibilities of CustomCell include:
- * <p> - Displaying a label for filter text and an arrow icon for visual indication of order.
- * <p> - Providing a root node (StackPane) to integrate multiple graphical elements and support
- *   custom layout and styling.
- * <p> - Storing a unique identifier for each cell instance, allowing consistent referencing within
- *   the filter list model.
- * <p>
- */
 public class CustomCell {
-    /* static field to generate unique IDs for each cell */
-    private static int idCnt;
 
-    /* instance fields */
+    private static int idCnt;
     private final Label label;
     private final ImageView arrowIcon;
     private final int id;
     private final StackPane stackPane;
 
-    /* static initializer */
     static {
         idCnt = 0;
     }
@@ -86,7 +70,6 @@ public class CustomCell {
         stackPane.getChildren().addAll(hbox, hbox2);
     }
 
-    /* getters and setters */
 
     /**
      * gets the root node of the CustomCell, which includes the layout structure and

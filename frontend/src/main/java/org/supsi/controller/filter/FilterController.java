@@ -27,13 +27,25 @@ import org.supsi.model.info.LoggerModel;
  */
 public class FilterController {
 
-    /* self reference */
     private static FilterController myself;
+    private final IFilterModel model;
+    private final ILoggerModel loggerModel;
 
-    /* instance field*/
-    private final IFilterModel model = FilterModel.getInstance();
-    private final ILoggerModel loggerModel = LoggerModel.getInstance();
-    private final EventSubscriber subscriber = EventManager.getSubscriber();
+
+    protected FilterController() {
+        model = FilterModel.getInstance();
+        loggerModel  = LoggerModel.getInstance();
+
+        EventSubscriber subscriber = EventManager.getSubscriber();
+        subscriber.subscribe(FilterEvent.FilterAddRequested.class,
+                this::onFilterAdded);
+        subscriber.subscribe(FilterEvent.FilterMoveRequested.class,
+                this::onFilterMoved);
+        subscriber.subscribe(FilterEvent.FilterExecutionRequested.class,
+                this::onFiltersActivated);
+        subscriber.subscribe(FilterEvent.FilterRemoveRequested.class,
+                this::onFilterRemoved);
+    }
 
     /**
      * Returns the singleton instance of FilterController.
@@ -45,17 +57,6 @@ public class FilterController {
             myself = new FilterController();
         }
         return myself;
-    }
-    /* constructor */
-    protected FilterController() {
-        subscriber.subscribe(FilterEvent.FilterAddRequested.class,
-                this::onFilterAdded);
-        subscriber.subscribe(FilterEvent.FilterMoveRequested.class,
-                this::onFilterMoved);
-        subscriber.subscribe(FilterEvent.FilterExecutionRequested.class,
-                this::onFiltersActivated);
-        subscriber.subscribe(FilterEvent.FilterRemoveRequested.class,
-                this::onFilterRemoved);
     }
 
     /**

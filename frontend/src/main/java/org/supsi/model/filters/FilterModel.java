@@ -5,24 +5,28 @@ import ch.supsi.application.image.ImageApplication;
 import ch.supsi.application.translations.TranslationsApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FilterModel implements IFilterModel{
 
     private static FilterModel mySelf;
-    private final FilterApplication application = FilterApplication.getInstance();
-    private final ImageApplication imgApplication = ImageApplication.getInstance();
-    private final TranslationsApplication translationsApplication = TranslationsApplication.getInstance();
+    private final FilterApplication application;
+    private final ImageApplication imgApplication;
+    private final TranslationsApplication translationsApplication;
+
+    private final ObservableList<String> filterPipeline;
+    private final ObservableList<String> appliedFilters;
 
 
-    private final ObservableList<String> filterPipeline = FXCollections.observableArrayList();
+    protected FilterModel(){
+        application = FilterApplication.getInstance();
+        imgApplication = ImageApplication.getInstance();
+        translationsApplication = TranslationsApplication.getInstance();
 
-    private final ObservableList<String> appliedFilters = FXCollections.observableArrayList();
+        filterPipeline = FXCollections.observableArrayList();
+        appliedFilters = FXCollections.observableArrayList();
+    }
 
     public static FilterModel getInstance(){
         if(mySelf==null){
@@ -30,9 +34,6 @@ public class FilterModel implements IFilterModel{
         }
         return mySelf;
 
-    }
-
-    protected FilterModel(){
     }
 
     @Override
@@ -45,11 +46,13 @@ public class FilterModel implements IFilterModel{
         return appliedFilters;
     }
 
+    @Override
     public void addFilterToPipeline(String filter){
         filterPipeline.add(TranslationsApplication.getInstance().translate(filter).orElse("N/A")); //local copy for observers
         application.addFilterToPipeline(filter);
     }
 
+    @Override
     public void processFilters(){
         appliedFilters.addAll(filterPipeline);
 

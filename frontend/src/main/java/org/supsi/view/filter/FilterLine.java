@@ -20,21 +20,26 @@ import java.util.Optional;
 
 public class FilterLine {
 
+    private static final String FILTER_IMAGE_PATH = "/images/buttons/top/%s.png";
+    private final IStateModel stateModel;
+    private final IFilterModel filterModel;
+    private final EventPublisher publisher;
+
     @FXML
     public Button activate;
 
     @FXML
     public HBox hbox;
 
-    private static final String FILTER_IMAGE_PATH = "/images/buttons/top/%s.png";
-
-    private final IStateModel stateModel = StateModel.getInstance();
-    private final IFilterModel filterModel = FilterModel.getInstance();
-    private final EventPublisher publisher = EventManager.getPublisher();
+    private FilterLine(){
+        stateModel = StateModel.getInstance();
+        filterModel = FilterModel.getInstance();
+        publisher = EventManager.getPublisher();
+    }
 
     @FXML
     public void initialize() {
-        ITranslationsModel translationsModel = TranslationModel.getInstance();
+        ITranslationsModel translationsModel = TranslationModel.getMyself();
 
         hbox.setSpacing(5);
         hbox.setPadding(new Insets(5));
@@ -70,9 +75,7 @@ public class FilterLine {
                     button.getStyleClass().add("filter-button");
                     HBox.setMargin(button, new Insets(0, 10, 0, 10));
 
-                    button.setOnAction(event -> {
-                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey));
-                    });
+                    button.setOnAction(event -> publisher.publish(new FilterEvent.FilterAddRequested(filterKey)));
 
                     return button;
                 });
@@ -96,9 +99,7 @@ public class FilterLine {
             activate.setMinSize(30, 30);
             activate.setMaxSize(30, 30);
 
-            activate.setOnAction(event -> {
-                publisher.publish(new FilterEvent.FilterExecutionRequested());
-            });
+            activate.setOnAction(event -> publisher.publish(new FilterEvent.FilterExecutionRequested()));
         }
     }
 }

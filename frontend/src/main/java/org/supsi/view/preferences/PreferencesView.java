@@ -12,14 +12,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.supsi.view.IView;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
-public class PreferencesView implements IPreferencesView {
-
+public class PreferencesView implements IView<ITranslationsModel> {
 
     @FXML
     private BorderPane root;
@@ -48,12 +48,16 @@ public class PreferencesView implements IPreferencesView {
     private Stage myStage;
 
     private ITranslationsModel model;
+    private final IPreferencesModel preferencesModel;
+    private final Map<String, String> labelsAndCodesMap;
+    private final EventPublisher publisher;
 
-    private IPreferencesModel preferencesModel = PreferencesModel.getInstance();
 
-
-    private final Map<String, String> labelsAndCodesMap = new HashMap<>();
-    private final EventPublisher publisher = EventManager.getPublisher();
+    private PreferencesView() {
+        preferencesModel = PreferencesModel.getInstance();
+        publisher = EventManager.getPublisher();
+        labelsAndCodesMap = new HashMap<>();
+    }
 
     @FXML
     private void initialize() {
@@ -90,13 +94,6 @@ public class PreferencesView implements IPreferencesView {
 
     }
 
-    private void notifyPref(String tag, CheckBox box){
-        Preferences dummyPreferences = Preferences.userRoot().node("dummy");
-        PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, tag, String.valueOf(box.isSelected()));
-
-        publisher.publish(new PreferenceEvent.PreferenceChanged(pEvent));
-    }
-
     public void setModel(ITranslationsModel model) {
         this.model = model;
     }
@@ -115,5 +112,12 @@ public class PreferencesView implements IPreferencesView {
 
             choiceBox.getItems().add(translation);
         });
+    }
+
+    private void notifyPref(String tag, CheckBox box){
+        Preferences dummyPreferences = Preferences.userRoot().node("dummy");
+        PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, tag, String.valueOf(box.isSelected()));
+
+        publisher.publish(new PreferenceEvent.PreferenceChanged(pEvent));
     }
 }

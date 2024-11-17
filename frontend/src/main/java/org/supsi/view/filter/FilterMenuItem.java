@@ -12,10 +12,14 @@ import java.util.Map;
 
 public class FilterMenuItem{
 
+    private final EventPublisher publisher;
+
     @FXML
     private Menu menu;
 
-    private final EventPublisher publisher = EventManager.getPublisher();
+    private FilterMenuItem() {
+        publisher = EventManager.getPublisher();
+    }
 
     @FXML
     void initialize() {

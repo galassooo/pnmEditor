@@ -3,19 +3,21 @@ package org.supsi.model.event;
 import java.util.*;
 
 public class EventManager implements EventPublisher, EventSubscriber {
-    private static final EventManager instance = new EventManager();
-    private final Map<Class<?>, List<EventHandler<?>>> handlers = new HashMap<>();
 
-    private EventManager() {
-        System.out.println("ViewEventManager initialized");
+    private static final EventManager instance = new EventManager();
+    private final Map<Class<?>, List<EventHandler<?>>> handlers;
+
+    protected EventManager() {
+        handlers = new HashMap<>();
     }
 
     public static EventPublisher getPublisher() {
-        return instance;
+        return instance; //cast di se stesso -> espone solo i metodi di un publisher
+        // ma gestisce tutto
     }
 
     public static EventSubscriber getSubscriber() {
-        return instance;
+        return instance; //cast di se stesso -> espone solo i metodi di un subscriber
     }
 
     @Override

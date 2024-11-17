@@ -8,8 +8,6 @@ import javafx.stage.Stage;
 
 public class ConfirmPopup implements IConfirmPopup{
 
-    private Stage myStage;
-
     @FXML
     private BorderPane root;
 
@@ -19,8 +17,10 @@ public class ConfirmPopup implements IConfirmPopup{
     @FXML
     private Button confirmButton;
 
+    private Stage myStage;
 
     private boolean wantsToContinue;
+
     @FXML
     void initialize() {
         myStage = new Stage();
@@ -38,6 +38,7 @@ public class ConfirmPopup implements IConfirmPopup{
             myStage.close();
         });
     }
+
     @Override
     public boolean showConfirmationDialog() {
         myStage.showAndWait();

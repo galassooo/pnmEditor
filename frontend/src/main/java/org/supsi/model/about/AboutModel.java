@@ -3,10 +3,11 @@ package org.supsi.model.about;
 public class AboutModel implements IAboutModel{
 
     private static AboutModel myself;
-
     private String developer;
     private String version;
     private String date;
+
+    protected AboutModel() {}
 
     public static AboutModel getInstance(){
         if(myself==null){
@@ -14,8 +15,6 @@ public class AboutModel implements IAboutModel{
         }
         return myself;
     }
-
-    private AboutModel() {}
 
     @Override
     public void setDeveloper(String developer) {

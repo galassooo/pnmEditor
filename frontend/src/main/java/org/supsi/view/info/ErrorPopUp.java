@@ -9,19 +9,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.supsi.view.IView;
 
 import java.net.URL;
 
-public class ErrorPopUp implements IErrorPopUp{
+public class ErrorPopUp implements IView<IErrorModel> {
 
     @FXML
     private BorderPane root;
-
-    @FXML
-    private Label title;
-
-    @FXML
-    private Label messageHeader;
 
     @FXML
     private Label message;
@@ -65,7 +60,6 @@ public class ErrorPopUp implements IErrorPopUp{
     public void show(){
         myStage.show();
     }
-
 
     @Override
     public void setModel(IErrorModel model) {

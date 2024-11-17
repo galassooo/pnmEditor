@@ -22,35 +22,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * FilterListView is the class responsible for displaying and managing the filter
- * pipeline in the application.
- * This class implements the IFilteredListView interface, used to communicate with the listeners.
- * <p>
- * Main responsibilities of FilterListView include:
- * <p>- Initializing the ListView with items from the model's filter pipeline.
- * <p>- Monitoring changes in the filter pipeline to dynamically update the ListView.
- * <p>- Enabling drag-and-drop functionality for reordering filters, with the correct
- *   model indices calculated based on the reverse order between the ListView and
- *   the filter pipeline.
- * <p>- Supporting copy-paste operations for filters through keyboard shortcuts,
- *   notifying listeners of any filter addition.
- * <p>- Updating icon visuals for each filter item based on its position in the list.
- * <p>
- * The class also includes utility methods to register and deregister
- * FilterUpdateListener instances, which receive notifications on filter updates.
- */
 public class FilterListView {
 
-    /* FXML fields */
+
     @FXML
     private ListView<CustomCell> list;
 
-    /* instance fields */
     private ObservableList<CustomCell> items;
     private CustomCell copiedItem;
     private IFilterModel model;
-    private final EventPublisher publisher = EventManager.getPublisher();
+    private final EventPublisher publisher;
+
+
+    private FilterListView() {
+        publisher = EventManager.getPublisher();
+    }
 
     /**
      * Initializes the view, sets up list items, listeners, and drag-and-drop functionality.
@@ -243,6 +229,7 @@ public class FilterListView {
      * Updates icons in the ListView's cells based on the position of each item.
      *
      */
+    @SuppressWarnings("all") //replace switch with if
     private void updateIcons() {
         for (int i = 0; i < items.size(); i++) {
             //for each cell

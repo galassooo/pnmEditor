@@ -1,7 +1,6 @@
 package org.supsi.controller.confirmation;
 
 import javafx.fxml.FXMLLoader;
-import javafx.stage.Stage;
 import org.supsi.model.info.ILoggerModel;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.model.state.IStateModel;
@@ -16,32 +15,23 @@ import java.util.function.Consumer;
 
 public class ConfirmationController implements IConfirmationController {
 
-    /* self reference */
     private static ConfirmationController instance;
-    private final ILoggerModel loggerModel = LoggerModel.getInstance();
-    private final IStateModel stateModel = StateModel.getInstance();
-
-    /* stage */
-    private Stage primaryStage;
-
-    /* view */
     private IConfirmPopup view;
-
     private boolean changesPending = false;
 
     protected ConfirmationController() {
 
-        stateModel.areChangesPending().addListener((obs, old, newValue) -> {
-            changesPending = newValue;
-        });
+        IStateModel stateModel = StateModel.getInstance();
+        stateModel.areChangesPending().addListener((obs, old, newValue) -> changesPending = newValue);
 
         URL fxmlUrl = getClass().getResource("/layout/ConfirmPopup.fxml");
         if (fxmlUrl == null) {
             return;
         }
 
+        ILoggerModel loggerModel = LoggerModel.getInstance();
         try {
-            ITranslationsModel translationsModel = TranslationModel.getInstance();
+            ITranslationsModel translationsModel = TranslationModel.getMyself();
             FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());
             loader.load();
             view = loader.getController();
@@ -50,7 +40,6 @@ public class ConfirmationController implements IConfirmationController {
             loggerModel.addError("ui_failed_to_load_component");
         }
         loggerModel.addDebug("ui__loaded");
-
     }
 
     /**
@@ -67,6 +56,7 @@ public class ConfirmationController implements IConfirmationController {
     /**
      * handle exit request
      */
+    @Override
     public void requestConfirm(Consumer<?> onConfirm) {
         if(changesPending) {
             if (view.showConfirmationDialog()) {

@@ -1,6 +1,5 @@
 package org.supsi.view.image;
 
-import ch.supsi.application.state.StateChangeListener;
 import org.supsi.model.image.IImageModel;
 import org.supsi.model.image.ImageModel;
 import javafx.fxml.FXML;
@@ -18,10 +17,8 @@ public class MainImageView implements IImageView {
         model = ImageModel.getInstance();
     }
 
-    @FXML
-    void initialize() {
-    }
 
+    @Override
     public void update() {
         long[][] pixels = model.getImagePixels();
         int width = pixels[0].length;

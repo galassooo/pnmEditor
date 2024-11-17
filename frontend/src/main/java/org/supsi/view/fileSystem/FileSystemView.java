@@ -10,10 +10,13 @@ import java.io.File;
 public class FileSystemView implements IFileSystemView {
 
     private final Stage root;
-    private final IImageModel model = ImageModel.getInstance();
+    private final IImageModel model;
     private String extension;
 
+
     public FileSystemView(Stage root) {
+        model = ImageModel.getInstance();
+
         if (root == null) {
             throw new IllegalArgumentException("root must not be null");
         }

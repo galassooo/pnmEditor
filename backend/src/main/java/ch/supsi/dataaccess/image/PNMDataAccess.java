@@ -111,6 +111,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
      * @throws IOException if there's an error writing to the file
      */
     @Override
+    @SuppressWarnings("All")
     public final WritableImage write(WritableImage image) throws IOException {
         String outputPath = image.getFilePath();
         File outputFile = new File(outputPath);

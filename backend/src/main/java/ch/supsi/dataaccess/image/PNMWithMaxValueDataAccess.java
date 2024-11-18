@@ -11,6 +11,10 @@ import java.util.concurrent.ExecutorService;
  * Abstract base class for handling PNM image formats that include a "max value" field in their headers.
  * This class extends {@link PNMDataAccess} and provides shared functionality for formats like PPM and PGM,
  * which support pixel values up to a defined maximum.
+ *
+ * @see PNMDataAccess
+ * @see PPMDataAccess
+ * @see PGMDataAccess
  */
 public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
         permits PPMDataAccess, PGMDataAccess {
@@ -137,6 +141,11 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
         }
     }
 
+    /**
+     * writes the max value to the output stream
+     * @param os the {@link OutputStream} to be written
+     * @throws IOException if an error occurs during writing operation
+     */
     private void writeMaxValue(OutputStream os) throws IOException {
         os.write((maxValue + "\n").getBytes());
     }

@@ -15,16 +15,25 @@ public class ImageBuilder implements ImageBuilderInterface {
     private String magicNumber;
     private ImageAdapterInterface imageAdapter;
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public long[][] getPixels() {
         return pixels;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public String getFilePath() {
         return filePath;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public String getMagicNumber() {
         return magicNumber;

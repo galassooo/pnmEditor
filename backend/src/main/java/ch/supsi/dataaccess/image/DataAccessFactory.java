@@ -16,12 +16,13 @@ import java.lang.reflect.InvocationTargetException;
  * Factory class for managing and instantiating image data access components.
  * This class uses registered {@link DataAccessComponent} entries to provide instances
  * of image data access implementations based on file extension or magic number.
+ * @see ImageDataAccess
  */
 @ImageAccessFactory
 public class DataAccessFactory {
 
     /**
-     * List of registered data access components.
+     * {@link List} of registered data access components.
      */
     @Register
     private static List<DataAccessComponent> dataAccessComponents;
@@ -29,7 +30,7 @@ public class DataAccessFactory {
     /**
      * Retrieves a list of supported file extensions from the registered data access components.
      *
-     * @return a list of supported file extensions
+     * @return a {@link List} of supported file extensions
      */
     public static List<String> getSupportedExtensions() {
         return dataAccessComponents.stream().map(e -> e.extension).toList();
@@ -149,7 +150,7 @@ public class DataAccessFactory {
      * Retrieves the class corresponding to the given magic number from the registered components.
      *
      * @param magicNumber the magic number to search for
-     * @return the class associated with the magic number, or null if not found
+     * @return the {@link Class} associated with the magic number, or null if not found
      */
     private static Class<?> getFromMagicNumber(String magicNumber) {
         for (DataAccessComponent component : dataAccessComponents) {
@@ -164,7 +165,7 @@ public class DataAccessFactory {
      * Retrieves the class corresponding to the given file extension from the registered components.
      *
      * @param extension the file extension to search for
-     * @return the class associated with the file extension, or null if not found
+     * @return the {@link Class} associated with the file extension, or null if not found
      */
     private static Class<?> getFromExtension(String extension) {
         for (DataAccessComponent component : dataAccessComponents) {

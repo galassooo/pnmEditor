@@ -4,6 +4,10 @@ import ch.supsi.application.image.WritableImage;
 
 public class NegativeCommand implements FilterCommand {
 
+    /**
+     * {@inheritDoc}
+     * @param img the {@link WritableImage} to process
+     */
     @Override
     public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
@@ -22,6 +26,10 @@ public class NegativeCommand implements FilterCommand {
         img.setPixels(pixels);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return name
+     */
     @Override
     public String getName() {
         return "Negative";

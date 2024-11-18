@@ -10,6 +10,9 @@ public class ThreeChannel implements ConvertStrategy {
         this.maxValue = maxValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long toArgb(long pixel) {
         long red;
@@ -37,6 +40,9 @@ public class ThreeChannel implements ConvertStrategy {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long ArgbToOriginal(long pixel) {
         long red = (pixel >> 16) & 0xFF;

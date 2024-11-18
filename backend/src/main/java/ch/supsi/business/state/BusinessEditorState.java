@@ -35,82 +35,128 @@ public class BusinessEditorState implements EditorStateManager, StateChangeEvent
     }
 
     // implementazione dei metodi dell'interfaccia che delegano allo stato corrente
+
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean canApplyFilters() {
         return currentState.canApplyFilters();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean canSave() {
         return currentState.canSave();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean canSaveAs() {
         return currentState.canSaveAs();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean canAddFilter() {
         return currentState.canAddFilter();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean canExport() {
         return currentState.canExport();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean isRefreshRequired() {
         return currentState.isRefreshRequired();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public boolean areChangesPending() {
         return currentState.areChangesPending();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onLoading() {
         currentState = new LoadingState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onLoadingError() {
         currentState = new DefaultState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onImageLoaded() {
         currentState = new ImageLoadedState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onFilterAdded() {
         currentState = new FilterPending();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onFilterProcessed() {
         currentState = new EditedImage();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onFiltersRemoved() {
         currentState = new ImageLoadedState();
         listeners.forEach(StateChangeListener::onStateChange);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void registerStateListener(StateChangeListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void deregisterStateListener(StateChangeListener listener) {
         listeners.remove(listener);

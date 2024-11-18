@@ -19,7 +19,6 @@ import org.supsi.view.image.IImageView;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Controls image-related operations and manages interactions between the image view and model.
@@ -70,12 +69,17 @@ public class ImageController implements IImageController {
         return myself;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void open() {
         confirmationController.requestConfirm((event) -> openImage());
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void save() {
         try {
@@ -87,6 +91,9 @@ public class ImageController implements IImageController {
         loggerModel.addInfo("ui_image_saved");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveAs() {
         IFileSystemView fsPopUp = new FileSystemView(root);
@@ -103,11 +110,17 @@ public class ImageController implements IImageController {
         loggerModel.addInfo("ui_image_saved");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setImage(IImageView image) {
         this.mainImageView = image;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setStage(Stage stage) {
         this.root = stage;

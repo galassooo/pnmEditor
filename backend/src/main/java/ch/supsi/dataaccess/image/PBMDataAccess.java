@@ -15,6 +15,9 @@ import java.util.concurrent.ExecutorService;
  * Provides functionality to read and write PBM image files in both ASCII (P1) and binary (P4) formats.
  * Implements a Singleton pattern to ensure a single instance is used across the application.
  * Extends {@link PNMDataAccess} for shared functionality with PNM formats.
+ *
+ * @see DataAccessFactory
+ * @see ch.supsi.business.image.ImageDataAccess
  */
 
 @ImageAccess(magicNumber = {"P1", "P4"})

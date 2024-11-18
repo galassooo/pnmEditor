@@ -10,12 +10,18 @@ public class SingleChannel implements ConvertStrategy {
         this.maxValue = maxValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long toArgb(long grayValue) {
         long normalizedGray = (long) ((grayValue / (double) maxValue) * 255);
         return (0xFFL << 24) | (normalizedGray << 16) | (normalizedGray << 8) | normalizedGray;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long ArgbToOriginal(long pixel) {
         int r = (int) ((pixel >> 16) & 0xFF);

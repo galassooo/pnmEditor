@@ -80,38 +80,58 @@ public class ImageBusiness implements WritableImage {
         dac.write(new ImageBusiness(exportedImage));
     }
 
-    /* getters / setters */
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public long[][] getPixels() {
         return argbPixels;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public int getWidth() {
         return argbPixels.length > 0 ? argbPixels[0].length : 0;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public int getHeight() {
         return argbPixels.length;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public String getFilePath() {
         return filePath;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public String getMagicNumber() {
         return magicNumber;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public String getName() {
         File file = new File(filePath);
         return file.getName();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void setPixels(long[][] rotatedPixels) {
         argbPixels = rotatedPixels;

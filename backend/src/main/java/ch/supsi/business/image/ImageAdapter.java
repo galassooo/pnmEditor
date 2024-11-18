@@ -16,6 +16,9 @@ public class ImageAdapter implements ImageAdapterInterface {
         this.strategy = strategy;
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public long[][] rawToArgb(long[][] rawImage) {
         var function = new Function<Long, Long>() {
@@ -27,6 +30,9 @@ public class ImageAdapter implements ImageAdapterInterface {
         return process(rawImage, function);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public long[][] argbToRaw(long[][] rawImage) {
         var function = new Function<Long, Long>() {
@@ -38,6 +44,12 @@ public class ImageAdapter implements ImageAdapterInterface {
         return process(rawImage, function);
     }
 
+    /**
+     * apply the conversion function to all pixels
+     * @param pixels 2D array of long representing an image
+     * @param function conversion function to be applied
+     * @return a new array with converted pixels
+     */
     private long[][] process(long[][] pixels, Function<Long, Long> function) {
         if (pixels == null)
             return new long[0][];

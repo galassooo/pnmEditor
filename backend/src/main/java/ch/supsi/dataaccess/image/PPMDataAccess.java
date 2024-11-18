@@ -17,6 +17,9 @@ import java.util.concurrent.*;
  * Provides functionality to read and write PPM image files in both ASCII (P3) and binary (P6) formats.
  * Implements a Singleton pattern to ensure a single instance is used across the application.
  * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats with maxvalue.
+ *
+ * @see PNMDataAccess
+ * @see ch.supsi.business.image.ImageDataAccess
  */
 @ImageAccess(magicNumber = {"P3", "P6"})
 public final class PPMDataAccess extends PNMWithMaxValueDataAccess {

@@ -137,6 +137,9 @@ public class FilterManager implements FilterPipelineInterface {
         throw new IndexOutOfBoundsException("invalid index");
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public int getSize() {
         return size;

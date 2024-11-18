@@ -32,6 +32,9 @@ public class FileSystemView implements IFileSystemView {
         this.root = root;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File askForFile() {
         FileChooser fileChooser = new FileChooser();
@@ -39,6 +42,9 @@ public class FileSystemView implements IFileSystemView {
         return fileChooser.showOpenDialog(root);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File askForDirectory() {
         FileChooser fileChooser = new FileChooser();
@@ -51,6 +57,10 @@ public class FileSystemView implements IFileSystemView {
 
     }
 
+    /**
+     * {@inheritDoc}
+     * @param fileExtension the file extension to use (e.g., "png", "jpg")
+     */
     @Override
     public void setFileExtension(String fileExtension) {
         extension = fileExtension;

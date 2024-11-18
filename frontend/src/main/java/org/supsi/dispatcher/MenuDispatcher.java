@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import org.supsi.model.state.IStateModel;
 import org.supsi.model.state.StateModel;
-import java.io.IOException;
 
 /**
  * Manages the dispatching of menu actions to the appropriate controllers in the application.

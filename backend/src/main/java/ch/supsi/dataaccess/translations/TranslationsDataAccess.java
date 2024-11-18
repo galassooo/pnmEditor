@@ -225,7 +225,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
         return null;
     }
 
-
     /**
      * Handles loading resources when the specified locale is invalid.
      *

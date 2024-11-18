@@ -4,6 +4,10 @@ import ch.supsi.application.image.WritableImage;
 
 public class VerticalMirrorCommand implements FilterCommand {
 
+    /**
+     * {@inheritDoc}
+     * @param img the {@link WritableImage} to process
+     */
     @Override
     public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
@@ -30,6 +34,10 @@ public class VerticalMirrorCommand implements FilterCommand {
         img.setPixels(pixels);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return name
+     */
     @Override
     public String getName() {
         return "Mirror_Vertical";

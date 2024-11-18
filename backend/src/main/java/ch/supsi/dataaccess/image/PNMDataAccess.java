@@ -19,6 +19,11 @@ import java.util.concurrent.Future;
  * dimensions, and pixel data in both ASCII and binary formats.
  * <p>
  * Permits subclasses for specific PNM types (PBM, PGM, PPM).
+ *
+ * @see PBMDataAccess
+ * @see PGMDataAccess
+ * @see PPMDataAccess
+ *
  */
 public abstract sealed class PNMDataAccess implements ImageDataAccess
         permits PBMDataAccess, PNMWithMaxValueDataAccess {

@@ -4,6 +4,10 @@ import ch.supsi.application.image.WritableImage;
 
 public class RotateRightCommand implements FilterCommand {
 
+    /**
+     * {@inheritDoc}
+     * @param img the {@link WritableImage} to process
+     */
     @Override
     public void execute(WritableImage img) {
         long[][] pixels = img.getPixels();
@@ -14,11 +18,20 @@ public class RotateRightCommand implements FilterCommand {
         img.setPixels(rotatedPixels);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return name
+     */
     @Override
     public String getName() {
         return "Rotate_Right";
     }
 
+    /**
+     * apply rotation function on the given pixels
+     * @param pixels a 2D array of {@link Long} containing pixels
+     * @return another array of the rotated pixels
+     */
     private long[][] rotate(long[][] pixels) {
 
         int width = pixels.length;

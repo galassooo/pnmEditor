@@ -112,9 +112,9 @@ public class DataAccessFactory {
      * @return the singleton instance of the class
      * @throws IllegalAccessException if the `getInstance` method throws an exception or is inaccessible
      */
-    private static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
+    static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
+        System.out.println("CLASS: "+clazz.getName());
         try {
-            //magari aggiungi un check sul tipo di ritorno che sia compatibile con l'interfaccia
             Method getInstanceMethod = clazz.getDeclaredMethod("getInstance");
             if (!java.lang.reflect.Modifier.isPublic(getInstanceMethod.getModifiers())) {
                 getInstanceMethod.setAccessible(true);
@@ -136,13 +136,9 @@ public class DataAccessFactory {
      * @return an instance of {@link ImageDataAccess}
      * @throws IllegalAccessException if an error occurs while creating the instance
      */
-    private static ImageDataAccess loadClazz(Class<?> clazz) throws IllegalAccessException {
+    static ImageDataAccess loadClazz(Class<?> clazz) throws IllegalAccessException {
         ImageDataAccess instance;
-        try {
-            instance = (ImageDataAccess) getSingletonInstance(clazz);
-        } catch (IllegalAccessException e) {
-            throw new IllegalAccessException(e.getMessage());
-        }
+        instance = (ImageDataAccess) getSingletonInstance(clazz);
         return instance;
     }
 
@@ -167,7 +163,7 @@ public class DataAccessFactory {
      * @param extension the file extension to search for
      * @return the {@link Class} associated with the file extension, or null if not found
      */
-    private static Class<?> getFromExtension(String extension) {
+    static Class<?> getFromExtension(String extension) {
         for (DataAccessComponent component : dataAccessComponents) {
             if (component.extension.equals(extension)) {
                 return component.clazz;

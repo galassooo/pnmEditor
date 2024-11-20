@@ -70,11 +70,10 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
      */
     @Override
     public Optional<Object> getPreference(String key) {
-        this.userPreferences = preferencesDao.getPreferences();
         if (key == null || key.isEmpty()) {
             return Optional.empty();
         }
-
+        this.userPreferences = preferencesDao.getPreferences();
         return Optional.of(userPreferences.get(key));
     }
 

@@ -1,6 +1,12 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.image.ImageAdapter;
+import ch.supsi.business.image.ImageBuilder;
+import ch.supsi.business.image.ImageBuilderInterface;
+import ch.supsi.business.image.ImageBusiness;
+import ch.supsi.business.strategy.ThreeChannel;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,10 +15,19 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class PPMDataAccessTest {
 
@@ -329,10 +344,16 @@ class PPMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusiness img = new ImageBusiness(
-//                data, tmpFile.toAbsolutePath().toString(),"P6",
-//                new ThreeChannel(255));
-//        assertDoesNotThrow(()->ppmDataAccess.write(img));
+
+        ImageBuilderInterface builder = new ImageBuilder()
+                .withFilePath(tmpFile.toAbsolutePath().toString())
+                .withMagicNumber("P6")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new ThreeChannel(255)))
+                .build();
+
+        ImageBusiness img = new ImageBusiness(builder);
+        assertDoesNotThrow(()->ppmDataAccess.write(img));
     }
     @Test
     void testWrite16bitBinary() throws IOException {
@@ -368,10 +389,15 @@ class PPMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusiness img = new ImageBusiness(
-//                data, tmpFile.toAbsolutePath().toString(),"P3",
-//                new ThreeChannel(255));
-//        assertDoesNotThrow(()->ppmDataAccess.write(img));
+        ImageBuilderInterface builder = new ImageBuilder()
+                .withFilePath(tmpFile.toAbsolutePath().toString())
+                .withMagicNumber("P3")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new ThreeChannel(255)))
+                .build();
+
+        ImageBusiness img = new ImageBusiness(builder);
+        assertDoesNotThrow(()->ppmDataAccess.write(img));
     }
 
     @Test
@@ -417,12 +443,94 @@ class PPMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusiness img = new ImageBusiness(
-//                data, nonWritablePath.toAbsolutePath().toString(), "P3", //viene skippato se ho i privilegi di root
-//                new ThreeChannel(255));
-//
-//        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));
-//        assertTrue(e.getMessage().contains("Unable to write to file: "));
-//        nonWritablePath.toFile().setWritable(true);
+
+        ImageBuilderInterface builder = new ImageBuilder()
+                .withFilePath(nonWritablePath.toAbsolutePath().toString())
+                .withMagicNumber("P3")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new ThreeChannel(255)))
+                .build();
+
+        ImageBusiness img = new ImageBusiness(builder);
+
+        IOException e = assertThrows(IOException.class, () -> ppmDataAccess.write(img));
+        assertTrue(e.getMessage().contains("Unable to write to file: "));
+        nonWritablePath.toFile().setWritable(true);
+    }
+
+    /* ------------- test exception in future -----------------*/
+    //so che non è bello usare le reflection per i test, ma era
+    //l 'unico modo per fare il 100% del coverage in quanto il metodo:
+
+    /*
+     private void writeFuturesToStream(List<Future<byte[]>> futures, OutputStream os) throws IOException {
+        for (Future<byte[]> future : futures) {
+            try {
+                os.write(future.get());
+            } catch (InterruptedException | ExecutionException ignored) {
+
+            }
+            //NON RIESCO A TESTARLO!!!!!!!!
+        }
+    }
+     */
+    // è PRIVATE, non 'callable' direttamente
+    // è in una classe seald/final -> non mockabile
+    //è impossibile generare l'exception dall'esterno.
+    // neanche col PID del thread, dato che altrimenti killo l'applicazione
+
+    //custom mock
+    private static class TestFuture implements Future<byte[]> {
+        private final Exception exception;
+
+        public TestFuture(Exception exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) { return false; }
+
+        @Override
+        public boolean isCancelled() { return false; }
+
+        @Override
+        public boolean isDone() { return true; }
+
+        @Override
+        public byte[] get() throws InterruptedException, ExecutionException {
+            if (exception != null) {
+                if (exception instanceof InterruptedException) {
+                    throw (InterruptedException) exception;
+                }
+                if (exception instanceof ExecutionException) {
+                    throw (ExecutionException) exception;
+                }
+            }
+            return new byte[0];
+        }
+
+        @Override
+        public byte[] get(long timeout, TimeUnit unit) { return new byte[0]; }
+    }
+
+    @Test
+    void testInterruptedException() throws Exception {
+        // Setup
+        OutputStream mockOutputStream = mock(OutputStream.class);
+        List<Future<byte[]>> futures = List.of(
+                new TestFuture(new InterruptedException("Test"))
+        );
+
+        // Ottieni il metodo privato
+        Method method = ppmDataAccess.getClass().getDeclaredMethod(
+                "writeFuturesToStream",
+                List.class,
+                OutputStream.class
+        );
+        method.setAccessible(true);
+
+        method.invoke(ppmDataAccess, futures, mockOutputStream);
+
+        verify(mockOutputStream, never()).write(any(byte[].class));
     }
 }

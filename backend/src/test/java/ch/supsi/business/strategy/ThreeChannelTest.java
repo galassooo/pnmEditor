@@ -1,11 +1,11 @@
 package ch.supsi.business.strategy;
 
-import ch.supsi.business.strategy.ThreeChannel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class ArgbThreeChannelTest {
+public class ThreeChannelTest {
 
     @Test
     void testToArgbWith8BitMaxValue() {
@@ -54,5 +54,24 @@ public class ArgbThreeChannelTest {
         assertEquals((65535L << 32), converter.ArgbToOriginal(0xFFFF0000L));
         assertEquals((65535L << 16), converter.ArgbToOriginal(0xFF00FF00L));
         assertEquals(65535L, converter.ArgbToOriginal(0xFF0000FFL));
+    }
+    @Test
+    void testEqualsSameObject() {
+        ThreeChannel converter = new ThreeChannel(65535);
+        assertEquals(converter, converter);
+        assertEquals(converter.hashCode(), converter.hashCode());
+    }
+
+    @Test
+    void testEqualsDifferentClass(){
+        ThreeChannel converter = new ThreeChannel(65535);
+        assertNotEquals(converter, "converter");
+    }
+
+    @Test
+    void testEqualsDifferentMaxValue(){
+        ThreeChannel converter = new ThreeChannel(1);
+        ThreeChannel converter2 = new ThreeChannel(65535);
+        assertNotEquals(converter, converter2);
     }
 }

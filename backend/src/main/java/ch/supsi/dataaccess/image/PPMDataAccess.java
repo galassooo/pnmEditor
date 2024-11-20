@@ -255,14 +255,14 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
      * @param os      the {@link OutputStream} to write the data to
      * @throws IOException if an error occurs during writing
      */
-    private void writeFuturesToStream(List<Future<byte[]>> futures, OutputStream os) throws IOException {
+    @Override
+    protected void writeFuturesToStream(List<Future<byte[]>> futures, OutputStream os) throws IOException {
         for (Future<byte[]> future : futures) {
             try {
                 os.write(future.get());
             } catch (InterruptedException | ExecutionException ignored) {
 
             }
-            //NON RIESCO A TESTARLO!!!!!!!!
         }
     }
 

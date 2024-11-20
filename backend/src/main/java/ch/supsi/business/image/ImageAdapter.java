@@ -2,6 +2,7 @@ package ch.supsi.business.image;
 
 import ch.supsi.business.strategy.ConvertStrategy;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /*
@@ -67,5 +68,17 @@ public class ImageAdapter implements ImageAdapterInterface {
             }
         }
         return argbMatrix;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImageAdapter adapter)) return false;
+        return Objects.equals(strategy, adapter.strategy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(strategy);
     }
 }

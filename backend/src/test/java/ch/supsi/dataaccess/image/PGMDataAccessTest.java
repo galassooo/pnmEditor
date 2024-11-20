@@ -1,6 +1,11 @@
 package ch.supsi.dataaccess.image;
 
 import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.image.ImageAdapter;
+import ch.supsi.business.image.ImageBuilder;
+import ch.supsi.business.image.ImageBuilderInterface;
+import ch.supsi.business.image.ImageBusiness;
+import ch.supsi.business.strategy.SingleChannel;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +14,18 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class PGMDataAccessTest {
 
@@ -393,10 +407,16 @@ class PGMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusinessInterface img = new ImageBusiness(
-//                data, tmpFile.toAbsolutePath().toString(), "P5",
-//                new SingleChannel(255));
-//        assertDoesNotThrow(() -> pgmDataAccess.write(img));
+
+        ImageBuilderInterface builderInterface = new ImageBuilder()
+                .withFilePath(tmpFile.toAbsolutePath().toString())
+                .withMagicNumber("P5")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new SingleChannel(255)))
+                .build();
+
+        WritableImage img = new ImageBusiness(builderInterface);
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
     @Test
@@ -427,10 +447,15 @@ class PGMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusinessInterface img = new ImageBusiness(
-//                data, tmpFile.toAbsolutePath().toString(), "P2",
-//                new SingleChannel(255));
-//        assertDoesNotThrow(() -> pgmDataAccess.write(img));
+        ImageBuilderInterface builderInterface = new ImageBuilder()
+                .withFilePath(tmpFile.toAbsolutePath().toString())
+                .withMagicNumber("P2")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new SingleChannel(255)))
+                .build();
+
+        WritableImage img = new ImageBusiness(builderInterface);
+        assertDoesNotThrow(() -> pgmDataAccess.write(img));
     }
 
     @Test
@@ -475,12 +500,72 @@ class PGMDataAccessTest {
                 {1, 2, 3},
                 {4, 5, 6},
         };
-//        ImageBusinessInterface img = new ImageBusiness(
-//                data, nonWritablePath.toAbsolutePath().toString(), "P2",
-//                new SingleChannel(255));
-//
-//        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img));
-//        assertTrue(e.getMessage().contains("Unable to write to file: "));
-//        nonWritablePath.toFile().setWritable(true);
+        ImageBuilderInterface builderInterface = new ImageBuilder()
+                .withFilePath(nonWritablePath.toAbsolutePath().toString())
+                .withMagicNumber("P5")
+                .withPixels(data)
+                .withImageAdapter(new ImageAdapter(new SingleChannel(255)))
+                .build();
+
+        WritableImage img = new ImageBusiness(builderInterface);
+        IOException e = assertThrows(IOException.class, () -> pgmDataAccess.write(img));
+        assertTrue(e.getMessage().contains("Unable to write to file: "));
+        nonWritablePath.toFile().setWritable(true);
+    }
+
+    //vedi PPMDataAccess per commento (in fondo)
+    //custom mock
+    private static class TestFuture implements Future<byte[]> {
+        private final Exception exception;
+
+        public TestFuture(Exception exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) { return false; }
+
+        @Override
+        public boolean isCancelled() { return false; }
+
+        @Override
+        public boolean isDone() { return true; }
+
+        @Override
+        public byte[] get() throws InterruptedException, ExecutionException {
+            if (exception != null) {
+                if (exception instanceof InterruptedException) {
+                    throw (InterruptedException) exception;
+                }
+                if (exception instanceof ExecutionException) {
+                    throw (ExecutionException) exception;
+                }
+            }
+            return new byte[0];
+        }
+
+        @Override
+        public byte[] get(long timeout, TimeUnit unit) { return new byte[0]; }
+    }
+
+    @Test
+    void testInterruptedException() throws Exception {
+        // Setup
+        OutputStream mockOutputStream = mock(OutputStream.class);
+        List<Future<byte[]>> futures = List.of(
+                new PGMDataAccessTest.TestFuture(new InterruptedException("Test"))
+        );
+
+        // Ottieni il metodo privato
+        Method method = PNMDataAccess.class.getDeclaredMethod(
+                "writeFuturesToStream",
+                List.class,
+                OutputStream.class
+        );
+        method.setAccessible(true);
+
+        method.invoke(pgmDataAccess, futures, mockOutputStream);
+
+        verify(mockOutputStream, never()).write(any(byte[].class));
     }
 }

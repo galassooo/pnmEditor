@@ -113,7 +113,10 @@ public class ImageBuilder implements ImageBuilderInterface {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ImageBuilder that)) return false;
-        return Objects.deepEquals(getPixels(), that.getPixels()) && Objects.equals(getFilePath(), that.getFilePath()) && Objects.equals(getMagicNumber(), that.getMagicNumber()) && Objects.equals(imageAdapter, that.imageAdapter);
+        return Objects.deepEquals(getPixels(), that.getPixels())
+                && Objects.equals(getFilePath(), that.getFilePath())
+                && Objects.equals(getMagicNumber(), that.getMagicNumber())
+                && Objects.equals(imageAdapter, that.imageAdapter);
     }
 
     @Override

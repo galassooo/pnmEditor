@@ -177,12 +177,15 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
             final int row = y;
             futures.add(executor.submit(() -> generator.generateRow(pixels, row, pixels[0].length)));
         }
+        writeFuturesToStream(futures, os);
+    }
 
+    protected void writeFuturesToStream(List<Future<byte[]>> futures, OutputStream os) throws IOException {
         for (Future<byte[]> future : futures) {
             try {
                 os.write(future.get());
             } catch (InterruptedException | ExecutionException ignored) {
-                //unable to test
+
             }
         }
     }

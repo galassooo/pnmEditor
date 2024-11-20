@@ -64,7 +64,8 @@ public class FilterChainLink {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FilterChainLink that)) return false;
-        return Objects.equals(command, that.command) && Objects.equals(getNext(), that.getNext());
+        return Objects.equals(command, that.command)
+                && Objects.equals(getNext(), that.getNext());
     }
 
     @Override

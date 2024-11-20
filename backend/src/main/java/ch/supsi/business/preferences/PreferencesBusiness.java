@@ -74,7 +74,7 @@ public class PreferencesBusiness implements PreferencesBusinessInterface {
             return Optional.empty();
         }
         this.userPreferences = preferencesDao.getPreferences();
-        return Optional.of(userPreferences.get(key));
+        return Optional.ofNullable(userPreferences.get(key));
     }
 
     /**

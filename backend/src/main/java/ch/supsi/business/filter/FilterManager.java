@@ -42,6 +42,7 @@ public class FilterManager implements FilterPipelineInterface {
         if (image == null || pipeline == null) return;
         pipeline.execute(image);
         pipeline = null;
+        size = 0;
     }
 
     /**
@@ -54,6 +55,7 @@ public class FilterManager implements FilterPipelineInterface {
         FilterChainLink link = new FilterChainLink(command);
         if (pipeline == null) {
             pipeline = link;
+            size++;
         } else {
             size++;
             FilterChainLink current = pipeline;
@@ -127,18 +129,15 @@ public class FilterManager implements FilterPipelineInterface {
             current = current.getNext();
         }
 
-        if (current.getNext() != null) {
-            String name = current.getNext().getName();
-            current.setNext(current.getNext().getNext());
-            size--;
-            return name;
-        }
+        String name = current.getNext().getName();
+        current.setNext(current.getNext().getNext());
+        size--;
+        return name;
 
-        throw new IndexOutOfBoundsException("invalid index");
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public int getSize() {

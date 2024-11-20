@@ -27,6 +27,9 @@ public class FilterFactory {
         load();
     }
 
+    private FilterFactory() {
+    }
+
     /**
      * Dynamically loads filter commands from the specified package and verifies their translations.
      * Filters without translations are logged with a warning and excluded from the list.

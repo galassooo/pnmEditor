@@ -160,6 +160,18 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
+                <configuration>
+                    <excludes>
+                        <!-- SONO LE CLASSI GENERATE DINAMICAMENTE DA JAVAASSIST NEI TEST DELLE REFLECTION -->
+                        <!-- QUESTI MOSTRI STANNO VIVI TRA UNA RUN E L'ALTRA E NON SI POSSONO LEVARE DAL CLASSPOOL!!! -->
+                        <!-- VEDI DOCUMENTAZIONE JAVAASSSIST https://www.javassist.org/tutorial/tutorial.html su 2.classpool-->
+                        <!-- e si, anche col detach il riferimento che ha la JVM della classe non viene eliminato -->
+                        <exclude>**/ch/supsi/business/filter/chain/command/AbstractFilter.class</exclude>
+                        <exclude>**/ch/supsi/business/filter/chain/command/NoNoArgConstructor.class</exclude>
+                        <exclude>**/ch/supsi/business/filter/chain/command/exceptionConstructor.class</exclude>
+                        <exclude>**/ch/supsi/business/filter/chain/command/NullNameFilterTrans.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

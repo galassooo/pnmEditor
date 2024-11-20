@@ -107,7 +107,6 @@ class PreferencesBusinessTest {
         assertTrue(result.isEmpty(), "Null key should return null without error");
     }
 
-    @Disabled
     @Test
     void testGetPreferenceEmptyKey() throws IOException {
         //retrieve with empty string key

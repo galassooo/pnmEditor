@@ -1,105 +1,136 @@
 package ch.supsi.application.filter;
 
 import ch.supsi.application.filters.FilterApplication;
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.filter.FilterFactory;
+import ch.supsi.business.filter.FilterManager;
+import ch.supsi.business.filter.chain.command.FilterCommand;
+import ch.supsi.business.state.BusinessEditorState;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
-@Disabled
-public class FilterApplicationTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class FilterApplicationTest {
 
     private FilterApplication filterApplication;
+    private FilterManager mockFilterManager;
+    private BusinessEditorState mockStateManager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() throws Exception {
+        //force reset
+        var field = FilterApplication.class.getDeclaredField("myself");
+        field.setAccessible(true);
+        field.set(null, null);
+
+        //mock dependencies
+        mockFilterManager = mock(FilterManager.class);
+        mockStateManager = mock(BusinessEditorState.class);
+
+        //mock factory
+        var mockFilterFactory = mockStatic(FilterFactory.class);
+        mockFilterFactory.when(FilterFactory::getFilters).thenReturn(List.of("Negative", "Mirror", "Rotate_Right", "Rotate_Left"));
+        mockFilterFactory.when(() -> FilterFactory.getFilter("Mirror")).thenReturn(mock(FilterCommand.class));
+
+        // Inject mocks
         filterApplication = FilterApplication.getInstance();
+        var modelField = FilterApplication.class.getDeclaredField("model");
+        modelField.setAccessible(true);
+        modelField.set(filterApplication, mockFilterManager);
+
+        var stateManagerField = FilterApplication.class.getDeclaredField("stateManager");
+        stateManagerField.setAccessible(true);
+        stateManagerField.set(filterApplication, mockStateManager);
+
+        mockFilterFactory.close();
     }
 
-    /* ----------- test singleton ----------- */
     @Test
-    void testSingleton(){
-        FilterApplication filterApplication = FilterApplication.getInstance();
+    void testSingleton() {
+        FilterApplication instance = FilterApplication.getInstance();
+        assertSame(filterApplication, instance, "The same instance should be returned for Singleton");
     }
 
-    /* ----------- test methods ----------- */
-
     @Test
-    void testAddFilter(){
-        String key = "Negative";
+    void testAddFilter() {
+        String key = "Mirror";
+        FilterCommand mockFilterCommand = mock(FilterCommand.class);
+
+        var mockFilterFactory = mockStatic(FilterFactory.class);
+        mockFilterFactory.when(() -> FilterFactory.getFilter(key)).thenReturn(mockFilterCommand);
 
         filterApplication.addFilterToPipeline(key);
 
+        verify(mockFilterManager, times(1)).addFilter(mockFilterCommand);
+        verify(mockStateManager, times(1)).onFilterAdded();
 
+        mockFilterFactory.close();
     }
 
     @Test
-    void testGetAllFilters(){
-
+    void testGetAllFilters() {
         var allFilters = filterApplication.getAllAvailableFilters();
-        assertFalse(allFilters.isEmpty());
-        assertTrue(allFilters.contains("Negative"));
-        assertTrue(allFilters.contains("Mirror"));
-        assertTrue(allFilters.contains("Rotate_Right"));
-        assertTrue(allFilters.contains("Rotate_Left"));
-
+        assertFalse(allFilters.isEmpty(), "The filter list should not be empty");
+        assertTrue(allFilters.contains("Negative"), "The filter list should contain 'Negative'");
+        assertTrue(allFilters.contains("Mirror"), "The filter list should contain 'Mirror'");
+        assertTrue(allFilters.contains("Rotate_Right"), "The filter list should contain 'Rotate_Right'");
+        assertTrue(allFilters.contains("Rotate_Left"), "The filter list should contain 'Rotate_Left'");
     }
 
     @Test
-    void testProcessEmptyPipeline(){
+    void testProcessEmptyPipeline() {
+        WritableImage mockImage = mock(WritableImage.class);
 
-        long[][] image = {
-                {1, 0},
-                {0, 1},
-        };
+        doThrow(new IllegalStateException("Pipeline is empty")).when(mockFilterManager).executePipeline(mockImage);
 
-        long[][] expected = {
-                {0xFF000000L, 0xFFFFFFFFL},
-                {0xFFFFFFFFL, 0xFF000000L}
-        };
-
-//        ImageBusiness img = new ImageBusiness(image, null, null, new SingleBit());
-//
-//        filterApplication.processFilterPipeline(img);
-//        assertArrayEquals(expected, img.getPixels());
+        assertThrows(IllegalStateException.class, () -> filterApplication.processFilterPipeline(mockImage), "Processing an empty pipeline should throw an exception");
+        verify(mockStateManager, never()).onFilterProcessed();
     }
 
     @Test
-    void testProcessWithPipeline(){
+    void testProcessWithPipeline() {
+        WritableImage mockImage = mock(WritableImage.class);
 
-        long[][] original = {
-                {1, 2, 3},
-                {4, 5, 6},
-                {7, 8, 9}
-        };
+        filterApplication.addFilterToPipeline("Mirror");
+        filterApplication.processFilterPipeline(mockImage);
 
-        long[][] expected = {
-                {0xFF000003L, 0xFF000002L, 0xFF000001L},
-                {0xFF000006L, 0xFF000005L, 0xFF000004L},
-                {0xFF000009L, 0xFF000008L, 0xFF000007L}
-        };
-
-
-//        ImageBusiness img = new ImageBusiness(original, null, null, new ThreeChannel(255));
-//
-//        filterApplication.addFilterToPipeline("Mirror");
-//        filterApplication.processFilterPipeline(img);
-//
-//        //printMatrix("Expected: ",expected);
-//        //printMatrix("Actual: ",img.getPixels());
-//        assertArrayEquals(expected, img.getPixels());
-
-    }
-    private void printMatrix(String label, long[][] matrix) {
-        System.out.println(label);
-        for (long[] row : matrix) {
-            for (long value : row) {
-                System.out.printf("%08X ", value);
-            }
-            System.out.println();
-        }
-        System.out.println();
+        verify(mockFilterManager, times(1)).executePipeline(mockImage);
+        verify(mockStateManager, times(1)).onFilterProcessed();
     }
 
+    @Test
+    void testAddFilterAtIndex() {
+        String key = "Rotate_Right";
+        FilterCommand mockFilterCommand = mock(FilterCommand.class);
+
+        var mockFilterFactory = mockStatic(FilterFactory.class);
+        mockFilterFactory.when(() -> FilterFactory.getFilter(key)).thenReturn(mockFilterCommand);
+
+        filterApplication.add(key, 0);
+
+        verify(mockFilterManager, times(1)).addFilter(mockFilterCommand, 0);
+        verify(mockStateManager, times(1)).onFilterAdded();
+
+        mockFilterFactory.close();
+    }
+
+    @Test
+    void testRemoveFilter() {
+        when(mockFilterManager.getSize()).thenReturn(2);
+        when(mockFilterManager.remove(0)).thenReturn("Mirror");
+
+        String removedFilter = filterApplication.remove(0);
+
+        assertEquals("Mirror", removedFilter, "The removed filter should be 'Mirror'");
+        verify(mockFilterManager, times(1)).remove(0);
+        verify(mockStateManager, never()).onFiltersRemoved();
+
+        when(mockFilterManager.getSize()).thenReturn(1);
+        filterApplication.remove(0);
+        verify(mockStateManager, times(1)).onFiltersRemoved();
+    }
 }

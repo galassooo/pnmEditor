@@ -41,7 +41,7 @@ public class ImageController implements IImageController {
      * - Registers a listener to refresh the image view when the state model indicates a refresh is required.
      * - Subscribes to export events to handle image export requests dynamically.
      */
-    private ImageController() {
+    protected ImageController() {
         model = ImageModel.getInstance();
         errorController = ErrorController.getInstance();
         loggerModel = LoggerModel.getInstance();
@@ -88,7 +88,6 @@ public class ImageController implements IImageController {
             errorController.showError(e.getMessage());
         }
         loggerModel.addInfo("ui_image_saved");
-        loggerModel.addInfo("ui_image_saved");
     }
 
     /**
@@ -96,7 +95,7 @@ public class ImageController implements IImageController {
      */
     @Override
     public void saveAs() {
-        IFileSystemView fsPopUp = new FileSystemView(root);
+        IFileSystemView fsPopUp = getFileSystemView(root);
         File chosen = fsPopUp.askForDirectory();
 
         if (chosen == null) { //popup closed
@@ -126,13 +125,17 @@ public class ImageController implements IImageController {
         this.root = stage;
     }
 
+    protected FileSystemView getFileSystemView(Stage root){
+        return new FileSystemView(root);
+    }
+
     /**
      * Handles export events, allowing the user to save the image in a different format.
      *
      * @param event the export request event containing the desired file extension
      */
-    private void onExportRequested(ExportEvent.ExportRequested event) {
-        IFileSystemView fsPopUp = new FileSystemView(root);
+    protected void onExportRequested(ExportEvent.ExportRequested event) {
+        IFileSystemView fsPopUp = getFileSystemView(root);
         fsPopUp.setFileExtension(event.extension());
         File chosen = fsPopUp.askForDirectory();
 
@@ -153,7 +156,7 @@ public class ImageController implements IImageController {
      */
     private void openImage() {
 
-        IFileSystemView fsPopUp = new FileSystemView(root);
+        IFileSystemView fsPopUp = getFileSystemView(root);
         File chosen = fsPopUp.askForFile();
 
         if (chosen == null) { //popup closed

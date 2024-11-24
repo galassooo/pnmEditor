@@ -2,15 +2,17 @@ package org.supsi.controller.exit;
 
 
 import javafx.application.Platform;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.controller.confirmation.ConfirmationController;
-import org.supsi.controller.confirmation.IConfirmationController;
 
 import java.util.function.Consumer;
 
@@ -22,6 +24,9 @@ public class ExitControllerTest {
 
     @Mock
     private ConfirmationController mockConfirmationController;
+
+    @Captor
+    private ArgumentCaptor<Consumer<?>> runnableCaptor;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -58,25 +63,45 @@ public class ExitControllerTest {
     }
 
 
-    @Disabled
     @Test
     void testHandleExitWithoutStage() throws Exception {
         try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);
-             MockedStatic<Platform> platformMock = mockStatic(Platform.class);
-             MockedStatic<System> systemMock = mockStatic(System.class);) {
-
+             MockedStatic<Platform> platformMock = mockStatic(Platform.class)) {
 
             confirmationControllerMock.when(ConfirmationController::getInstance).thenReturn(mockConfirmationController);
 
             ExitController controller = ExitController.getInstance();
 
-
-            controller.handleExit(null);
-            verify(mockConfirmationController).requestConfirm(any());
-
-
             controller.handleExit(null);
 
+            verify(mockConfirmationController).requestConfirm(runnableCaptor.capture());
+
+            Consumer<?> capturedRunnable = runnableCaptor.getValue();
+            capturedRunnable.accept(null);
+
+            platformMock.verify(Platform::exit);
+        }
+    }
+
+
+    @Test
+    void testHandleExitWithStage() throws Exception {
+        try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);
+             MockedStatic<Platform> platformMock = mockStatic(Platform.class)) {
+
+            confirmationControllerMock.when(ConfirmationController::getInstance).thenReturn(mockConfirmationController);
+
+            Stage mockedStage = mock(Stage.class);
+
+            ExitController controller = ExitController.getInstance();
+            controller.handleExit(mockedStage);
+
+            verify(mockConfirmationController).requestConfirm(runnableCaptor.capture());
+
+            Consumer<?> capturedRunnable = runnableCaptor.getValue();
+            capturedRunnable.accept(null);
+
+            verify(mockedStage).close();
             platformMock.verify(Platform::exit);
         }
     }

@@ -50,7 +50,6 @@ public class ExitController implements IExitController{
                 stage.close();
             }
             Platform.exit();
-            System.exit(0);
         });
     }
 }

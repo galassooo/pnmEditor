@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.model.about.AboutModel;
 import org.supsi.model.about.IAboutModel;
@@ -38,6 +39,7 @@ class AboutControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         Field instanceField = AboutController.class.getDeclaredField("myself");
         instanceField.setAccessible(true);
         instanceField.set(null, null);

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.model.event.EventManager;
 import org.supsi.model.event.EventSubscriber;
@@ -34,6 +35,7 @@ public class FilterControllerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         //reset singleton
         var field = FilterController.class.getDeclaredField("myself");
         field.setAccessible(true);

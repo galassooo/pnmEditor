@@ -41,7 +41,7 @@ public class PreferencesController implements IPreferencesController {
         EventSubscriber subscriber = EventManager.getSubscriber();
         subscriber.subscribe(PreferenceEvent.PreferenceChanged.class,
                 this::preferenceChange);
-        URL fxmlUrl = getClass().getResource("/layout/PreferencesPopup.fxml");
+        URL fxmlUrl = getResource("/layout/PreferencesPopup.fxml");
         if (fxmlUrl == null) {
             return;
         }
@@ -56,6 +56,10 @@ public class PreferencesController implements IPreferencesController {
         } catch (IOException ignored) {
 
         }
+    }
+
+    protected URL getResource(String path) {
+        return getClass().getResource(path);
     }
 
     /**
@@ -89,7 +93,7 @@ public class PreferencesController implements IPreferencesController {
      *
      * @param parentEvent the {@code PreferenceChanged} event containing the key and new value of the preference.
      */
-    private void preferenceChange(PreferenceEvent.PreferenceChanged parentEvent) {
+    protected void preferenceChange(PreferenceEvent.PreferenceChanged parentEvent) {
         try {
             model.setPreference(parentEvent.event().getKey(), parentEvent.event().getNewValue());
         } catch (IOException e) {

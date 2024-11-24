@@ -84,6 +84,7 @@ public class ImageControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         var field = ImageController.class.getDeclaredField("myself");
         field.setAccessible(true);
         field.set(null, null);

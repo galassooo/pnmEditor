@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.model.state.StateModel;
@@ -42,6 +43,7 @@ class ConfirmationControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         // Reset singleton
         Field instanceField = ConfirmationController.class.getDeclaredField("myself");
         instanceField.setAccessible(true);

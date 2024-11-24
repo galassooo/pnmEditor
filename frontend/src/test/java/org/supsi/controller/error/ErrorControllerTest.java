@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.controller.about.AboutController;
 import org.supsi.controller.errors.ErrorController;
@@ -42,6 +43,7 @@ class ErrorControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         var myselfField = ErrorController.class.getDeclaredField("mySelf");
         myselfField.setAccessible(true);
         myselfField.set(null, null);

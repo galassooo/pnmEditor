@@ -5,12 +5,9 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
+import org.mockito.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.controller.confirmation.ConfirmationController;
 
@@ -30,6 +27,7 @@ public class ExitControllerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         var field = ExitController.class.getDeclaredField("instance");
         field.setAccessible(true);
         field.set(null, null);

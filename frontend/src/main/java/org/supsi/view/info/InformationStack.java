@@ -21,14 +21,6 @@ public class InformationStack {
     @FXML
     private ListView<LogEntry> list;
 
-    private final ILoggerModel model;
-
-    /**
-     * Constructs a new {@code InformationStack} and initializes the associated logger model.
-     */
-    private InformationStack() {
-        model = LoggerModel.getInstance();
-    }
 
     /**
      * Initializes the information stack view.
@@ -37,6 +29,8 @@ public class InformationStack {
      */
     @FXML
     private void initialize() {
+        ILoggerModel model = LoggerModel.getInstance();
+
         model.getLogs().addListener((ListChangeListener<LogEntry>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {

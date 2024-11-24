@@ -26,9 +26,8 @@ import java.util.Optional;
 public class FilterLine {
 
     private static final String FILTER_IMAGE_PATH = "/images/buttons/top/%s.png";
-    private final IStateModel stateModel;
-    private final IFilterModel filterModel;
-    private final EventPublisher publisher;
+    private IStateModel stateModel;
+    private EventPublisher publisher;
 
     @FXML
     public Button activate;
@@ -36,14 +35,7 @@ public class FilterLine {
     @FXML
     public HBox hbox;
 
-    /**
-     * Constructs a new {@code FilterLine} and initializes required models and the event publisher.
-     */
-    private FilterLine(){
-        stateModel = StateModel.getInstance();
-        filterModel = FilterModel.getInstance();
-        publisher = EventManager.getPublisher();
-    }
+
 
     /**
      * Initializes the filter line UI.
@@ -52,6 +44,10 @@ public class FilterLine {
      */
     @FXML
     public void initialize() {
+        stateModel = StateModel.getInstance();
+        IFilterModel filterModel = FilterModel.getInstance();
+        publisher = EventManager.getPublisher();
+
         ITranslationsModel translationsModel = TranslationModel.getInstance();
 
         hbox.setSpacing(5);

@@ -1,5 +1,7 @@
 package org.supsi.model.about;
 
+import java.util.Objects;
+
 /**
  * A singleton class for managing application metadata such as the developer's information,
  * release date, and version.

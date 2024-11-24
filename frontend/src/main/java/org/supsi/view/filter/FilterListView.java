@@ -67,18 +67,15 @@ public class FilterListView {
     private ObservableList<CustomCell> items;
     private CustomCell copiedItem;
     private IFilterModel model;
-    private final EventPublisher publisher;
+    private EventPublisher publisher;
 
-
-    private FilterListView() {
-        publisher = EventManager.getPublisher();
-    }
 
     /**
      * Initializes the view, sets up list items, listeners, and drag-and-drop functionality.
      */
     @FXML
     void initialize() {
+        publisher = EventManager.getPublisher();
         model = FilterModel.getInstance();
 
         // Initialize cell items from the model filter pipeline

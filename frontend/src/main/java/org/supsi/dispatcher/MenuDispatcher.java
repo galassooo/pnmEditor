@@ -19,11 +19,11 @@ import org.supsi.model.state.StateModel;
  */
 public class MenuDispatcher {
 
-    private static final IImageController imageController;
-    private static final IPreferencesController preferencesController;
-    private static final IAboutController aboutController;
-    private static final IExitController exitController;
-    private static final IStateModel stateModel;
+    private final IImageController imageController;
+    private final IPreferencesController preferencesController;
+    private final IAboutController aboutController;
+    private final IExitController exitController;
+    private final IStateModel stateModel;
 
     @FXML
     private MenuItem saveMenuItem;
@@ -33,7 +33,7 @@ public class MenuDispatcher {
 
     private Stage stage;
 
-    static{
+    public MenuDispatcher(){
         stateModel = StateModel.getInstance();
         imageController = ImageController.getInstance();
         preferencesController = PreferencesController.getInstance();
@@ -45,7 +45,7 @@ public class MenuDispatcher {
      * Initializes the menu dispatcher by binding menu items to state properties.
      */
     @FXML
-    private void initialize(){
+    void initialize(){
         saveMenuItem.disableProperty().bind(stateModel.canSaveProperty().not());
         saveAsMenuItem.disableProperty().bind(stateModel.canSaveAsProperty().not());
     }

@@ -15,18 +15,16 @@ import java.util.ResourceBundle;
 public class TranslationModel implements ITranslationsModel {
 
     private static TranslationModel myself;
-    private static final TranslationsApplication translationsController;
-    private static final PreferencesApplication preferencesController;
+    private static TranslationsApplication translationsController;
+    private static PreferencesApplication preferencesController;
 
     private ResourceBundle uiBundle;
     private Locale locale;
 
-    static {
+    private TranslationModel() {
         translationsController = TranslationsApplication.getInstance();
         preferencesController = PreferencesApplication.getInstance();
     }
-
-    private TranslationModel() {}
 
     /**
      * Retrieves the singleton instance of this class.

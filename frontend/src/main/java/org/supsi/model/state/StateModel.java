@@ -27,7 +27,6 @@ public class StateModel implements StateChangeListener, IStateModel {
      */
     protected StateModel() {
         stateApp = StateApplication.getInstance();
-
         canSave = new SimpleBooleanProperty();
         canSaveAs = new SimpleBooleanProperty();
         canExport = new SimpleBooleanProperty();

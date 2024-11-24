@@ -17,14 +17,8 @@ public class HistoryStack {
     @FXML
     private ListView<String> list;
 
-    private final IFilterModel model;
+    private IFilterModel model;
 
-    /**
-     * Constructs a new {@code HistoryStack} and initializes the associated filter model.
-     */
-    private HistoryStack() {
-        model = FilterModel.getInstance();
-    }
 
     /**
      * Initializes the history stack view.
@@ -33,6 +27,7 @@ public class HistoryStack {
      */
     @FXML
     private void initialize() {
+        model = FilterModel.getInstance();
         ObservableList<String> reversedList = FXCollections.observableArrayList(model.getLastApplied());
         FXCollections.reverse(reversedList);
 

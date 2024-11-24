@@ -50,7 +50,8 @@ import java.util.*;
  */
 public class EventManager implements EventPublisher, EventSubscriber {
 
-    private static final EventManager instance = new EventManager();
+    @SuppressWarnings("all") //not final -> reset with reflection for test
+    private static EventManager instance = new EventManager();
     private final Map<Class<?>, List<EventHandler<?>>> handlers;
 
     /**
@@ -87,14 +88,7 @@ public class EventManager implements EventPublisher, EventSubscriber {
      */
     @Override
     public <T> void subscribe(Class<T> eventType, EventHandler<T> handler) {
-        System.out.println("Subscribing handler for: " + eventType.getSimpleName());
-        handlers.computeIfAbsent(eventType, k -> {
-            var tmp = new ArrayList<EventHandler<?>>();
-            tmp.add(handler);
-            return tmp;
-        });
-        System.out.println("Current handlers for " + eventType.getSimpleName() + ": "
-                + handlers.get(eventType).size());
+        handlers.computeIfAbsent(eventType, k -> new ArrayList<>()).add(handler);
     }
 
     /**
@@ -103,10 +97,9 @@ public class EventManager implements EventPublisher, EventSubscriber {
     @Override
     public <T> void unsubscribe(Class<T> eventType, EventHandler<T> handler) {
         var eventHandlers = handlers.get(eventType);
-        if (eventHandlers != null) {
-            eventHandlers.remove(handler);
-        }
+        eventHandlers.remove(handler); //impossible null on eventHandlers
     }
+
     /**
      * {@inheritDoc}
      */

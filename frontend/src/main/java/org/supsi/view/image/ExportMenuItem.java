@@ -18,17 +18,11 @@ import java.util.List;
  */
 public class ExportMenuItem{
 
-    private final EventPublisher publisher;
+    private EventPublisher publisher;
 
     @FXML
-    private Menu exportMenu;
+    protected Menu exportMenu;
 
-    /**
-     * Constructs a new {@code ExportMenuItem} and initializes the event publisher.
-     */
-    private ExportMenuItem() {
-        publisher = EventManager.getPublisher();
-    }
 
     /**
      * Initializes the export menu.
@@ -37,6 +31,7 @@ public class ExportMenuItem{
      */
     @FXML
     private void initialize() {
+        publisher = EventManager.getPublisher();
         IImageModel model = ImageModel.getInstance();
         IStateModel stateModel = StateModel.getInstance();
 

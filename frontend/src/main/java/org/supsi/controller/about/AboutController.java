@@ -39,7 +39,7 @@ public class AboutController implements IAboutController{
         model = AboutModel.getInstance();
         loggerModel = LoggerModel.getInstance();
 
-        URL fxmlUrl = getClass().getResource("/layout/About.fxml");
+        URL fxmlUrl = getResource("/layout/About.fxml");
         if (fxmlUrl == null) {
             return;
         }
@@ -74,7 +74,7 @@ public class AboutController implements IAboutController{
      * Retrieves build-time, version, and developer information from `build.properties`.
      */
     private void readBuildInfo() {
-        try (InputStream propertiesStream = getClass().getResourceAsStream("/build.properties")) {
+        try (InputStream propertiesStream = getResourceAsStream("/build.properties")) {
             if (propertiesStream != null) {
 
                 Properties properties = new Properties();
@@ -109,6 +109,15 @@ public class AboutController implements IAboutController{
         } catch (IOException e) {
             loggerModel.addDebug("ui_build_properties_error");
         }
+    }
+    //used for test purpose (it doesn't alter or modify the code flow, structure or visibility in any way)
+    protected InputStream getResourceAsStream(String resourceName) throws IOException {
+        return getClass().getResourceAsStream(resourceName);
+    }
+
+    //used for test purpose
+    protected URL getResource(String name) {
+        return getClass().getResource(name);
     }
 
     /**

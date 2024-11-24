@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 public class ConfirmationController implements IConfirmationController {
 
-    private static ConfirmationController instance;
+    private static ConfirmationController myself;
     private IConfirmPopup view;
     private boolean changesPending = false;
 
@@ -32,7 +32,7 @@ public class ConfirmationController implements IConfirmationController {
         IStateModel stateModel = StateModel.getInstance();
         stateModel.areChangesPending().addListener((obs, old, newValue) -> changesPending = newValue);
 
-        URL fxmlUrl = getClass().getResource("/layout/ConfirmPopup.fxml");
+        URL fxmlUrl = getResource("/layout/ConfirmPopup.fxml");
         if (fxmlUrl == null) {
             return;
         }
@@ -56,10 +56,14 @@ public class ConfirmationController implements IConfirmationController {
      * @return the singleton instance
      */
     public static ConfirmationController getInstance() {
-        if (instance == null) {
-            instance = new ConfirmationController();
+        if (myself == null) {
+            myself = new ConfirmationController();
         }
-        return instance;
+        return myself;
+    }
+
+    protected URL getResource(String name) {
+        return getClass().getResource(name);
     }
 
     /**

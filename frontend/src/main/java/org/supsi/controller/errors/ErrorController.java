@@ -27,11 +27,11 @@ public class ErrorController implements IErrorController {
      * Private constructor to implement the Singleton pattern.
      * Loads the error popup view and sets its model.
      */
-    private ErrorController() {
+    protected ErrorController() {
         model  = ErrorModel.getInstance();
         loggerModel = LoggerModel.getInstance();
 
-        URL fxmlUrl = getClass().getResource("/layout/ErrorPopUp.fxml");
+        URL fxmlUrl = getResource("/layout/ErrorPopUp.fxml");
         if (fxmlUrl == null) {
             return;
         }
@@ -59,6 +59,10 @@ public class ErrorController implements IErrorController {
             mySelf = new ErrorController();
         }
         return mySelf;
+    }
+
+    protected URL getResource(String path){
+        return getClass().getResource(path);
     }
 
     /**

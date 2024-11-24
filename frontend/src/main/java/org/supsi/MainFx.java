@@ -46,7 +46,7 @@ public class MainFx extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
         initializeControllers();
         setupStage();
@@ -79,7 +79,7 @@ public class MainFx extends Application {
     /**
      * Loads the main interface components and arranges them in the scene.
      */
-    private void loadMainInterface() {
+    private void loadMainInterface() throws IOException {
         try {
             loadBaseLayout();
             setupMenuBar();
@@ -87,6 +87,7 @@ public class MainFx extends Application {
             finalizeStage();
             loggerController.addDebug("ui_application_started");
         } catch (IOException ignored) {
+            throw ignored;
             //unmanaged ex, if the main components fails to load
             // the application should not start
         }

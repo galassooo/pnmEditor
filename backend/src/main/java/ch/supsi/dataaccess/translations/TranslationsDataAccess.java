@@ -174,21 +174,21 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
 
         if (frontendModule.isPresent()) {
             try{
-            String frontendPath = loadFrontendPath();
+                String frontendPath = loadFrontendPath();
 
-            if (frontendPath != null) {
-                String localeCode = locale.toLanguageTag().replace('-', '_');
-                String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
+                if (frontendPath != null) {
+                    String localeCode = locale.toLanguageTag().replace('-', '_');
+                    String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
 
-                try (InputStream inputStream = getResourceAsStream(resourceName)) {
-                    if (inputStream != null) {
-                        try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                            ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
-                            resourceBundles.add(resourceBundle);
+                    try (InputStream inputStream = frontendModule.get().getResourceAsStream(resourceName)) {
+                        if (inputStream != null) {
+                            try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                                ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
+                                resourceBundles.add(resourceBundle);
+                            }
                         }
                     }
                 }
-            }
             } catch (IOException e) {
                 System.err.println("Error loading resource %s from the frontend module%n");
             }
@@ -196,7 +196,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
             String localeCode = locale.toLanguageTag().replace('-', '_');
             String resourceName = String.format("%s_%s.properties", FRONTEND_PATH.substring(1), localeCode);
 
-            try (InputStream inputStream = getResourceAsStream(resourceName)) {
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourceName)) {
                 if (inputStream != null) {
                     try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                         ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
@@ -218,18 +218,16 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @return a {@link String} containing the frontend labels path
      */
     private String loadFrontendPath() throws IOException {
-        InputStream is = getResourceAsStream("application.properties");
-            Properties properties = new Properties();
-            if (is != null) {
-                System.out.println("OK CHIAMO LOAD");
-                properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
-                System.out.println("DOVREBBE ANDRAE IN EX!!");
+        InputStream is = getResourceAsStream("/application.properties");
+        Properties properties = new Properties();
+        if (is != null) {
+            properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
 
-                is.close(); //non prendeva il branch col try-catch -> unico modo spezzare declaration e forzare close
-                return properties.getProperty("frontend.labels.path");
-            } else {
-                System.err.println("Application.properties file not found.");
-            }
+            is.close(); //non prendeva il branch col try-catch -> unico modo spezzare declaration e forzare close
+            return properties.getProperty("frontend.labels.path");
+        } else {
+            System.err.println("Application.properties file not found.");
+        }
         return null;
     }
 

@@ -16,17 +16,12 @@ import java.util.Map;
  */
 public class FilterMenuItem{
 
-    private final EventPublisher publisher;
+    private EventPublisher publisher;
 
     @FXML
     private Menu menu;
 
-    /**
-     * Constructs a new {@code FilterMenuItem} and initializes the event publisher.
-     */
-    private FilterMenuItem() {
-        publisher = EventManager.getPublisher();
-    }
+
 
     /**
      * Initializes the filter menu.
@@ -34,6 +29,7 @@ public class FilterMenuItem{
      */
     @FXML
     void initialize() {
+        publisher = EventManager.getPublisher();
         IFilterModel model = FilterModel.getInstance();
 
         Map<String, String> filtersKeyValues = model.getFiltersKeyValues();

@@ -180,7 +180,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
                     String localeCode = locale.toLanguageTag().replace('-', '_');
                     String resourceName = String.format("%s_%s.properties", frontendPath, localeCode);
 
-                    try (InputStream inputStream = frontendModule.get().getResourceAsStream(resourceName)) {
+                    try (InputStream inputStream = getStreamFromModule( frontendModule.get(), resourceName)) {
                         if (inputStream != null) {
                             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                                 ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
@@ -196,7 +196,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
             String localeCode = locale.toLanguageTag().replace('-', '_');
             String resourceName = String.format("%s_%s.properties", FRONTEND_PATH.substring(1), localeCode);
 
-            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourceName)) {
+            try (InputStream inputStream = getClassLoaderResourceAsStream(resourceName)) {
                 if (inputStream != null) {
                     try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                         ResourceBundle resourceBundle = new PropertyResourceBundle(reader);
@@ -246,5 +246,11 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
 
     protected InputStream getResourceAsStream(String path) throws IOException {
         return this.getClass().getResourceAsStream(path);
+    }
+    protected InputStream getClassLoaderResourceAsStream(String path) throws IOException {
+        return this.getClass().getClassLoader().getResourceAsStream(path);
+    }
+    protected InputStream getStreamFromModule(Module module, String path) throws IOException {
+        return module.getResourceAsStream(path);
     }
 }

@@ -106,7 +106,7 @@ class TranslationsDataAccessTest {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(
                     "test.key=Test Value".getBytes()
             );
-            doReturn(inputStream).when(spy).getResourceAsStream(anyString());
+            doReturn(inputStream).when(spy).getClassLoaderResourceAsStream(anyString());
 
             Optional<ResourceBundle> bundles = spy.getUIResourceBundle(Locale.US);
 
@@ -130,13 +130,14 @@ class TranslationsDataAccessTest {
             ByteArrayInputStream configStream = new ByteArrayInputStream(
                     "frontend.labels.path=test/path".getBytes()
             );
-            doReturn(configStream).when(spy).getResourceAsStream("application.properties");
+            doReturn(configStream).when(spy).getResourceAsStream("/application.properties");
 
             // Mock dello stream per il file properties
             ByteArrayInputStream propsStream = new ByteArrayInputStream(
                     "test.key=Test Value".getBytes()
             );
-            doReturn(propsStream).when(spy).getResourceAsStream(contains("test/path"));
+            doReturn(propsStream).when(spy).getStreamFromModule(eq(mockModule), contains("test/path"));
+
 
             Optional<ResourceBundle> bundles = spy.getUIResourceBundle(Locale.US);
 
@@ -188,7 +189,7 @@ class TranslationsDataAccessTest {
 
             doThrow(new IOException("Test exception"))
                     .when(spy)
-                    .getResourceAsStream(argThat(path -> !path.equals("/supported-languages.properties")));
+                    .getClassLoaderResourceAsStream(argThat(path -> !path.equals("/supported-languages.properties")));
 
             Optional<ResourceBundle> bundles = spy.getUIResourceBundle(Locale.US);
 
@@ -220,7 +221,7 @@ class TranslationsDataAccessTest {
             );
             doReturn(appPropsStream)
                     .when(spy)
-                    .getResourceAsStream("application.properties");
+                    .getResourceAsStream("/application.properties");
 
             // mock dei labels
             ByteArrayInputStream labelsStream = new ByteArrayInputStream(
@@ -257,7 +258,7 @@ class TranslationsDataAccessTest {
             // mock application.properties mancante
             doReturn(null)
                     .when(spy)
-                    .getResourceAsStream("application.properties");
+                    .getResourceAsStream("/application.properties");
 
             Optional<ResourceBundle> bundles = spy.getUIResourceBundle(Locale.US);
             assertFalse(bundles.isEmpty()); //should use missing resource bundle and fallback
@@ -286,7 +287,7 @@ class TranslationsDataAccessTest {
             // mock IOException su application.properties
             doThrow(new IOException("Test exception"))
                     .when(spy)
-                    .getResourceAsStream("application.properties");
+                    .getResourceAsStream("/application.properties");
 
             Optional<ResourceBundle> bundles = spy.getUIResourceBundle(Locale.US);
             assertFalse(bundles.isEmpty()); //should use missing resource bundle and fallback

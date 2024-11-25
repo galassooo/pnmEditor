@@ -58,7 +58,7 @@ public class PreferencesView implements IView<ITranslationsModel> {
     private final EventPublisher publisher;
 
     /** Constructs a new PreferencesView and initializes dependencies. */
-    private PreferencesView() {
+    public PreferencesView() {
         preferencesModel = PreferencesModel.getInstance();
         publisher = EventManager.getPublisher();
         labelsAndCodesMap = new HashMap<>();

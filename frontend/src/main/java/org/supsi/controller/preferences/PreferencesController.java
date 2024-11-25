@@ -14,6 +14,7 @@ import org.supsi.model.translations.TranslationModel;
 import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 
 /**
@@ -54,7 +55,7 @@ public class PreferencesController implements IPreferencesController {
             view.setModel(translationsModel);
 
         } catch (IOException ignored) {
-
+            ignored.printStackTrace();
         }
     }
 

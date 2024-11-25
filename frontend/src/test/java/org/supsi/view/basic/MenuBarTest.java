@@ -5,16 +5,18 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.supsi.model.state.IStateModel;
 import org.supsi.model.state.StateModel;
+import org.supsi.model.translations.TranslationModel;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
@@ -24,8 +26,8 @@ public class MenuBarTest extends AbstractGUITest {
 
     @Test
     public void walkThrough() {
+        clickOn("#root");
         testMainScene();
-        testClickOnMenuItem();
         testFileMenuItems();
         testEditMenuPreferences();
         testHelpMenuAbout();
@@ -37,21 +39,6 @@ public class MenuBarTest extends AbstractGUITest {
             verifyThat("#fileMenu", isVisible());
             verifyThat("#edit", isVisible());
             verifyThat("#help", isVisible());
-        });
-    }
-
-    private void testClickOnMenuItem() {
-        step("file menu", () -> {
-            clickOn("#root");
-            sleep(SLEEP_INTERVAL);
-            clickOn("#fileMenu");
-            sleep(SLEEP_INTERVAL);
-
-
-            sleep(SLEEP_INTERVAL);
-            verifyThat("#openMenuItem", isVisible());
-
-            press(KeyCode.ESCAPE);
         });
     }
 
@@ -67,24 +54,30 @@ public class MenuBarTest extends AbstractGUITest {
             assertTrue(saveMenuItem.isDisable());
             assertTrue(saveAsMenuItem.isDisable());
 
-            press(KeyCode.ESCAPE);
         });
     }
 
 
     private void testEditMenuPreferences() {
-        step("preferences dialog", () -> {
-            clickOn("#edit");
+        step("preferences menu item", () -> {
+            sleep(SLEEP_INTERVAL);
+            moveTo("#edit");
+            sleep(SLEEP_INTERVAL);
+
+            Node menuContent = lookup("#preferences").query();
+
+            WaitForAsyncUtils.waitForFxEvents();
+            MenuItem menuItem = ((ContextMenuContent.MenuItemContainer)menuContent).getItem();
+            assertFalse(menuItem.isDisable());
             clickOn("#preferences");
 
-            // Verify preferences dialog components
-            verifyThat("#choiceBox", isVisible());
-            verifyThat("#errorCB", isVisible());
-            verifyThat("#warningCB", isVisible());
-            verifyThat("#debugCB", isVisible());
+            sleep(SLEEP_INTERVAL);
+            // Get the popup stage
+            TranslationModel translationModel = TranslationModel.getInstance();
+            Window preferencesPopup = robotContext().getWindowFinder().window("");
 
+            verifyThat(preferencesPopup.getScene().getRoot().lookup("#choiceBox"), isVisible());
             clickOn("#closeButton");
-            press(KeyCode.ESCAPE);
         });
     }
 

@@ -5,4 +5,8 @@ open module frontend {
     requires java.prefs;
     requires backend;
     requires spring.jcl;
+    requires java.logging;
+
+    requires static org.testfx;
+    requires static org.testfx.junit5;
 }

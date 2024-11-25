@@ -66,6 +66,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>17.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.14.2</version>
@@ -83,7 +91,14 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
-            <version>4.0.17</version>
+            <version>4.0.18</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>openjfx-monocle</artifactId>
+            <version>jdk-12.0.1+2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -117,6 +132,8 @@
                             <compilerArgs>
                                 <arg>--module-path</arg>
                                 <arg>${javafx.module.path}</arg>
+                                <arg>--add-exports</arg>
+                                <arg>javafx.controls/com.sun.javafx.scene.control=frontend</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -127,6 +144,14 @@
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
+                        <configuration>
+                            <compilerArgs>
+                                    <arg>--add-exports=javafx.controls/com.sun.javafx.scene.control=frontend</arg>
+                                    <arg>--add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</arg>
+                                    <arg>--add-exports=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
+                                    <arg>--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -251,6 +276,7 @@
                 <version>3.5.1</version>
                 <configuration>
                     <argLine>@{argLine}</argLine>
+                    <reuseForks>false</reuseForks>
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>

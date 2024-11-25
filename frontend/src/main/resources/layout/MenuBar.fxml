@@ -3,9 +3,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<MenuBar stylesheets="/style/style.css" fx:controller="org.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
+<MenuBar id="menubar" stylesheets="/style/style.css" fx:controller="org.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
          BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
-    <Menu fx:id="file" mnemonicParsing="false" text="%ui_file">
+    <Menu fx:id="fileMenu" mnemonicParsing="false" text="%ui_file">
         <items>
             <MenuItem id="openMenuItem" fx:id="openMenuItem" mnemonicParsing="false" text="%ui_open" onAction="#open"/>
             <SeparatorMenuItem mnemonicParsing="false"/>

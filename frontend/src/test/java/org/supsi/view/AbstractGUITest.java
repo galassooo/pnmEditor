@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 abstract public class AbstractGUITest extends ApplicationTest {
 
-    protected static final int SLEEP_INTERVAL = 0;
+    protected static final int SLEEP_INTERVAL = 2000;
 
     protected static final Logger LOGGER = Logger.getAnonymousLogger();
 

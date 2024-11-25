@@ -101,6 +101,12 @@
             <version>jdk-12.0.1+2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <version>4.0.18</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -146,10 +152,14 @@
                         </goals>
                         <configuration>
                             <compilerArgs>
-                                    <arg>--add-exports=javafx.controls/com.sun.javafx.scene.control=frontend</arg>
-                                    <arg>--add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</arg>
-                                    <arg>--add-exports=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
-                                    <arg>--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
+                                <arg>--add-exports</arg>
+                                <arg>javafx.controls/com.sun.javafx.scene.control=frontend</arg>
+                                <arg>--add-exports</arg>
+                                <arg>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</arg>
+                                <arg>--add-exports</arg>
+                                <arg>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
+                                <arg>--add-opens</arg>
+                                <arg>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -277,6 +287,9 @@
                 <configuration>
                     <argLine>@{argLine}</argLine>
                     <reuseForks>false</reuseForks>
+                    <argLine>
+                        @{argLine}
+                    </argLine>
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>

@@ -7,6 +7,13 @@ open module frontend {
     requires spring.jcl;
     requires java.logging;
 
+    // Test requirements
     requires static org.testfx;
     requires static org.testfx.junit5;
+
+    exports org.supsi.view;
+
+
+    // Required for TestFX
+    exports org.supsi to org.testfx;
 }

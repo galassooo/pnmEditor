@@ -2,6 +2,7 @@ package org.supsi.view.basic;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
 import javafx.scene.control.MenuItem;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.supsi.view.AbstractGUITest;
 
@@ -15,31 +16,28 @@ public class MenuBarTest extends AbstractGUITest {
     @Test
     public void walkThrough() {
         testMainScene();
+        testClickOnMenuItem();
     }
 
     void testMainScene() {
         step("menu bar structure", () -> {
-            verifyThat("#file", isVisible());
+            verifyThat("#fileMenu", isVisible());
             verifyThat("#edit", isVisible());
             verifyThat("#help", isVisible());
         });
     }
 
-    @Test
     void testClickOnMenuItem() {
-
-        step("file component", () -> {
-
+        step("file menu", () -> {
             sleep(SLEEP_INTERVAL);
-            clickOn("#file");
+            clickOn("#fileMenu");
             sleep(SLEEP_INTERVAL);
-
-            sleep(SLEEP_INTERVAL);
-            clickOn("#file");
+            clickOn("#fileMenu");
             sleep(SLEEP_INTERVAL);
 
-            MenuItem menu = lookup("#openMenuItem").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-            assertTrue(menu.isVisible());
+
+            sleep(SLEEP_INTERVAL);
+            verifyThat("#openMenuItem", isVisible());
         });
     }
 }

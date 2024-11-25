@@ -6,24 +6,20 @@
 <MenuBar id="menubar" stylesheets="/style/style.css" fx:controller="org.supsi.dispatcher.MenuDispatcher" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0"
          BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml">
     <Menu fx:id="fileMenu" mnemonicParsing="false" text="%ui_file">
-        <items>
-            <MenuItem id="openMenuItem" fx:id="openMenuItem" mnemonicParsing="false" text="%ui_open" onAction="#open"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem id="saveMenuItem" fx:id="saveMenuItem" mnemonicParsing="false" text="%ui_save" onAction="#save" disable="true"/>
-            <MenuItem id="saveAsMenuItem" fx:id="saveAsMenuItem" mnemonicParsing="false" text="%ui_save_as" onAction="#saveAs" disable="true" />
-            <!-- QUI VA INSERITO IL EXPORT MENU -->
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="%ui_close" onAction="#close"/>
-        </items>
+        <MenuItem id="openMenuItem" fx:id="openMenuItem" mnemonicParsing="false" text="%ui_open" onAction="#open"/>
+        <SeparatorMenuItem mnemonicParsing="false"/>
+        <MenuItem id="saveMenuItem" fx:id="saveMenuItem" mnemonicParsing="false" text="%ui_save" onAction="#save"
+                  disable="true"/>
+        <MenuItem id="saveAsMenuItem" fx:id="saveAsMenuItem" mnemonicParsing="false" text="%ui_save_as"
+                  onAction="#saveAs" disable="true"/>
+        <!-- QUI VA INSERITO IL EXPORT MENU -->
+        <SeparatorMenuItem mnemonicParsing="false"/>
+        <MenuItem mnemonicParsing="false" text="%ui_close" onAction="#close"/>
     </Menu>
     <Menu fx:id="edit" mnemonicParsing="false" text="%ui_edit">
-        <items>
-            <MenuItem mnemonicParsing="false" text="%ui_preferences" onAction="#preferences" />
-        </items>
+        <MenuItem fx:id="preferences" mnemonicParsing="false" text="%ui_preferences" onAction="#preferences"/>
     </Menu>
     <Menu fx:id="help" mnemonicParsing="false" text="%ui_help">
-        <items>
-            <MenuItem mnemonicParsing="false" text="%ui_about" onAction="#about" />
-        </items>
+        <MenuItem mnemonicParsing="false" text="%ui_about" onAction="#about"/>
     </Menu>
 </MenuBar>

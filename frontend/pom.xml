@@ -138,8 +138,6 @@
                             <compilerArgs>
                                 <arg>--module-path</arg>
                                 <arg>${javafx.module.path}</arg>
-                                <arg>--add-exports</arg>
-                                <arg>javafx.controls/com.sun.javafx.scene.control=frontend</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -155,11 +153,9 @@
                                 <arg>--add-exports</arg>
                                 <arg>javafx.controls/com.sun.javafx.scene.control=frontend</arg>
                                 <arg>--add-exports</arg>
-                                <arg>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</arg>
+                                <arg>javafx.graphics/com.sun.javafx.application=frontend</arg>
                                 <arg>--add-exports</arg>
-                                <arg>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
-                                <arg>--add-opens</arg>
-                                <arg>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</arg>
+                                <arg>javafx.graphics/com.sun.glass.ui=frontend</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>

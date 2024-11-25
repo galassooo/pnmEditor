@@ -13,17 +13,13 @@
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="441.0" stylesheets="/style/errorPopUp.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.supsi.view.info.ErrorPopUp">
    <top>
       <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane">
-         <children>
-            <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
-               <children>
-                  <Label fx:id="title" styleClass="main-label" text="%ui_error_title" textAlignment="JUSTIFY">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-         </children>
+         <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
+            <Label fx:id="title" styleClass="main-label" text="%ui_error_title" textAlignment="JUSTIFY">
+               <font>
+                  <Font size="17.0"/>
+               </font>
+            </Label>
+         </HBox>
       </Pane>
    </top>
    <bottom>
@@ -35,33 +31,27 @@
    </bottom>
    <center>
       <VBox prefHeight="174.0" prefWidth="424.0" BorderPane.alignment="CENTER">
-         <children>
-            <Pane prefHeight="112.0" prefWidth="400.0" />
-            <HBox alignment="CENTER" prefHeight="225.0" prefWidth="400.0">
-               <children>
-                  <ImageView fx:id="image" fitHeight="107.0" fitWidth="105.0" pickOnBounds="true" preserveRatio="true" />
-                  <VBox alignment="CENTER_LEFT" prefHeight="144.0" prefWidth="322.0">
-                     <children>
-                        <Label fx:id="messageHeader" text="%ui_failed_operation">
-                           <VBox.margin>
-                              <Insets bottom="40.0" top="15.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="message" styleClass="error-label" textFill="#8d0000" />
-                     </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <HBox.margin>
-                        <Insets left="40.0" />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
+         <Pane prefHeight="112.0" prefWidth="400.0"/>
+         <HBox alignment="CENTER" prefHeight="225.0" prefWidth="400.0">
+            <ImageView fx:id="image" fitHeight="107.0" fitWidth="105.0" pickOnBounds="true" preserveRatio="true"/>
+            <VBox alignment="CENTER_LEFT" prefHeight="144.0" prefWidth="322.0">
+               <opaqueInsets>
+                  <Insets/>
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets left="40.0"/>
+               </HBox.margin>
+               <Label fx:id="messageHeader" text="%ui_failed_operation">
+                  <VBox.margin>
+                     <Insets bottom="40.0" top="15.0"/>
+                  </VBox.margin>
+                  <font>
+                     <Font size="15.0"/>
+                  </font>
+               </Label>
+               <Label fx:id="message" styleClass="error-label" textFill="#8d0000"/>
+            </VBox>
+         </HBox>
       </VBox>
    </center>
 </BorderPane>

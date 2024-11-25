@@ -12,46 +12,39 @@
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="441.0" stylesheets="/style/errorPopUp.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.supsi.view.info.ConfirmPopup">
     <top>
         <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane">
-            <children>
-                <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
-                    <children>
-                        <Label fx:id="title" styleClass="main-label" text="%ui_pending_changes_title" textAlignment="JUSTIFY">
-                            <font>
-                                <Font size="17.0" />
-                            </font>
-                        </Label>
-                    </children>
-                </HBox>
-            </children>
+            <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
+                <Label fx:id="title" styleClass="main-label" text="%ui_pending_changes_title"
+                       textAlignment="JUSTIFY">
+                    <font>
+                        <Font size="17.0"/>
+                    </font>
+                </Label>
+            </HBox>
         </Pane>
     </top>
     <center>
         <VBox alignment="CENTER" prefHeight="174.0" prefWidth="424.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label text="%ui_pending_changes" />
-         </children>
+            <Label text="%ui_pending_changes"/>
         </VBox>
     </center>
    <bottom>
-      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="441.0" BorderPane.alignment="CENTER">
-         <children>
-              <Button fx:id="confirmButton" mnemonicParsing="false" text="%ui_confirm">
-               <HBox.margin>
-                  <Insets left="20.0" right="20.0" />
-               </HBox.margin>
-              </Button>
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="%ui_cancel">
-               <HBox.margin>
-                  <Insets left="20.0" right="20.0" />
-               </HBox.margin>
-            </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </BorderPane.margin>
-         <padding>
-            <Insets left="10.0" right="10.0" />
-         </padding>
-      </HBox>
+       <HBox alignment="CENTER" prefHeight="37.0" prefWidth="441.0" BorderPane.alignment="CENTER">
+           <BorderPane.margin>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+           </BorderPane.margin>
+           <padding>
+               <Insets left="10.0" right="10.0"/>
+           </padding>
+           <Button fx:id="confirmButton" mnemonicParsing="false" text="%ui_confirm">
+            <HBox.margin>
+                <Insets left="20.0" right="20.0"/>
+            </HBox.margin>
+           </Button>
+           <Button fx:id="cancelButton" mnemonicParsing="false" text="%ui_cancel">
+              <HBox.margin>
+                  <Insets left="20.0" right="20.0"/>
+              </HBox.margin>
+           </Button>
+       </HBox>
    </bottom>
 </BorderPane>

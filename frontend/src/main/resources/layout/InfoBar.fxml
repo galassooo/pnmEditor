@@ -3,20 +3,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Font?>
-<HBox stylesheets="/style/style.css" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml">
-    <children>
-        <Label text="%ui_filter_order">
-            <font>
-                <Font size="11.0" />
-            </font></Label>
-        <Region prefHeight="30.0" prefWidth="30.0" />
-        <Label text="v3 RAW">
-            <font>
-                <Font size="11.0" />
-            </font></Label>
-        <Region prefHeight="30.0" prefWidth="42.0" />
-    </children>
+<HBox stylesheets="/style/style.css" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0"
+      xmlns:fx="http://javafx.com/fxml">
     <VBox.margin>
-        <Insets left="5.0" right="5.0" />
+        <Insets left="5.0" right="5.0"/>
     </VBox.margin>
+    <Label text="%ui_filter_order">
+        <font>
+            <Font size="11.0"/>
+        </font>
+    </Label>
+    <Region prefHeight="30.0" prefWidth="30.0"/>
+    <Label text="v3 RAW">
+        <font>
+            <Font size="11.0"/>
+        </font>
+    </Label>
+    <Region prefHeight="30.0" prefWidth="42.0"/>
 </HBox>

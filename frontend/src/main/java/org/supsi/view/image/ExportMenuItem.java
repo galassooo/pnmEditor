@@ -42,6 +42,7 @@ public class ExportMenuItem{
 
             item.disableProperty().bind(stateModel.canExportProperty().not());
             item.setOnAction(actionEvent -> publisher.publish(new ExportEvent.ExportRequested(extension)));
+            item.setId(extension);
 
             exportMenu.getItems().add(item);
         });

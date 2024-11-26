@@ -59,7 +59,12 @@ public class PreferencesControllerTest {
     void testSingleton() {
         try (MockedStatic<PreferencesModel> preferencesModelMock = mockStatic(PreferencesModel.class);
              MockedStatic<LoggerModel> loggerModelMock = mockStatic(LoggerModel.class);
-             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class)) {
+             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class);
+             MockedConstruction<FXMLLoader> fxmlLoaderMock = mockConstruction(FXMLLoader.class,
+                     (mockLoader, context) -> {
+                         when(mockLoader.load()).thenReturn(null);
+                         when(mockLoader.getController()).thenReturn(mockView);
+                     })) {
 
             preferencesModelMock.when(PreferencesModel::getInstance).thenReturn(mockPreferencesModel);
             loggerModelMock.when(LoggerModel::getInstance).thenReturn(mockLoggerModel);
@@ -166,7 +171,12 @@ public class PreferencesControllerTest {
     void testPreferenceChangeSuccess() throws Exception {
         try (MockedStatic<PreferencesModel> preferencesModelMock = mockStatic(PreferencesModel.class);
              MockedStatic<LoggerModel> loggerModelMock = mockStatic(LoggerModel.class);
-             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class)) {
+             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class);
+             MockedConstruction<FXMLLoader> fxmlLoaderMock = mockConstruction(FXMLLoader.class,
+                     (mockLoader, context) -> {
+                         when(mockLoader.load()).thenReturn(null);
+                         when(mockLoader.getController()).thenReturn(mockView);
+                     })) {
 
             preferencesModelMock.when(PreferencesModel::getInstance).thenReturn(mockPreferencesModel);
             loggerModelMock.when(LoggerModel::getInstance).thenReturn(mockLoggerModel);
@@ -187,12 +197,18 @@ public class PreferencesControllerTest {
             verify(mockLoggerModel).addInfo("ui_preferences_stored");
         }
     }
+
     @Test
     void testPreferenceChangeWithIOException() throws Exception {
         try (MockedStatic<PreferencesModel> preferencesModelMock = mockStatic(PreferencesModel.class);
              MockedStatic<LoggerModel> loggerModelMock = mockStatic(LoggerModel.class);
              MockedStatic<ErrorController> errorControllerMock = mockStatic(ErrorController.class);
-             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class)) {
+             MockedStatic<EventManager> eventManagerMock = mockStatic(EventManager.class);
+             MockedConstruction<FXMLLoader> fxmlLoaderMock = mockConstruction(FXMLLoader.class,
+                     (mockLoader, context) -> {
+                         when(mockLoader.load()).thenReturn(null);
+                         when(mockLoader.getController()).thenReturn(mockView);
+                     })) {
 
             preferencesModelMock.when(PreferencesModel::getInstance).thenReturn(mockPreferencesModel);
             loggerModelMock.when(LoggerModel::getInstance).thenReturn(mockLoggerModel);

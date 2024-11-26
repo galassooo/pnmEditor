@@ -1,5 +1,6 @@
 package org.supsi.view.info;
 
+import javafx.stage.Modality;
 import org.supsi.model.about.IAboutModel;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -28,7 +29,7 @@ public class AboutView implements IView<IAboutModel> {
     private Label developer;
 
     @FXML
-    private Button closeButton;
+    private Button AboutCloseButton;
 
     private Stage myStage;
 
@@ -43,8 +44,8 @@ public class AboutView implements IView<IAboutModel> {
         myStage = new Stage();
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
-
-        closeButton.setOnAction(event -> myStage.close());
+        myStage.initModality(Modality.APPLICATION_MODAL);
+        AboutCloseButton.setOnAction(event -> myStage.close());
     }
 
     /**

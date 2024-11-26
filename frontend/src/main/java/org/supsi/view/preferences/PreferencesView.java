@@ -1,5 +1,6 @@
 package org.supsi.view.preferences;
 
+import javafx.stage.Modality;
 import org.supsi.model.event.EventManager;
 import org.supsi.model.event.EventPublisher;
 import org.supsi.model.preferences.IPreferencesModel;
@@ -27,13 +28,13 @@ import java.util.prefs.Preferences;
 public class PreferencesView implements IView<ITranslationsModel> {
 
     @FXML
-    private BorderPane root;
+    private BorderPane preferencesPopupRoot;
 
     @FXML
-    private Button saveButton;
+    private Button preferencesPopupSave;
 
     @FXML
-    private Button closeButton;
+    private Button preferencesPopupClose;
 
     @FXML
     private ChoiceBox<String> choiceBox;
@@ -70,10 +71,11 @@ public class PreferencesView implements IView<ITranslationsModel> {
      */
     @FXML
     private void initialize() {
-        closeButton.setOnAction(event -> myStage.close());
+        preferencesPopupClose.setOnAction(event -> myStage.close());
 
         myStage = new Stage();
-        myStage.setScene(new Scene(root));
+        myStage.setScene(new Scene(preferencesPopupRoot));
+        myStage.initModality(Modality.APPLICATION_MODAL);
         myStage.setResizable(false);
 
         debugCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-debug").orElse("N/A").toString()));
@@ -81,7 +83,7 @@ public class PreferencesView implements IView<ITranslationsModel> {
         errorCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-error").orElse("N/A").toString()));
         warningCB.setSelected(Boolean.parseBoolean(preferencesModel.getPreference("show-warning").orElse("N/A").toString()));
 
-        saveButton.setOnAction(event -> {
+        preferencesPopupSave.setOnAction(event -> {
             if(choiceBox.getValue()!=null){
                 Preferences dummyPreferences = Preferences.userRoot().node("dummy");
                 PreferenceChangeEvent pEvent = new PreferenceChangeEvent(dummyPreferences, "language-tag",

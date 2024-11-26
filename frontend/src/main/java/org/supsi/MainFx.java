@@ -80,25 +80,23 @@ public class MainFx extends Application {
      * Loads the main interface components and arranges them in the scene.
      */
     private void loadMainInterface() throws IOException {
-        try {
-            loadBaseLayout();
-            setupMenuBar();
-            setupCenterPane();
-            finalizeStage();
-            loggerController.addDebug("ui_application_started");
-        } catch (IOException ignored) {
-            throw ignored;
-            //unmanaged ex, if the main components fails to load
-            // the application should not start
-        }
+        loadBaseLayout();
+        setupMenuBar();
+        setupCenterPane();
+        finalizeStage();
+        loggerController.addDebug("ui_application_started");
+
+        //unmanaged ex, if the main components fails to load
+        // the application should not start
     }
 
     /**
      * Loads the base layout from FXML.
+     *
      * @throws IOException if the FXML file cannot be loaded
      */
     private void loadBaseLayout() throws IOException {
-        URL baseUrl = getClass().getResource("/layout/BasePane.fxml");
+        URL baseUrl = getResource("/layout/BasePane.fxml");
         if (baseUrl == null) return;
         FXMLLoader loader = new FXMLLoader(baseUrl);
         root = loader.load();
@@ -109,6 +107,7 @@ public class MainFx extends Application {
 
     /**
      * Sets up the menu bar with all its components.
+     *
      * @throws IOException if any menu FXML files cannot be loaded
      */
     private void setupMenuBar() throws IOException {
@@ -131,11 +130,12 @@ public class MainFx extends Application {
 
     /**
      * Loads the main menu bar from FXML.
+     *
      * @return MenuBar component
      * @throws IOException if the FXML file cannot be loaded
      */
     private MenuBar loadMenuBar() throws IOException {
-        URL menuUrl = getClass().getResource("/layout/MenuBar.fxml");
+        URL menuUrl = getResource("/layout/MenuBar.fxml");
         if (menuUrl == null) return null;
 
         FXMLLoader loader = new FXMLLoader(menuUrl, translationsModel.getUiBundle());
@@ -149,11 +149,12 @@ public class MainFx extends Application {
 
     /**
      * Loads the export menu from FXML.
+     *
      * @return Menu component
      * @throws IOException if the FXML file cannot be loaded
      */
     private Menu loadExportMenu() throws IOException {
-        URL exportUrl = getClass().getResource("/layout/ExportMenu.fxml");
+        URL exportUrl = getResource("/layout/ExportMenu.fxml");
         if (exportUrl == null) return null;
 
         FXMLLoader loader = new FXMLLoader(exportUrl, translationsModel.getUiBundle());
@@ -162,11 +163,12 @@ public class MainFx extends Application {
 
     /**
      * Loads the filter menu from FXML.
+     *
      * @return Menu component
      * @throws IOException if the FXML file cannot be loaded
      */
     private Menu loadFilterMenu() throws IOException {
-        URL filterUrl = getClass().getResource("/layout/FilterMenu.fxml");
+        URL filterUrl = getResource("/layout/FilterMenu.fxml");
         if (filterUrl == null) return null;
 
         FXMLLoader loader = new FXMLLoader(filterUrl, translationsModel.getUiBundle());
@@ -175,6 +177,7 @@ public class MainFx extends Application {
 
     /**
      * Sets up the center pane with filter components, image view, and side panels.
+     *
      * @throws IOException if any FXML files cannot be loaded
      */
     private void setupCenterPane() throws IOException {
@@ -185,6 +188,7 @@ public class MainFx extends Application {
 
     /**
      * Sets up filter-related components in the center pane.
+     *
      * @throws IOException if any filter-related FXML files cannot be loaded
      */
     private void setupFilterComponents() throws IOException {
@@ -209,6 +213,7 @@ public class MainFx extends Application {
 
     /**
      * Creates the filter column container.
+     *
      * @return VBox configured as filter column
      */
     private VBox createFilterColumn() {
@@ -222,10 +227,11 @@ public class MainFx extends Application {
 
     /**
      * Sets up the main image view in the center pane.
+     *
      * @throws IOException if the image FXML file cannot be loaded
      */
     private void setupImageView() throws IOException {
-        URL imageUrl = getClass().getResource("/layout/Image.fxml");
+        URL imageUrl = getResource("/layout/Image.fxml");
         if (imageUrl == null) return;
 
         FXMLLoader loader = new FXMLLoader(imageUrl, translationsModel.getUiBundle());
@@ -238,6 +244,7 @@ public class MainFx extends Application {
 
     /**
      * Sets up the side panels (history and info columns).
+     *
      * @throws IOException if any side panel FXML files cannot be loaded
      */
     private void setupSidePanels() throws IOException {
@@ -251,12 +258,13 @@ public class MainFx extends Application {
 
     /**
      * Helper method to load FXML components with proper error handling.
+     *
      * @param fxmlPath path to the FXML file
      * @return loaded FXML component or null if loading fails
      * @throws IOException if the FXML file cannot be loaded
      */
     private <T> T loadFXML(String fxmlPath) throws IOException {
-        URL fxmlUrl = getClass().getResource(fxmlPath);
+        URL fxmlUrl = getResource(fxmlPath);
         if (fxmlUrl == null) return null;
 
         FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());
@@ -290,5 +298,8 @@ public class MainFx extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    protected URL getResource(String resourcePath) {
+        return getClass().getResource(resourcePath);
     }
 }

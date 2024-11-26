@@ -1,5 +1,6 @@
 package org.supsi.view.info;
 
+import javafx.stage.Modality;
 import org.supsi.model.errors.IErrorModel;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -48,6 +49,7 @@ public class ErrorPopUp implements IView<IErrorModel> {
         myStage = new Stage();
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
+        myStage.initModality(Modality.APPLICATION_MODAL);
 
         URL imageUrl = getClass().getResource("/images/icons/sadFile.png");
         if (imageUrl == null) {

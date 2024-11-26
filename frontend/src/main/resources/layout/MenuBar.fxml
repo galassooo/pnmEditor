@@ -12,9 +12,8 @@
                   disable="true"/>
         <MenuItem id="saveAsMenuItem" fx:id="saveAsMenuItem" mnemonicParsing="false" text="%ui_save_as"
                   onAction="#saveAs" disable="true"/>
-        <!-- QUI VA INSERITO IL EXPORT MENU -->
         <SeparatorMenuItem mnemonicParsing="false"/>
-        <MenuItem mnemonicParsing="false" text="%ui_close" onAction="#close"/>
+        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="%ui_close" onAction="#close"/>
     </Menu>
     <Menu fx:id="edit" mnemonicParsing="false" text="%ui_edit">
         <MenuItem fx:id="preferences" mnemonicParsing="false" text="%ui_preferences" onAction="#preferences"/>

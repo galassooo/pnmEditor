@@ -38,7 +38,7 @@ public class FileSystemView implements IFileSystemView {
     @Override
     public File askForFile() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("prova");
+        fileChooser.setTitle("Open file");
         return fileChooser.showOpenDialog(root);
     }
 

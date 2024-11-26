@@ -6,6 +6,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Menu fx:id="menu" fx:controller="org.supsi.view.filter.FilterMenuItem" mnemonicParsing="false" text="%ui_filters" xmlns:fx="http://javafx.com/fxml">
+<Menu fx:id="filterMenu" fx:controller="org.supsi.view.filter.FilterMenuItem" mnemonicParsing="false" text="%ui_filters" xmlns:fx="http://javafx.com/fxml">
 
 </Menu>

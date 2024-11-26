@@ -36,7 +36,6 @@ public class FilterLine {
     public HBox hbox;
 
 
-
     /**
      * Initializes the filter line UI.
      * Sets up the HBox layout and creates buttons for each filter.
@@ -67,8 +66,8 @@ public class FilterLine {
     /**
      * Creates a button for a specific filter, including its tooltip and actions.
      *
-     * @param filterKey        the key identifying the filter
-     * @param translatedFilter the translated name of the filter
+     * @param filterKey         the key identifying the filter
+     * @param translatedFilter  the translated name of the filter
      * @param translationsModel the model for retrieving UI translations
      * @return an {@link Optional} containing the created {@link Button}, or {@code Optional.empty()} if the button couldn't be created
      */
@@ -82,6 +81,8 @@ public class FilterLine {
                     imageView.setFitWidth(25);
                     button.setGraphic(imageView);
 
+                    button.setId(filterKey + "_line");
+                    System.out.println(button.getId());
                     button.setTooltip(new Tooltip(translationsModel.translate("ui_apply") + " " + translatedFilter));
                     button.disableProperty().bind(stateModel.canApplyFiltersProperty().not());
 

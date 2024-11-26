@@ -7,6 +7,8 @@ import org.supsi.model.filters.IFilterModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
 
 import java.util.Map;
 
@@ -19,7 +21,7 @@ public class FilterMenuItem{
     private EventPublisher publisher;
 
     @FXML
-    private Menu menu;
+    private Menu filterMenu;
 
 
 
@@ -30,18 +32,24 @@ public class FilterMenuItem{
     @FXML
     void initialize() {
         publisher = EventManager.getPublisher();
+        IStateModel stateModel = StateModel.getInstance();
         IFilterModel model = FilterModel.getInstance();
 
         Map<String, String> filtersKeyValues = model.getFiltersKeyValues();
 
         filtersKeyValues.forEach((filterKey, translatedFilter) -> {
             MenuItem item = new MenuItem(translatedFilter);
-
+            item.setId(filterKey);
             item.setOnAction(actionEvent ->
                     publisher.publish(new FilterEvent.FilterAddRequested(filterKey))
             );
-
-            menu.getItems().add(item);
+            item.setDisable(true);
+            stateModel.canApplyFiltersProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue){
+                    item.setDisable(false);
+                }
+            });
+            filterMenu.getItems().add(item);
         });
     }
 }

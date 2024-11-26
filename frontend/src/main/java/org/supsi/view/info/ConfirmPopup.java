@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -34,7 +35,7 @@ public class ConfirmPopup implements IConfirmPopup{
         myStage = new Stage();
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
-
+        myStage.initModality(Modality.APPLICATION_MODAL);
 
         confirmButton.setOnAction(e -> {
             wantsToContinue = true;

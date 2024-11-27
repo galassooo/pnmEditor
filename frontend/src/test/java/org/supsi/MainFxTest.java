@@ -33,3 +33,55 @@ public class MainFxTest extends ApplicationTest {
 
     }
 }
+class MainFXMissingResourcesTest extends ApplicationTest {
+
+    @BeforeAll
+    public static void setupSpec() {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            System.setProperty("testfx.robot", "glass");
+            System.setProperty("prism.order", "sw");
+            System.setProperty("java.awt.headless", "true");
+        }
+    }
+
+    public void start(final Stage stage) throws Exception {
+        MainFx mainFx = Mockito.spy(MainFx.class);
+
+        doReturn(null).when(mainFx).getResource("/layout/ExportMenu.fxml");
+        doReturn(null).when(mainFx).getResource("/layout/FilterMenu.fxml");
+        doReturn(null).when(mainFx).getResource("/layout/Image.fxml");
+        doReturn(null).when(mainFx).getResource("/layout/HistoryColumn.fxml");
+
+        assertDoesNotThrow(()->mainFx.start(stage));
+    }
+
+    @Test
+    void emptyTest(){
+
+    }
+}
+
+class MainFXMissingInfoColTest extends ApplicationTest {
+
+    @BeforeAll
+    public static void setupSpec() {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            System.setProperty("testfx.robot", "glass");
+            System.setProperty("prism.order", "sw");
+            System.setProperty("java.awt.headless", "true");
+        }
+    }
+
+    public void start(final Stage stage) throws Exception {
+        MainFx mainFx = Mockito.spy(MainFx.class);
+
+        doReturn(null).when(mainFx).getResource("/layout/InfoColumn.fxml");
+
+        assertDoesNotThrow(()->mainFx.start(stage));
+    }
+
+    @Test
+    void emptyTest(){
+
+    }
+}

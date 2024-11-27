@@ -122,12 +122,11 @@ public class FilterLine {
      * Sets its size and action to publish a filter execution request.
      */
     private void setupActivateButton() {
-        if (activate != null) {
-            activate.setPrefSize(30, 30);
-            activate.setMinSize(30, 30);
-            activate.setMaxSize(30, 30);
+        activate.setPrefSize(30, 30);
+        activate.setMinSize(30, 30);
+        activate.setMaxSize(30, 30);
 
-            activate.setOnAction(event -> publisher.publish(new FilterEvent.FilterExecutionRequested()));
-        }
+        activate.setOnAction(event -> publisher.publish(new FilterEvent.FilterExecutionRequested()));
+
     }
 }

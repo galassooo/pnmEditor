@@ -40,7 +40,7 @@ public class FilterViewTest extends AbstractGUITest {
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         mockedFileChooser.close();
     }
 
@@ -127,7 +127,6 @@ public class FilterViewTest extends AbstractGUITest {
     }
 
 
-
     private void testContextMenuDelete() {
         step("test context menu deletion", () -> {
             sleep(SLEEP_INTERVAL);
@@ -210,6 +209,11 @@ public class FilterViewTest extends AbstractGUITest {
     private void testKeyboardShortcuts() {
         step("test keyboard shortcuts", () -> {
 
+            moveTo("#root");
+            press(KeyCode.COMMAND).press(KeyCode.C).release(KeyCode.C).release(KeyCode.COMMAND);
+            sleep(SLEEP_INTERVAL);
+            press(KeyCode.COMMAND).press(KeyCode.V).release(KeyCode.V).release(KeyCode.COMMAND);
+            sleep(SLEEP_INTERVAL);
 
             clickOn("#Rotate_Left_line");
             sleep(SLEEP_INTERVAL);

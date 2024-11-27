@@ -1,17 +1,22 @@
 package org.supsi.view.info;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.supsi.controller.errors.ErrorController;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.view.AbstractGUITest;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;

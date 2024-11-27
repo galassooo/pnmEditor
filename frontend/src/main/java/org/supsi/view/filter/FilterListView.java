@@ -207,11 +207,10 @@ public class FilterListView {
 
                 deleteItem.setOnAction(event -> {
                     CustomCell selectedItem = cell.getItem();
-                    if (selectedItem != null) {
-                        int index = items.indexOf(selectedItem);
-                        publisher.publish(new FilterEvent.FilterRemoveRequested(items.size() - 1 - index));
-                        items.remove(selectedItem);
-                    }
+
+                    int index = items.indexOf(selectedItem);
+                    publisher.publish(new FilterEvent.FilterRemoveRequested(items.size() - 1 - index));
+                    items.remove(selectedItem);
                 });
                 contextMenu.getItems().add(deleteItem);
 

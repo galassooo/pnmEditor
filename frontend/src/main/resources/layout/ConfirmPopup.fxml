@@ -13,7 +13,7 @@
     <top>
         <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane">
             <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
-                <Label fx:id="title" styleClass="main-label" text="%ui_pending_changes_title"
+                <Label fx:id="confirmTitle" styleClass="main-label" text="%ui_pending_changes_title"
                        textAlignment="JUSTIFY">
                     <font>
                         <Font size="17.0"/>

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 abstract public class AbstractGUITest extends ApplicationTest {
 
-    protected static final int SLEEP_INTERVAL = 1000;
+    protected static final int SLEEP_INTERVAL = 500;
 
     protected static final Logger LOGGER = Logger.getAnonymousLogger();
 

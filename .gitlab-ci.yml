@@ -62,7 +62,7 @@ install-package:
     - cd ..
     - cd frontend
     - 'mvn $MAVEN_CLI_OPTS clean'
-    - 'DISPLAY=:99 mvn $MAVEN_CLI_OPTS package'
+    - 'DISPLAY=:99 mvn $MAVEN_CLI_OPTS -Dheadless=true package'
     - cd ..
     
   rules:

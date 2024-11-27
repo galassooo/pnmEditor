@@ -58,7 +58,7 @@ install-package:
     - cd ..
     - cd backend
     - 'mvn $MAVEN_CLI_OPTS clean'
-    - 'mvn $MAVEN_CLI_OPTS install 
+    - 'mvn $MAVEN_CLI_OPTS install'
     - cd ..
     - cd frontend
     - 'mvn $MAVEN_CLI_OPTS clean'

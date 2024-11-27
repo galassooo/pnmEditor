@@ -14,7 +14,7 @@
    <top>
       <Pane prefHeight="30.0" prefWidth="350.0" styleClass="top-pane">
          <HBox alignment="CENTER" prefHeight="33.0" prefWidth="441.0">
-            <Label fx:id="title" styleClass="main-label" text="%ui_error_title" textAlignment="JUSTIFY">
+            <Label fx:id="errorTitle" styleClass="main-label" text="%ui_error_title" textAlignment="JUSTIFY">
                <font>
                   <Font size="17.0"/>
                </font>
@@ -23,7 +23,7 @@
       </Pane>
    </top>
    <bottom>
-      <Button fx:id="closeButton" mnemonicParsing="false" text="Close" BorderPane.alignment="CENTER">
+      <Button fx:id="errorCloseBtn" mnemonicParsing="false" text="Close" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" top="10.0" />
          </BorderPane.margin>
@@ -41,7 +41,7 @@
                <HBox.margin>
                   <Insets left="40.0"/>
                </HBox.margin>
-               <Label fx:id="messageHeader" text="%ui_failed_operation">
+               <Label fx:id="errorMessageHeader" text="%ui_failed_operation">
                   <VBox.margin>
                      <Insets bottom="40.0" top="15.0"/>
                   </VBox.margin>
@@ -49,7 +49,7 @@
                      <Font size="15.0"/>
                   </font>
                </Label>
-               <Label fx:id="message" styleClass="error-label" textFill="#8d0000"/>
+               <Label fx:id="errorMessage" styleClass="error-label" textFill="#8d0000"/>
             </VBox>
          </HBox>
       </VBox>

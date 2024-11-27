@@ -1,21 +1,23 @@
 package org.supsi.view.filter;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
-import javafx.application.Platform;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
-import org.supsi.MainFx;
+import org.supsi.model.filters.FilterModel;
 import org.supsi.view.AbstractGUITest;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.when;
@@ -24,14 +26,35 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 public class FilterViewTest extends AbstractGUITest {
 
+    @Override
+    public void start(Stage stage) throws Exception {
+        mockedFileChooser = mockConstruction(FileChooser.class,
+                (mock, context) -> {
+                    File testFile = new File(getClass().getResource("/image.ppm").getFile());
+
+
+                    when(mock.showOpenDialog(any())).thenReturn(testFile);
+                    when(mock.showSaveDialog(any())).thenReturn(testFile);
+                });
+        super.start(stage);
+    }
+
+    @Override
+    public void stop(){
+        mockedFileChooser.close();
+    }
 
     @Test
-    void test(){
+    void walkThrough() {
         clickOn("#root");
         openImage();
         testFilterMenu();
         testFilterLine();
         testFilterAdd();
+        testDragAndDrop();
+        testContextMenuDelete();
+        testKeyboardShortcuts();
+        executeFilters();
     }
 
     private void openImage() {
@@ -39,42 +62,25 @@ public class FilterViewTest extends AbstractGUITest {
             sleep(SLEEP_INTERVAL);
             clickOn("#fileMenu");
             sleep(SLEEP_INTERVAL);
-
             clickOn("#openMenuItem");
             sleep(SLEEP_INTERVAL);
         });
     }
 
-    private void testFilterMenu(){
+    private void testFilterMenu() {
         step("filter menu", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#filterMenu");
             sleep(SLEEP_INTERVAL);
-
-            verifyThat("#Negative", isVisible());
-            verifyThat("#Rotate_Right", isVisible());
-            verifyThat("#Rotate_Left", isVisible());
-            verifyThat("#Mirror_Horizontal", isVisible());
-            verifyThat("#Mirror_Vertical", isVisible());
-
-            MenuItem negative = lookup("#Negative").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-            MenuItem rotateRight = lookup("#Rotate_Right").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-            MenuItem rotateLeft = lookup("#Rotate_Left").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-            MenuItem mirrorH = lookup("#Mirror_Horizontal").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-            MenuItem mirrorV = lookup("#Mirror_Vertical").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
-
-            assertFalse(negative.isDisable());
-            assertFalse(rotateRight.isDisable());
-            assertFalse(rotateLeft.isDisable());
-            assertFalse(mirrorH.isDisable());
-            assertFalse(mirrorV.isDisable());
-
+            clickOn("#Negative");
+            sleep(SLEEP_INTERVAL);
             clickOn("#root");
-        });
 
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Negative"));
+        });
     }
 
-    private void testFilterLine(){
+    private void testFilterLine() {
         step("filter line", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#root");
@@ -100,21 +106,142 @@ public class FilterViewTest extends AbstractGUITest {
         });
     }
 
-    private void testFilterAdd(){
+    private void testFilterAdd() {
         step("filter add", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#root");
             sleep(SLEEP_INTERVAL);
 
+            // Add some filters for subsequent tests
             clickOn("#Negative_line");
             sleep(SLEEP_INTERVAL);
             clickOn("#Rotate_Right_line");
             sleep(SLEEP_INTERVAL);
-            clickOn("#Rotate_Left_line");
-            sleep(SLEEP_INTERVAL);
             clickOn("#Mirror_Horizontal_line");
             sleep(SLEEP_INTERVAL);
+
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Negative"));
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Rotate Right"));
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Mirror Horizontally"));
+        });
+    }
+
+
+
+    private void testContextMenuDelete() {
+        step("test context menu deletion", () -> {
+            sleep(SLEEP_INTERVAL);
+
+            clickOn("#Rotate_Left_line");
+            sleep(SLEEP_INTERVAL);
+
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Rotate Left"));
+
+            rightClickOn(".list-cell:nth-child(0)");
+            sleep(SLEEP_INTERVAL);
+            clickOn("Delete");
+            sleep(SLEEP_INTERVAL);
+
+            assertFalse(FilterModel.getInstance().getFilterPipeline().contains("Rotate Left"));
+
             clickOn("#Mirror_Vertical_line");
+            sleep(SLEEP_INTERVAL);
+
+            assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Mirror Vertically"));
+            rightClickOn(".list-cell:nth-last-child(0)");
+            sleep(SLEEP_INTERVAL);
+            clickOn("Delete");
+            sleep(SLEEP_INTERVAL);
+            assertFalse(FilterModel.getInstance().getFilterPipeline().contains("Mirror Vertically"));
+        });
+    }
+
+    private void testDragAndDrop() {
+        step("test drag and drop functionality", () -> {
+
+            Node cell = lookup(".list-cell").nth(0).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, 50);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+
+
+            cell = lookup(".list-cell").nth(0).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, 120);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+
+            cell = lookup(".list-cell").nth(0).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, 200);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+
+
+            cell = lookup(".list-cell").nth(3).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, -110);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+        });
+    }
+
+    private void testKeyboardShortcuts() {
+        step("test keyboard shortcuts", () -> {
+
+
+            clickOn("#Rotate_Left_line");
+            sleep(SLEEP_INTERVAL);
+
+            clickOn(".list-cell:nth-child(0)");
+            sleep(SLEEP_INTERVAL);
+
+            //(Windows/Linux)
+            press(KeyCode.CONTROL).press(KeyCode.C).release(KeyCode.C).release(KeyCode.CONTROL);
+            sleep(SLEEP_INTERVAL);
+            press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+            sleep(SLEEP_INTERVAL);
+
+            clickOn("#Rotate_Left_line");
+            sleep(SLEEP_INTERVAL);
+
+            clickOn(".list-cell:nth-child(0)");
+            sleep(SLEEP_INTERVAL);
+            //(Mac)
+            press(KeyCode.COMMAND).press(KeyCode.C).release(KeyCode.C).release(KeyCode.COMMAND);
+            sleep(SLEEP_INTERVAL);
+            press(KeyCode.COMMAND).press(KeyCode.V).release(KeyCode.V).release(KeyCode.COMMAND);
+            sleep(SLEEP_INTERVAL);
+        });
+    }
+
+    void executeFilters() {
+        step("test execute filters", () -> {
+            clickOn("#activate");
+            sleep(SLEEP_INTERVAL);
+
+            assertTrue(FilterModel.getInstance().getFilterPipeline().isEmpty());
         });
     }
 }

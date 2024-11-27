@@ -17,10 +17,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * A specialized ListView implementation for managing and displaying a pipeline of image filters.
@@ -80,7 +78,6 @@ public class FilterListView {
 
         // Initialize cell items from the model filter pipeline
         items = FXCollections.observableArrayList();
-        model.getFilterPipeline().forEach(filterName -> items.add(0, new CustomCell(filterName)));
 
         // Set items in the ListView only once
         list.setItems(items);
@@ -121,23 +118,22 @@ public class FilterListView {
 
                 // Set drag detection for cells
                 cell.setOnDragDetected(event -> {
-                    if (!cell.isEmpty()) {
 
-                        //create a new Drag board to manage drag options and store the
-                        //cell id into the drag board content
-                        Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(String.valueOf(cell.getItem().getId()));
-                        db.setContent(content);
+                    //create a new Drag board to manage drag options and store the
+                    //cell id into the drag board content
+                    Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(String.valueOf(cell.getItem().getId()));
+                    db.setContent(content);
 
-                        //create the transparent cell overlay effect
-                        Image dragViewImage = cell.snapshot(null, null);
-                        db.setDragView(dragViewImage);
+                    //create the transparent cell overlay effect
+                    Image dragViewImage = cell.snapshot(null, null);
+                    db.setDragView(dragViewImage);
 
-                        //add the closed hand cursor while dragging cells
-                        cell.getScene().getRoot().getStyleClass().add("dragging-hand");
-                        event.consume();
-                    }
+                    //add the closed hand cursor while dragging cells
+                    cell.getScene().getRoot().getStyleClass().add("dragging-hand");
+                    event.consume();
+
                 });
 
                 // Handle drag over events to display where items can be dropped
@@ -220,9 +216,8 @@ public class FilterListView {
                 contextMenu.getItems().add(deleteItem);
 
                 cell.setOnContextMenuRequested(event -> {
-                    if (!cell.isEmpty()) {
-                        contextMenu.show(cell, event.getScreenX(), event.getScreenY());
-                    }
+                    contextMenu.show(cell, event.getScreenX(), event.getScreenY());
+
                 });
 
                 return cell;
@@ -251,7 +246,15 @@ public class FilterListView {
                     //it notifies all the listener that a paste operation has been requested for the item
                     if (isControlDown && copiedItem != null) {
                         // Notify listeners of a new filter being added
-                        publisher.publish(new FilterEvent.FilterAddRequested(copiedItem.getText()));
+                        String filterKey = null;
+
+                        for (Map.Entry<String, String> entry : model.getFiltersKeyValues().entrySet()) {
+                            if (entry.getValue().equals(copiedItem.getText())) {
+                                filterKey = entry.getKey();
+                                break;
+                            }
+                        }
+                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey));
                     }
                     break;
             }
@@ -260,7 +263,6 @@ public class FilterListView {
 
     /**
      * Updates icons in the ListView's cells based on the position of each item.
-     *
      */
     @SuppressWarnings("all") //replace switch with if
     private void updateIcons() {

@@ -6,17 +6,41 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.matcher.base.NodeMatchers;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
-@Disabled
 public class MenuBarStartTest extends AbstractGUITest {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        mockedFileChooser = mockConstruction(FileChooser.class,
+                (mock, context) -> {
+                    File testFile = new File(getClass().getResource("/image.ppm").getFile());
+
+
+                    when(mock.showOpenDialog(any())).thenReturn(testFile);
+                    when(mock.showSaveDialog(any())).thenReturn(testFile);
+                });
+        super.start(stage);
+    }
+
+    @Override
+    public void stop(){
+        mockedFileChooser.close();
+    }
 
     @Test
     public void walkThrough() {

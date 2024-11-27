@@ -24,13 +24,13 @@ public class ErrorPopUp implements IView<IErrorModel> {
     private BorderPane root;
 
     @FXML
-    private Label message;
+    private Label errorMessage;
 
     @FXML
     private ImageView image;
 
     @FXML
-    private Button closeButton;
+    private Button errorCloseBtn;
 
     private Stage myStage;
 
@@ -44,14 +44,14 @@ public class ErrorPopUp implements IView<IErrorModel> {
      */
     @FXML
     private void initialize() {
-        closeButton.setOnAction(event -> myStage.close());
+        errorCloseBtn.setOnAction(event -> myStage.close());
 
         myStage = new Stage();
         myStage.setScene(new Scene(root));
         myStage.setResizable(false);
         myStage.initModality(Modality.APPLICATION_MODAL);
 
-        URL imageUrl = getClass().getResource("/images/icons/sadFile.png");
+        URL imageUrl = getResource("/images/icons/sadFile.png");
         if (imageUrl == null) {
             System.err.println("Error while loading sadFile image");
             return;
@@ -68,7 +68,7 @@ public class ErrorPopUp implements IView<IErrorModel> {
      */
     @Override
     public void build(){
-        message.setText(model.getMessage());
+        errorMessage.setText(model.getMessage());
     }
 
     /**
@@ -87,5 +87,9 @@ public class ErrorPopUp implements IView<IErrorModel> {
     @Override
     public void setModel(IErrorModel model) {
         this.model = model;
+    }
+
+    protected URL getResource(String fileName) {
+        return  getClass().getResource(fileName);
     }
 }

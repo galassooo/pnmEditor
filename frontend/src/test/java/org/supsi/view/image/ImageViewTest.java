@@ -21,13 +21,54 @@ import static org.mockito.Mockito.*;
 
 public class ImageViewTest extends AbstractGUITest {
 
+    @Override
+    public void start(Stage stage) throws Exception {
+        mockedFileChooser = mockConstruction(FileChooser.class,
+                (mock, context) -> {
+                    File testFile = new File(getClass().getResource("/image1.ppm").getFile());
+
+
+                    when(mock.showOpenDialog(any())).thenReturn(testFile);
+                    when(mock.showSaveDialog(any())).thenReturn(testFile);
+                });
+        super.start(stage);
+    }
+
+    @Override
+    public void stop(){
+        mockedFileChooser.close();
+    }
+
     @Test
-    void test() {
+    void walkThrough() {
         clickOn("#root");
         clickMenuFile();
         testOpenDialogMock();
         testSave();
         testSaveAs();
+        testExport();
+    }
+
+    private void testExport() {
+        step("test export", () ->{
+            sleep(SLEEP_INTERVAL);
+            clickOn("#exportMenu");
+            sleep(SLEEP_INTERVAL);
+
+
+            MenuItem item = lookup("#ppm").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            assertFalse(item.isDisable());
+
+            MenuItem item1 = lookup("#pgm").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            assertFalse(item1.isDisable());
+
+            MenuItem item2 = lookup("#pbm").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            assertFalse(item2.isDisable());
+
+            clickOn("#ppm");
+            sleep(SLEEP_INTERVAL);
+
+        });
     }
 
     private void clickMenuFile() {
@@ -49,7 +90,10 @@ public class ImageViewTest extends AbstractGUITest {
     }
 
     private void testOpenDialogMock() {
-        step("menu open mocked", () -> {
+        step("menu open", () -> {
+
+            MenuItem item = lookup("#openMenuItem").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            assertFalse(item.isDisable());
 
             sleep(SLEEP_INTERVAL);
             clickOn("#openMenuItem");

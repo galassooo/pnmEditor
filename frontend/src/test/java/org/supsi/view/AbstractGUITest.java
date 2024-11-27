@@ -30,6 +30,8 @@ abstract public class AbstractGUITest extends ApplicationTest {
 
     protected Stage stage;
 
+
+    protected boolean requestErrorImage = false;
     protected static MockedConstruction<FileChooser> mockedFileChooser;
 
     @BeforeAll
@@ -41,14 +43,6 @@ abstract public class AbstractGUITest extends ApplicationTest {
         }
     }
 
-    @AfterAll
-    public static void tearDownClass() {
-        // Chiudiamo il mock solo dopo che tutti i test sono finiti
-        if (mockedFileChooser != null) {
-            mockedFileChooser.close();
-        }
-    }
-
     protected void step(final String step, final Runnable runnable) {
         ++stepNo;
         LOGGER.info("STEP" + stepNo + ":" + step);
@@ -57,14 +51,6 @@ abstract public class AbstractGUITest extends ApplicationTest {
     }
 
     public void start(final Stage stage) throws Exception {
-        mockedFileChooser = mockConstruction(FileChooser.class,
-                (mock, context) -> {
-                    File testFile = new File(getClass().getResource("/image.ppm").getFile());
-                    System.out.println("--------------- test file exists? "+testFile.exists());
-                    when(mock.showOpenDialog(any())).thenReturn(testFile);
-                    when(mock.showSaveDialog(any())).thenReturn(testFile);
-                });
-
         final MainFx main = new MainFx();
         this.stage = stage;
         main.start(stage);

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.supsi.model.filters.FilterModel;
 import org.supsi.view.AbstractGUITest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 
@@ -46,6 +47,8 @@ public class FilterViewTest extends AbstractGUITest {
 
     @Test
     void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#root");
         openImage();
         testFilterMenu();

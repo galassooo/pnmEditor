@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import org.supsi.controller.exit.ExitController;
 import org.supsi.model.about.AboutModel;
 import org.supsi.view.AbstractGUITest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 
@@ -42,6 +43,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
 
     @Test
     void walkthrough(){
+        WaitForAsyncUtils.waitForFxEvents();
         clickOn("#root");
         openImage();
         addFilter();

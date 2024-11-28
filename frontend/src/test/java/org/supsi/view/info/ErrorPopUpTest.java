@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.supsi.controller.errors.ErrorController;
 import org.supsi.model.info.LoggerModel;
 import org.supsi.view.AbstractGUITest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,8 @@ public class ErrorPopUpTest extends AbstractGUITest {
 
     @Test
     public void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#root");
         openImage();
         verifyPopUp();

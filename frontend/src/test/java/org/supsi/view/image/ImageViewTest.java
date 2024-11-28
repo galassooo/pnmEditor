@@ -12,6 +12,7 @@ import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.supsi.MainFx;
 import org.supsi.view.AbstractGUITest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 
@@ -41,6 +42,8 @@ public class ImageViewTest extends AbstractGUITest {
 
     @Test
     void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#root");
         clickMenuFile();
         testOpenDialogMock();

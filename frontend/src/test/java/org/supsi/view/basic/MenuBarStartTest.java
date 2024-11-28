@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.matcher.base.NodeMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 
@@ -44,6 +45,8 @@ public class MenuBarStartTest extends AbstractGUITest {
 
     @Test
     public void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#root");
         testMainScene();
         testFileMenuItems();

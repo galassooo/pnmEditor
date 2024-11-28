@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.matcher.base.NodeMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 
@@ -40,6 +41,8 @@ public class PreferencesPopupTest extends AbstractGUITest {
 
     @Test
     public void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#root");
         openPreferences();
         selectFirstChoiceBoxItem();

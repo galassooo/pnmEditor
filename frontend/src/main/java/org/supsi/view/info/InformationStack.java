@@ -45,8 +45,8 @@ public class InformationStack {
                 return new ListCell<>() {
                     @Override
                     protected void updateItem(LogEntry item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
+                        super.updateItem(item, empty); //not null item, throws ex before this point
+                        if (empty) {
                             setText(null);
                             setGraphic(null);
                         } else {

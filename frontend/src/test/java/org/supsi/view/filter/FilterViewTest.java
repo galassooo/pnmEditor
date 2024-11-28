@@ -41,8 +41,9 @@ public class FilterViewTest extends AbstractGUITest {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws Exception {
         mockedFileChooser.close();
+        super.stop();
     }
 
     @Test
@@ -60,7 +61,7 @@ public class FilterViewTest extends AbstractGUITest {
         executeFilters();
     }
 
-    private void openImage() {
+    protected void openImage() {
         step("menu file click", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#fileMenu");
@@ -70,7 +71,7 @@ public class FilterViewTest extends AbstractGUITest {
         });
     }
 
-    private void testFilterMenu() {
+    protected void testFilterMenu() {
         step("filter menu", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#filterMenu");
@@ -83,7 +84,7 @@ public class FilterViewTest extends AbstractGUITest {
         });
     }
 
-    private void testFilterLine() {
+    protected void testFilterLine() {
         step("filter line", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#root");
@@ -109,7 +110,7 @@ public class FilterViewTest extends AbstractGUITest {
         });
     }
 
-    private void testFilterAdd() {
+    protected void testFilterAdd() {
         step("filter add", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#root");
@@ -130,7 +131,7 @@ public class FilterViewTest extends AbstractGUITest {
     }
 
 
-    private void testContextMenuDelete() {
+    protected void testContextMenuDelete() {
         step("test context menu deletion", () -> {
             sleep(SLEEP_INTERVAL);
 
@@ -158,7 +159,7 @@ public class FilterViewTest extends AbstractGUITest {
         });
     }
 
-    private void testDragAndDrop() {
+    protected void testDragAndDrop() {
         step("test drag and drop functionality", () -> {
 
             Node cell = lookup(".list-cell").nth(0).query();
@@ -168,6 +169,19 @@ public class FilterViewTest extends AbstractGUITest {
             press(MouseButton.PRIMARY);
             sleep(SLEEP_INTERVAL);
             moveBy(0, 50);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+
+            cell = lookup(".list-cell").nth(0).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, 50);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, -50);
             sleep(SLEEP_INTERVAL);
             release(MouseButton.PRIMARY);
             sleep(SLEEP_INTERVAL);
@@ -206,10 +220,21 @@ public class FilterViewTest extends AbstractGUITest {
             sleep(SLEEP_INTERVAL);
             release(MouseButton.PRIMARY);
             sleep(SLEEP_INTERVAL);
+
+            cell = lookup(".list-cell").nth(3).query();
+            moveTo(cell);
+            sleep(SLEEP_INTERVAL);
+
+            press(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
+            moveBy(0, 50);
+            sleep(SLEEP_INTERVAL);
+            release(MouseButton.PRIMARY);
+            sleep(SLEEP_INTERVAL);
         });
     }
 
-    private void testKeyboardShortcuts() {
+    protected void testKeyboardShortcuts() {
         step("test keyboard shortcuts", () -> {
 
             moveTo("#root");
@@ -223,7 +248,9 @@ public class FilterViewTest extends AbstractGUITest {
 
             clickOn(".list-cell:nth-child(0)");
             sleep(SLEEP_INTERVAL);
-
+            press(KeyCode.C);
+            press(KeyCode.V);
+            press(KeyCode.K);
             //(Windows/Linux)
             press(KeyCode.CONTROL).press(KeyCode.C).release(KeyCode.C).release(KeyCode.CONTROL);
             sleep(SLEEP_INTERVAL);

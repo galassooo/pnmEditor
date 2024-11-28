@@ -19,6 +19,7 @@ import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A specialized ListView implementation for managing and displaying a pipeline of image filters.
@@ -139,7 +140,7 @@ public class FilterListView {
                 // Handle drag over events to display where items can be dropped
                 cell.setOnDragOver(event -> {
                     //this if makes sure to 'catch' the right drag event
-                    if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
+                    if (event.getGestureSource() != cell) { //dragbord has string -> always true (un unico evento drag in tutta app)
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
 
@@ -171,25 +172,26 @@ public class FilterListView {
                     Dragboard db = event.getDragboard();
                     boolean success = false;
 
-                    if (db.hasString()) {
-                        //retrieve the dragged element id by the drag board
-                        //(the id has been stored in the db in setOnDragDetected method
-                        int draggedId = Integer.parseInt(db.getString());
-                        CustomCell draggedData = findElementById(draggedId);
+                    //dragbord has string -> always true (un unico evento drag in tutta app)
 
-                        //calculate indexes
-                        int draggedIndex = items.indexOf(draggedData);
-                        int targetIndex = items.indexOf(cell.getItem());
+                    //retrieve the dragged element id by the drag board
+                    //(the id has been stored in the db in setOnDragDetected method
+                    int draggedId = Integer.parseInt(db.getString());
+                    CustomCell draggedData = findElementById(draggedId);
 
-                        //if the indexes are valid
-                        if (draggedIndex != targetIndex && targetIndex >= 0) {
-                            //calculate the model indexes since the LISTVIEW ORDER IS REVERSED
-                            int modelFromIndex = items.size() - 1 - draggedIndex;
-                            int modelToIndex = items.size() - 1 - targetIndex;
-                            success = true;
-                            //notify listeners of the item movement
-                            publisher.publish(new FilterEvent.FilterMoveRequested(modelFromIndex, modelToIndex));
-                        }
+                    //calculate indexes
+                    int draggedIndex = items.indexOf(draggedData);
+                    int targetIndex = items.indexOf(cell.getItem());
+
+                    //if the indexes are valid (dragged index is always valid since we are retrieving it from an existing element)
+                    if (targetIndex >= 0) {
+                        //calculate the model indexes since the LISTVIEW ORDER IS REVERSED
+                        int modelFromIndex = items.size() - 1 - draggedIndex;
+                        int modelToIndex = items.size() - 1 - targetIndex;
+                        success = true;
+                        //notify listeners of the item movement
+                        publisher.publish(new FilterEvent.FilterMoveRequested(modelFromIndex, modelToIndex));
+
                     }
                     event.setDropCompleted(success);
                     event.consume();
@@ -245,15 +247,14 @@ public class FilterListView {
                     //it notifies all the listener that a paste operation has been requested for the item
                     if (isControlDown && copiedItem != null) {
                         // Notify listeners of a new filter being added
-                        String filterKey = null;
+                        AtomicReference<String> filterKey = new AtomicReference<>();
 
-                        for (Map.Entry<String, String> entry : model.getFiltersKeyValues().entrySet()) {
-                            if (entry.getValue().equals(copiedItem.getText())) {
-                                filterKey = entry.getKey();
-                                break;
+                        model.getFiltersKeyValues().forEach((key, value) -> {
+                            if (value.equals(copiedItem.getText())) {
+                                filterKey.set(key);
                             }
-                        }
-                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey));
+                        });
+                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey.get()));
                     }
                     break;
             }

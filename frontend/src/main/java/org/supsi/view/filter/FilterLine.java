@@ -108,9 +108,6 @@ public class FilterLine {
     private Optional<ImageView> loadImage(String filterName) {
         try {
             Image image = new Image(String.format(FILTER_IMAGE_PATH, filterName));
-            if (image.isError() || image.getWidth() == 0) {
-                return Optional.empty();
-            }
             return Optional.of(new ImageView(image));
         } catch (Exception e) {
             return Optional.empty();

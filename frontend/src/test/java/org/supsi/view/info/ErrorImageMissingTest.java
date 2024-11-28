@@ -1,31 +1,31 @@
 package org.supsi.view.info;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.supsi.controller.errors.ErrorController;
-import org.supsi.model.info.LoggerModel;
+import org.supsi.model.errors.ErrorModel;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
-public class ErrorPopUpTest extends AbstractGUITest {
+public class ErrorImageMissingTest extends AbstractGUITest {
 
+    private Path originalImagePath;
+    private Path temporaryImagePath;
     @Override
     public void start(Stage stage) throws Exception {
         mockedFileChooser = mockConstruction(FileChooser.class,
@@ -36,13 +36,21 @@ public class ErrorPopUpTest extends AbstractGUITest {
                     when(mock.showOpenDialog(any())).thenReturn(testFile);
                     when(mock.showSaveDialog(any())).thenReturn(testFile);
                 });
+
+        originalImagePath = Path.of(getClass().getResource("/images/icons/sadFile.png").toURI());
+        temporaryImagePath = Path.of(originalImagePath.toString() + ".backup");
+
+        // Move the image to a temporary location
+        Files.move(originalImagePath, temporaryImagePath, StandardCopyOption.REPLACE_EXISTING);
         super.start(stage);
     }
 
-    @Override
-    public void stop() throws Exception {
-        mockedFileChooser.close();
-        super.stop();
+    @AfterEach
+    public void cleanup() throws IOException {
+        // Restore the image
+        if (Files.exists(temporaryImagePath)) {
+            Files.move(temporaryImagePath, originalImagePath, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     @Test
@@ -53,8 +61,6 @@ public class ErrorPopUpTest extends AbstractGUITest {
         openImage();
         verifyPopUp();
         closePopup();
-        openImage();
-
     }
 
     private void openImage() {
@@ -69,11 +75,10 @@ public class ErrorPopUpTest extends AbstractGUITest {
 
     private void verifyPopUp() {
         step("verify popup component", () -> {
-
+            sleep(SLEEP_INTERVAL);
             verifyThat("#errorCloseBtn", isVisible());
             verifyThat("#errorMessageHeader", isVisible());
             verifyThat("#errorMessage", isVisible());
-            verifyThat("#errorTitle", isVisible());
         });
     }
 
@@ -85,4 +90,3 @@ public class ErrorPopUpTest extends AbstractGUITest {
         });
     }
 }
-

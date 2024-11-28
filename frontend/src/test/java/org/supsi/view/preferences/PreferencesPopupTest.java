@@ -34,8 +34,9 @@ public class PreferencesPopupTest extends AbstractGUITest {
     }
 
     @Override
-    public void stop(){
+    public void stop() throws Exception {
         mockedFileChooser.close();
+        super.stop();
     }
 
 

@@ -39,8 +39,9 @@ public class MenuBarStartTest extends AbstractGUITest {
     }
 
     @Override
-    public void stop(){
+    public void stop() throws Exception {
         mockedFileChooser.close();
+        super.stop();
     }
 
     @Test
@@ -169,7 +170,6 @@ public class MenuBarStartTest extends AbstractGUITest {
 
             clickOn("#root");
         });
-
     }
 
     private void testFilterLine(){

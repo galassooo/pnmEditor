@@ -2,23 +2,13 @@ package org.supsi.view;
 
 
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.MockedConstruction;
 import org.supsi.MainFx;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import javax.sound.midi.Soundbank;
-import java.io.File;
 import java.util.logging.Logger;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.when;
 
 abstract public class AbstractGUITest extends ApplicationTest {
 
@@ -30,8 +20,6 @@ abstract public class AbstractGUITest extends ApplicationTest {
 
     protected Stage stage;
 
-
-    protected boolean requestErrorImage = false;
     protected static MockedConstruction<FileChooser> mockedFileChooser;
 
     @BeforeAll
@@ -39,9 +27,7 @@ abstract public class AbstractGUITest extends ApplicationTest {
         if (Boolean.getBoolean("headless")) {
             System.setProperty("testfx.robot", "glass");
             System.setProperty("glass.platform", "Monocle");
-            System.setProperty("monocle.platform", "Headless");
             System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
             System.setProperty("java.awt.headless", "true");
         }
 

@@ -109,7 +109,7 @@ public class MenuBarStartTest extends AbstractGUITest {
             sleep(SLEEP_INTERVAL);
             clickOn("#help");
             sleep(SLEEP_INTERVAL);
-            clickOn("About");
+            clickOn("#about");
             sleep(SLEEP_INTERVAL);
 
             verifyThat("#date", isVisible());

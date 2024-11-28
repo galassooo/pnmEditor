@@ -19,6 +19,6 @@
         <MenuItem fx:id="preferences" mnemonicParsing="false" text="%ui_preferences" onAction="#preferences"/>
     </Menu>
     <Menu fx:id="help" mnemonicParsing="false" text="%ui_help">
-        <MenuItem mnemonicParsing="false" text="%ui_about" onAction="#about"/>
+        <MenuItem fx:id="about" mnemonicParsing="false" text="%ui_about" onAction="#about"/>
     </Menu>
 </MenuBar>

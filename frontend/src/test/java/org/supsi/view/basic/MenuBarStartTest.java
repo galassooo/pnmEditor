@@ -110,6 +110,7 @@ public class MenuBarStartTest extends AbstractGUITest {
 
     private void testHelpMenuAbout() {
         step("about dialog", () -> {
+            WaitForAsyncUtils.waitForFxEvents();
             sleep(SLEEP_INTERVAL);
             clickOn("#help");
             sleep(SLEEP_INTERVAL);

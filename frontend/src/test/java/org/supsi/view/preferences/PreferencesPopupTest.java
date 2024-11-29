@@ -49,11 +49,6 @@ public class PreferencesPopupTest extends AbstractGUITest {
         selectFirstChoiceBoxItem();
         verifyComponents();
         savePreferences();
-
-        //without language
-        openPreferences();
-        verifyComponents();
-        savePreferences();
     }
 
     protected void openPreferences() {

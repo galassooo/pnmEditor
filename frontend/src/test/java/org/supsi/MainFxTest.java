@@ -126,7 +126,6 @@ class MainFxMainMethodTest {
 class MainFxCloseRequestTest extends ApplicationTest {
 
     private Stage stage;
-    private MockedStatic<Platform> mockedStatic;
 
     @BeforeAll
     public static void setupSpec() {
@@ -138,11 +137,6 @@ class MainFxCloseRequestTest extends ApplicationTest {
     @Override
     public void start(final Stage stage) throws Exception {
 
-        mockedStatic = mockStatic(Platform.class);
-
-        mockedStatic.when(Platform::exit).thenAnswer(invocation -> {
-            return null;
-        });
 
         MainFx mainFx = new MainFx();
         this.stage = stage;
@@ -151,7 +145,6 @@ class MainFxCloseRequestTest extends ApplicationTest {
     }
     @Override
     public void stop() throws Exception {
-        mockedStatic.close();
         super.stop();
     }
 

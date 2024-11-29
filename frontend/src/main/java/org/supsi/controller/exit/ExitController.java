@@ -49,7 +49,6 @@ public class ExitController implements IExitController{
             if (stage != null) {
                 stage.close();
             }
-            Platform.exit();
         });
     }
 }

@@ -63,8 +63,7 @@ public class ExitControllerTest {
 
     @Test
     void testHandleExitWithoutStage() throws Exception {
-        try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);
-             MockedStatic<Platform> platformMock = mockStatic(Platform.class)) {
+        try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);) {
 
             confirmationControllerMock.when(ConfirmationController::getInstance).thenReturn(mockConfirmationController);
 
@@ -77,15 +76,13 @@ public class ExitControllerTest {
             Consumer<?> capturedRunnable = runnableCaptor.getValue();
             capturedRunnable.accept(null);
 
-            platformMock.verify(Platform::exit);
         }
     }
 
 
     @Test
     void testHandleExitWithStage() throws Exception {
-        try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);
-             MockedStatic<Platform> platformMock = mockStatic(Platform.class)) {
+        try (MockedStatic<ConfirmationController> confirmationControllerMock = mockStatic(ConfirmationController.class);) {
 
             confirmationControllerMock.when(ConfirmationController::getInstance).thenReturn(mockConfirmationController);
 
@@ -100,7 +97,6 @@ public class ExitControllerTest {
             capturedRunnable.accept(null);
 
             verify(mockedStage).close();
-            platformMock.verify(Platform::exit);
         }
     }
 }

@@ -19,7 +19,6 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 public class ConfirmationPopupTest extends AbstractGUITest {
 
-    MockedStatic<Platform> mockedStatic;
     @Override
     public void start(Stage stage) throws Exception {
         mockedFileChooser = mockConstruction(FileChooser.class,
@@ -29,11 +28,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
                     when(mock.showSaveDialog(any())).thenReturn(testFile);
                 });
 
-        mockedStatic = mockStatic(Platform.class);
 
-        mockedStatic.when(Platform::exit).thenAnswer(invocation -> {
-            return null;
-        });
 
         super.start(stage);
     }
@@ -41,7 +36,6 @@ public class ConfirmationPopupTest extends AbstractGUITest {
     @Override
     public void stop() throws Exception {
         mockedFileChooser.close();
-        mockedStatic.close();
         super.stop();
     }
 

@@ -58,9 +58,12 @@ public class ConfirmationPopupTest extends AbstractGUITest {
 
     @Test
     void testQuitReal(){
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#root");
         openImage();
         addFilter();
         quit();
+        verifyPopupElements();
         confirmOperation();
     }
 

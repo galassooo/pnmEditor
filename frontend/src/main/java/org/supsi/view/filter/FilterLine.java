@@ -82,7 +82,6 @@ public class FilterLine {
                     button.setGraphic(imageView);
 
                     button.setId(filterKey + "_line");
-                    System.out.println(button.getId());
                     button.setTooltip(new Tooltip(translationsModel.translate("ui_apply") + " " + translatedFilter));
                     button.disableProperty().bind(stateModel.canApplyFiltersProperty().not());
 

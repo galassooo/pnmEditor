@@ -113,7 +113,6 @@ public class DataAccessFactory {
      * @throws IllegalAccessException if the `getInstance` method throws an exception or is inaccessible
      */
     static Object getSingletonInstance(Class<?> clazz) throws IllegalAccessException {
-        System.out.println("CLASS: "+clazz.getName());
         try {
             Method getInstanceMethod = clazz.getDeclaredMethod("getInstance");
             if (!java.lang.reflect.Modifier.isPublic(getInstanceMethod.getModifiers())) {

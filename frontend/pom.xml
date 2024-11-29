@@ -107,6 +107,13 @@
             <version>4.0.18</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Logger, toglie warning x logger reflection -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

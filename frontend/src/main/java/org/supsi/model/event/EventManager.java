@@ -106,13 +106,10 @@ public class EventManager implements EventPublisher, EventSubscriber {
     @Override
     @SuppressWarnings("unchecked")
     public <T> void publish(T event) {
-        System.out.println("Publishing event: " + event.getClass().getSimpleName());
         List<EventHandler<?>> eventHandlers = handlers.getOrDefault(event.getClass(),
                 Collections.emptyList());
-        System.out.println("Found " + eventHandlers.size() + " handlers");
         eventHandlers.forEach(handler -> {
             try {
-                System.out.println("Handling event with: " + handler.getClass().getSimpleName());
                 ((EventHandler<T>) handler).handle(event);
             } catch (Exception e) {
                 System.err.println("Error handling view event: " + e.getMessage());

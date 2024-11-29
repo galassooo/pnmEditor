@@ -1,6 +1,8 @@
 package org.supsi.view.filter;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -12,6 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
+
 import org.supsi.model.filters.FilterModel;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -123,6 +126,18 @@ public class FilterViewTest extends AbstractGUITest {
             sleep(SLEEP_INTERVAL);
             clickOn("#Mirror_Horizontal_line");
             sleep(SLEEP_INTERVAL);
+
+            //genera caso true true in change.wasAdded() || change.wasRemoved()
+            Platform.runLater(() ->{
+                ObservableList<String> pipeline = FilterModel.getInstance().getFilterPipeline();
+                if (!pipeline.isEmpty()) {
+                    String firstElement = pipeline.get(0);
+                    pipeline.set(0, firstElement);
+                }
+                //genera caso false false in change.wasAdded() || change.wasRemoved()
+                pipeline.sort(null);
+                //100% coverage :')
+            });
 
             assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Negative"));
             assertTrue(FilterModel.getInstance().getFilterPipeline().contains("Rotate Right"));

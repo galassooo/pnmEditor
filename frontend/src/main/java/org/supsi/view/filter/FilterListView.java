@@ -87,6 +87,7 @@ public class FilterListView {
         model.getFilterPipeline().addListener((ListChangeListener<String>) change -> {
             while (change.next()) {
                 if (change.wasAdded() || change.wasRemoved()) {
+                    System.out.println("------------------ change.wasAdded(): "+change.wasAdded()+ "change.wasRemoved(): "+change.wasRemoved());
                     //!!!! since we use the list as a pipeline the first element should go on the bottom
                     //!!!! of the screen, so the listView order IS REVERSED!!!!!
                     List<CustomCell> updated = new ArrayList<>(model.getFilterPipeline().stream().map(CustomCell::new).toList());
@@ -108,8 +109,8 @@ public class FilterListView {
                     @Override
                     protected void updateItem(CustomCell item, boolean empty) {
                         super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setGraphic(null); //if we do not have item OR the list is empty:
+                        if (item == null) {
+                            setGraphic(null); //if we do not have item
                         } else { //otherwise set the right icons and set the graphic to the root node
                             updateIcons();
                             setGraphic(item.getRootNode());

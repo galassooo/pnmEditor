@@ -111,25 +111,6 @@ public class PreferencesPopupTest extends AbstractGUITest {
 
 class PreferencesPopupResetTest extends PreferencesPopupTest {
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        mockedFileChooser = mockConstruction(FileChooser.class,
-                (mock, context) -> {
-                    File testFile = new File(getClass().getResource("/image.ppm").getFile());
-
-
-                    when(mock.showOpenDialog(any())).thenReturn(testFile);
-                    when(mock.showSaveDialog(any())).thenReturn(testFile);
-                });
-        super.start(stage);
-    }
-
-    @Override
-    public void stop() throws Exception {
-        mockedFileChooser.close();
-        super.stop();
-    }
-
     @Test
     public void walkThrough() {
         WaitForAsyncUtils.waitForFxEvents();

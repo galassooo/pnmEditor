@@ -24,11 +24,9 @@ public class MainFxTest extends ApplicationTest {
 
     @BeforeAll
     public static void setupSpec() {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("java.awt.headless", "true");
     }
 
     public void start(final Stage stage) throws Exception {
@@ -48,11 +46,9 @@ class MainFXMissingResourcesTest extends ApplicationTest {
 
     @BeforeAll
     public static void setupSpec() {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("java.awt.headless", "true");
     }
 
     public void start(final Stage stage) throws Exception {
@@ -76,11 +72,9 @@ class MainFXMissingInfoColTest extends ApplicationTest {
 
     @BeforeAll
     public static void setupSpec() {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("java.awt.headless", "true");
     }
 
     public void start(final Stage stage) throws Exception {
@@ -136,11 +130,9 @@ class MainFxCloseRequestTest extends ApplicationTest {
 
     @BeforeAll
     public static void setupSpec() {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Override

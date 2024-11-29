@@ -24,17 +24,9 @@ abstract public class AbstractGUITest extends ApplicationTest {
 
     @BeforeAll
     public static void setupSpec() {
-        if (Boolean.getBoolean("headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
-
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("java.awt.headless", "true");
-        }
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("java.awt.headless", "true");
     }
 
     protected void step(final String step, final Runnable runnable) {

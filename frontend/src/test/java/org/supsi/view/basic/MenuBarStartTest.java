@@ -51,13 +51,22 @@ public class MenuBarStartTest extends AbstractGUITest {
         clickOn("#root");
         testMainScene();
         testFileMenuItems();
-        testEditMenuPreferences();
-        testHelpMenuAbout();
         testExportMenu();
         testFilterMenu();
         testFilterLine();
     }
 
+    @Test
+    public void testPrefPopup(){
+        clickOn("#root");
+        testEditMenuPreferences();
+    }
+
+    @Test
+    public void testAboutPopup(){
+        clickOn("#root");
+        testHelpMenuAbout();
+    }
     private void testMainScene() {
         step("menu bar structure", () -> {
             verifyThat("#fileMenu", isVisible());
@@ -89,7 +98,7 @@ public class MenuBarStartTest extends AbstractGUITest {
     private void testEditMenuPreferences() {
         step("preferences menu item", () -> {
             sleep(SLEEP_INTERVAL);
-            moveTo("#edit");
+            clickOn("#edit");
             sleep(SLEEP_INTERVAL);
 
             Node menuContent = lookup("#preferences").query();

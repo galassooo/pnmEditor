@@ -90,7 +90,6 @@ public class MenuBarStartTest extends AbstractGUITest {
             assertFalse(closeMenuItem.isDisable());
             assertTrue(saveMenuItem.isDisable());
             assertTrue(saveAsMenuItem.isDisable());
-
         });
     }
 
@@ -136,6 +135,8 @@ public class MenuBarStartTest extends AbstractGUITest {
     }
     private void testExportMenu(){
         step("export menu", () -> {
+            sleep(SLEEP_INTERVAL);
+            clickOn("#root");
             sleep(SLEEP_INTERVAL);
             clickOn("#exportMenu");
             sleep(SLEEP_INTERVAL);

@@ -51,6 +51,19 @@ public class PreferencesPopupTest extends AbstractGUITest {
         savePreferences();
     }
 
+    @Test
+    public void resetProp() {
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#root");
+
+        //without language
+        openPreferences();
+        verifyComponents();
+        savePreferences();
+    }
+
+
     protected void openPreferences() {
         step("preferences menu item", () -> {
             sleep(SLEEP_INTERVAL);
@@ -101,20 +114,5 @@ public class PreferencesPopupTest extends AbstractGUITest {
 
             sleep(SLEEP_INTERVAL);
         });
-    }
-}
-
-class PreferencesPopupResetTest extends PreferencesPopupTest {
-
-    @Test
-    public void walkThrough() {
-        WaitForAsyncUtils.waitForFxEvents();
-
-        clickOn("#root");
-
-        //without language
-        openPreferences();
-        verifyComponents();
-        savePreferences();
     }
 }

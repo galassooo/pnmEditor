@@ -157,7 +157,7 @@ class MainFxCloseRequestTest extends ApplicationTest {
 
     @Test
     void testCloseRequest() {
-        // Aspetta che la finestra sia completamente caricata
+        WaitForAsyncUtils.waitForFxEvents();
         clickOn("#root");
 
         Platform.runLater(() -> {

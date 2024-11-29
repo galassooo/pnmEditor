@@ -54,6 +54,12 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         quit();
         verifyPopupElements();
         cancelOperation();
+    }
+
+    @Test
+    void testQuitReal(){
+        openImage();
+        addFilter();
         quit();
         confirmOperation();
     }

@@ -53,8 +53,6 @@ public class ErrorPopUpTest extends AbstractGUITest {
         openImage();
         verifyPopUp();
         closePopup();
-        openImage();
-
     }
 
     private void openImage() {

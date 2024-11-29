@@ -56,7 +56,7 @@ public class PreferencesPopupTest extends AbstractGUITest {
         savePreferences();
     }
 
-    private void openPreferences() {
+    protected void openPreferences() {
         step("preferences menu item", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#edit");
@@ -73,7 +73,7 @@ public class PreferencesPopupTest extends AbstractGUITest {
         });
     }
 
-    private void verifyComponents(){
+    protected void verifyComponents(){
         clickOn("#warningCB");
         sleep(SLEEP_INTERVAL);
 
@@ -99,12 +99,46 @@ public class PreferencesPopupTest extends AbstractGUITest {
         });
     }
 
-    private void savePreferences() {
+    protected void savePreferences() {
         step("close preferences menu", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#preferencesPopupSave");
 
             sleep(SLEEP_INTERVAL);
         });
+    }
+}
+
+class PreferencesPopupResetTest extends PreferencesPopupTest {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        mockedFileChooser = mockConstruction(FileChooser.class,
+                (mock, context) -> {
+                    File testFile = new File(getClass().getResource("/image.ppm").getFile());
+
+
+                    when(mock.showOpenDialog(any())).thenReturn(testFile);
+                    when(mock.showSaveDialog(any())).thenReturn(testFile);
+                });
+        super.start(stage);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        mockedFileChooser.close();
+        super.stop();
+    }
+
+    @Test
+    public void walkThrough() {
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#root");
+
+        //without language
+        openPreferences();
+        verifyComponents();
+        savePreferences();
     }
 }

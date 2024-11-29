@@ -50,18 +50,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         cancelOperation();
     }
 
-    @Test
-    void testQuitReal(){
-        WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#root");
-        openImage();
-        addFilter();
-        quit();
-        verifyPopupElements();
-        confirmOperation();
-    }
-
-    private void verifyPopupElements() {
+    protected void verifyPopupElements() {
         step("verify confirmation popup elements", () -> {
 
             verifyThat("#confirmTitle", isVisible());
@@ -70,7 +59,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         });
     }
 
-    private void openImage() {
+    protected void openImage() {
         step("menu file click", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#fileMenu");
@@ -80,7 +69,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         });
     }
 
-    private void addFilter(){
+    protected void addFilter(){
         step("add filter", () ->{
             sleep(SLEEP_INTERVAL);
             clickOn("#Negative_line");
@@ -88,7 +77,7 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         });
     }
 
-    private void quit(){
+    protected void quit(){
         step("quit", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#fileMenu");
@@ -105,10 +94,24 @@ public class ConfirmationPopupTest extends AbstractGUITest {
         });
     }
 
-    private void confirmOperation(){
+    protected void confirmOperation(){
         step("confirm operation", () -> {
             sleep(SLEEP_INTERVAL);
             clickOn("#confirmButton");
         });
     }
+}
+
+class ConfirmationPopupConfirmTest extends ConfirmationPopupTest{
+    @Test
+    void walkthrough(){
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#root");
+        openImage();
+        addFilter();
+        quit();
+        verifyPopupElements();
+        confirmOperation();
+    }
+
 }

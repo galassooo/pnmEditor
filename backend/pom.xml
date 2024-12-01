@@ -15,7 +15,7 @@
     </properties>
     <dependencies>
 
-        <!-- mockare i test -->
+        <!-- Test mocking -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -35,14 +35,6 @@
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.28.0-GA</version>
-        </dependency>
-
-        <!-- annotation util -->
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.1.0</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- Reflections  -->
@@ -68,6 +60,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Plugin -->
         <dependency>
             <groupId>ch.supsi</groupId>
             <artifactId>plugin</artifactId>
@@ -78,6 +71,9 @@
 
     <build>
         <plugins>
+            <!--
+            Plugin per l'esecuzione di comandi PRIMA della compilazione (init phase)
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -91,6 +87,7 @@
                         </goals>
                         <configuration>
                             <target>
+                                <!-- Apro i moduli del compilatore per permettere al plugin di lavorare -->
                                 <exec executable="sh">
                                     <arg value="-c"/>
                                     <arg value="export MAVEN_OPTS='--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
@@ -111,6 +108,10 @@
                 </executions>
             </plugin>
             <plugin>
+                <!--
+                Compiler plugin, needed in order to compile with custom plugin
+                Careful: specify path processor
+                -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -130,7 +131,9 @@
                 </configuration>
             </plugin>
 
-
+            <!--
+            Test plugin, apre i moduli del compilatore
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -156,6 +159,9 @@
                 </configuration>
             </plugin>
 
+            <!--
+            Coverage plugin
+            -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -190,6 +196,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- site (javadoc) -->
     <reporting>
         <plugins>
             <plugin>

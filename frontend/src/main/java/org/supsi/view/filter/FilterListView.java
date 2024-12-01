@@ -87,7 +87,6 @@ public class FilterListView {
         model.getFilterPipeline().addListener((ListChangeListener<String>) change -> {
             while (change.next()) {
                 if (change.wasAdded() || change.wasRemoved()) {
-                    System.out.println("------------------ change.wasAdded(): "+change.wasAdded()+ "change.wasRemoved(): "+change.wasRemoved());
                     //!!!! since we use the list as a pipeline the first element should go on the bottom
                     //!!!! of the screen, so the listView order IS REVERSED!!!!!
                     List<CustomCell> updated = new ArrayList<>(model.getFilterPipeline().stream().map(CustomCell::new).toList());

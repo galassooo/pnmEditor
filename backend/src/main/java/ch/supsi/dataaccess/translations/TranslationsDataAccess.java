@@ -1,7 +1,6 @@
 package ch.supsi.dataaccess.translations;
 
 import ch.supsi.business.translations.TranslationsDataAccessInterface;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -103,7 +102,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      *
      * @return a {@link Properties} object representing the supported language tags
      */
-    private @NotNull Properties loadSupportedLanguageTags() {
+    private Properties loadSupportedLanguageTags() {
         Properties supportedLanguageTags = new Properties();
         //errore bytecode non preciso del tool di coverage intellij -> jacoco lo legge come 100%
         try (InputStream supportedLanguageTagsStream = getResourceAsStream(SUPPORTED_LANGUAGES_PROPERTIES)) {
@@ -122,7 +121,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @param locale the locale to load resource bundles for
      * @return a {@link List} of {@link ResourceBundle} objects for the specified locale
      */
-    private @NotNull List<ResourceBundle> getResourceBundlesForLocale(Locale locale, String pathToResources) {
+    private List<ResourceBundle> getResourceBundlesForLocale(Locale locale, String pathToResources) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
 
         resourceBundles.addAll(loadBackendResources(locale, pathToResources));
@@ -137,7 +136,6 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @param locale the locale to load backend resources for
      * @return a {@link List} of {@link ResourceBundle} objects from the backend module
      */
-    @NotNull
     protected List<ResourceBundle> loadBackendResources(Locale locale, String pathToResources) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
         PathMatchingResourcePatternResolver resolver = createResourcePatternResolver();
@@ -168,7 +166,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @param locale the locale to load frontend resources for
      * @return a {@link List} of {@link ResourceBundle} objects from the frontend module
      */
-    private @NotNull List<ResourceBundle> loadFrontendResources(Locale locale) {
+    private List<ResourceBundle> loadFrontendResources(Locale locale) {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
         Optional<Module> frontendModule = ModuleLayer.boot().findModule("frontend");
 
@@ -239,7 +237,7 @@ public class TranslationsDataAccess implements TranslationsDataAccessInterface {
      * @return a {@link List} of ResourceBundle objects for the fallback locale
      */
     @SuppressWarnings("all")
-    private @NotNull List<ResourceBundle> handleMissingResource(@NotNull Locale invalidLocale, @NotNull Locale fallbackLocale, String pathToResources) {
+    private List<ResourceBundle> handleMissingResource( Locale invalidLocale, Locale fallbackLocale, String pathToResources) {
         System.err.printf("Invalid locale: %s. Loading new locale: %s\n", invalidLocale, fallbackLocale);
         return getResourceBundlesForLocale(fallbackLocale, pathToResources);
     }

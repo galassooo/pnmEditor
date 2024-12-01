@@ -3,7 +3,6 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.application.image.WritableImage;
 import ch.supsi.business.image.*;
 import ch.supsi.business.strategy.ConvertStrategy;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
      * @return a 2D array of pixels
      * @throws IOException if an error occurs while reading the data
      */
-    protected abstract long[] @NotNull [] processBinary(InputStream is) throws IOException;
+    protected abstract long[] [] processBinary(InputStream is) throws IOException;
 
     /**
      * Processes ASCII PNM data. To be implemented by subclasses.
@@ -51,7 +50,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
      * @return a 2D array of pixels
      * @throws IOException if an error occurs while reading the data
      */
-    protected abstract long[] @NotNull [] processAscii(InputStream is) throws IOException;
+    protected abstract long[] [] processAscii(InputStream is) throws IOException;
 
     /**
      * Writes ASCII pixel data to the output stream. To be implemented by subclasses.
@@ -89,7 +88,7 @@ public abstract sealed class PNMDataAccess implements ImageDataAccess
      * @throws IOException if the file is not found or there is an error reading it
      */
     @Override
-    public final @NotNull WritableImage read(String path) throws IOException {
+    public final WritableImage read(String path) throws IOException {
         try (InputStream is = new FileInputStream(path)) { //da cambiare in FIS
             readHeader(is);
             long[][] processedMatrix = isBinaryFormat(format) ? processBinary(is) : processAscii(is);

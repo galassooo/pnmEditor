@@ -3,7 +3,6 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.SingleChannel;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +42,7 @@ public final class PGMDataAccess extends PNMWithMaxValueDataAccess {
      * @return a 2D array of pixels where each pixel contains a grayscale value
      * @throws IOException if an error occurs while reading the binary data
      */
-    protected long[] @NotNull [] readBinary(InputStream is) throws IOException {
+    protected long[]  [] readBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
 
         //loop on pixels

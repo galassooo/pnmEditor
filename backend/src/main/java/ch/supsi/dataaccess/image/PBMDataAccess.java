@@ -3,7 +3,6 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.SingleBit;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +44,7 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @throws IOException if the input stream contains insufficient data or if there's an error while reading
      */
     @Override
-    protected long[] @NotNull [] processBinary(InputStream is) throws IOException {
+    protected long[] [] processBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         int bytesPerRow = (width + 7) / 8;
 
@@ -74,7 +73,7 @@ public final class PBMDataAccess extends PNMDataAccess {
      * @throws IOException if the input stream contains invalid or insufficient data
      */
     @Override
-    protected long[] @NotNull [] processAscii(InputStream is) throws IOException {
+    protected long[] [] processAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {

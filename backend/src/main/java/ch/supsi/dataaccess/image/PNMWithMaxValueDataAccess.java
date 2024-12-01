@@ -1,6 +1,5 @@
 package ch.supsi.dataaccess.image;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +28,7 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
      * @throws IOException if an error occurs while reading the data
      */
     @Override
-    protected final long[] @NotNull [] processBinary(InputStream is) throws IOException {
+    protected final long[] [] processBinary(InputStream is) throws IOException {
         readMaxValue(is);
         return readBinary(is);
     }
@@ -42,7 +41,7 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
      * @throws IOException if an error occurs while reading the data
      */
     @Override
-    protected final long[] @NotNull [] processAscii(InputStream is) throws IOException {
+    protected final long[]  [] processAscii(InputStream is) throws IOException {
         readMaxValue(is);
         return readAscii(is);
     }
@@ -83,7 +82,7 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
      * @return a 2D array of pixels
      * @throws IOException if an error occurs while reading the data
      */
-    protected abstract long[] @NotNull [] readBinary(InputStream is) throws IOException;
+    protected abstract long[] [] readBinary(InputStream is) throws IOException;
 
     /**
      * Reads ASCII pixel data after the header. To be implemented by subclasses.
@@ -92,7 +91,7 @@ public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess
      * @return a 2D array of pixels
      * @throws IOException if an error occurs while reading the data
      */
-    protected abstract long[] @NotNull [] readAscii(InputStream is) throws IOException;
+    protected abstract long[] [] readAscii(InputStream is) throws IOException;
 
     /**
      * Writes binary pixel data. To be implemented by subclasses.

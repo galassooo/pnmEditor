@@ -3,7 +3,6 @@ package ch.supsi.dataaccess.image;
 import ch.supsi.annotation.ImageAccess;
 import ch.supsi.business.strategy.ConvertStrategy;
 import ch.supsi.business.strategy.ThreeChannel;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +45,7 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
      * @throws IOException if an error occurs while reading the binary data
      */
     @Override
-    protected long[] @NotNull [] readBinary(InputStream is) throws IOException {
+    protected long[] [] readBinary(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -97,7 +96,7 @@ public final class PPMDataAccess extends PNMWithMaxValueDataAccess {
      * @throws IOException if an error occurs while reading the ASCII data
      */
     @Override
-    protected long[] @NotNull [] readAscii(InputStream is) throws IOException {
+    protected long[] [] readAscii(InputStream is) throws IOException {
         long[][] pixelMatrix = new long[height][width];
         try (Scanner scanner = new Scanner(is)) {
             for (int y = 0; y < height; y++) {

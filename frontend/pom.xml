@@ -18,46 +18,45 @@
         <javafx.module.path>${project.basedir}/target/dependency</javafx.module.path>
     </properties>
 
-
     <dependencies>
+
+        <!-- Java FX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+
+        <!-- Java FX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+
+        <!-- Java FX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+
+        <!-- Java FX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-imaging</artifactId>
-            <version>1.0.0-alpha5</version>
-        </dependency>
+
+        <!-- Backend module -->
         <dependency>
             <groupId>org.supsi</groupId>
             <artifactId>backend</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>6.1.14</version>
-            <scope>compile</scope>
-        </dependency>
 
+        <!-- Testing Junit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -65,6 +64,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Testing Swing -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
@@ -72,14 +72,15 @@
             <scope>test</scope>
         </dependency>
 
-
+        <!-- Testing Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- per extends with mockito in tests-->
+
+        <!-- Testing Mockito extension (@ExtendsWith()) -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -87,7 +88,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- testfx -->
+        <!-- Testing TestFX -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
@@ -95,12 +96,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Testing TestFX Monocle -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>openjfx-monocle</artifactId>
             <version>jdk-12.0.1+2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Testing TestFX Junit -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
@@ -108,7 +112,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Logger, toglie warning x logger reflection -->
+        <!-- Logger (necessary for Reflection transitive dependency) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -191,7 +195,6 @@
             </plugin>
 
             <!--plugin per parsare data  -->
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -212,7 +215,6 @@
             </plugin>
 
             <!--plugin per creare jar -->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -246,7 +248,6 @@
             </plugin>
 
             <!--plugin per parsare le risorse nel build.properties-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -283,6 +284,7 @@
                 </executions>
             </plugin>
 
+            <!--plugin per test -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -297,6 +299,7 @@
                 </configuration>
             </plugin>
 
+            <!--plugin per coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -329,6 +332,7 @@
         </developer>
     </developers>
 
+    <!--plugins for site (javadoc) -->
     <reporting>
         <plugins>
             <plugin>

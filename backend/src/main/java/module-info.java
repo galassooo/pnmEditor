@@ -18,7 +18,6 @@
 
 module backend {
     requires jsr305;
-    requires org.jetbrains.annotations;
     requires org.reflections;
     requires spring.core;
     requires spring.context;

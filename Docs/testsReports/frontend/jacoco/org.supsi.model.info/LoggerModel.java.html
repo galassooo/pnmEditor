@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoggerModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.info</a> &gt; <span class="el_source">LoggerModel.java</span></div><h1>LoggerModel.java</h1><pre class="source lang-java linenums">package org.supsi.model.info;
+
+import ch.supsi.application.translations.TranslationsApplication;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+/**
+ * Represents the logging model for managing log entries of various types.
+ * Allows adding logs based on their type and controlling the visibility of each log type.
+ *
+ * @see LogEntry
+ */
+public class LoggerModel implements ILoggerModel {
+
+    private static LoggerModel myself;
+    private final ObservableList&lt;LogEntry&gt; logs;
+    private final TranslationsApplication translationsApp;
+
+<span class="fc" id="L19">    private boolean showDebug = false;</span>
+<span class="fc" id="L20">    private boolean showInfo = false;</span>
+<span class="fc" id="L21">    private boolean showError = false;</span>
+<span class="fc" id="L22">    private boolean showWarning = false;</span>
+
+    /**
+     * Constructs a new {@code LoggerModel} instance.
+     * Initializes the log storage and retrieves the translations application.
+     */
+<span class="fc" id="L28">    protected LoggerModel() {</span>
+<span class="fc" id="L29">        logs = FXCollections.observableArrayList();</span>
+<span class="fc" id="L30">        translationsApp = TranslationsApplication.getInstance();</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Retrieves the singleton instance of this class.
+     *
+     * @return the singleton instance of {@code LoggerModel}
+     */
+    public static LoggerModel getInstance(){
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if(myself == null){</span>
+<span class="fc" id="L40">            myself = new LoggerModel();</span>
+        }
+<span class="fc" id="L42">        return myself;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(){
+<span class="fc" id="L50">        logs.clear();</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addInfo(String info){
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if(showInfo){</span>
+<span class="fc" id="L59">            logs.add(new LogEntry(LogEntry.LogType.INFO, translationsApp.translate(info).orElse(&quot;N/A&quot;)));</span>
+        }
+
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addError(String error){
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if(showError){</span>
+<span class="fc" id="L70">            logs.add(new LogEntry(LogEntry.LogType.ERROR, translationsApp.translate(error).orElse(&quot;N/A&quot;)));</span>
+        }
+
+<span class="fc" id="L73">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addWarning(String warning){
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if(showWarning){</span>
+<span class="fc" id="L81">            logs.add(new LogEntry(LogEntry.LogType.WARNING, translationsApp.translate(warning).orElse(&quot;N/A&quot;)));</span>
+        }
+
+<span class="fc" id="L84">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addDebug(String debug){
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if(showDebug){</span>
+<span class="fc" id="L92">            logs.add(new LogEntry(LogEntry.LogType.DEBUG, translationsApp.translate(debug).orElse(&quot;N/A&quot;)));</span>
+        }
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList&lt;LogEntry&gt; getLogs() {
+<span class="fc" id="L101">        return logs;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setShowDebug(boolean showDebug) {
+<span class="fc" id="L109">        this.showDebug = showDebug;</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setShowInfo(boolean showInfo) {
+<span class="fc" id="L117">        this.showInfo = showInfo;</span>
+<span class="fc" id="L118">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setShowError(boolean showError) {
+<span class="fc" id="L125">        this.showError = showError;</span>
+<span class="fc" id="L126">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setShowWarning(boolean showWarning) {
+<span class="fc" id="L133">        this.showWarning = showWarning;</span>
+<span class="fc" id="L134">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

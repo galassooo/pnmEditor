@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomCell.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.filter</a> &gt; <span class="el_source">CustomCell.java</span></div><h1>CustomCell.java</h1><pre class="source lang-java linenums">package org.supsi.view.filter;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+
+import java.util.Objects;
+
+/**
+ * A specialized cell component for displaying filter items in a ListView with custom visual elements.
+ * Each cell represents a filter in the pipeline and includes directional arrows indicating filter flow,
+ * a label for the filter name, and interactive elements for user manipulation.
+ *
+ * &lt;p&gt;Visual Components:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Direction arrow - Indicates filter position and flow in the pipeline&lt;/li&gt;
+ *   &lt;li&gt;Filter label - Displays the filter name&lt;/li&gt;
+ *   &lt;li&gt;Options icon - Provides access to additional actions&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Key features:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Unique identifier system for reliable cell tracking during drag operations&lt;/li&gt;
+ *   &lt;li&gt;Configurable layout with consistent spacing and padding&lt;/li&gt;
+ *   &lt;li&gt;Dynamic arrow indicators that update based on cell position&lt;/li&gt;
+ *   &lt;li&gt;Support for right-aligned additional options&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Layout Structure:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Root: StackPane containing overlaid horizontal layouts&lt;/li&gt;
+ *   &lt;li&gt;Primary HBox: Arrow icon and filter label&lt;/li&gt;
+ *   &lt;li&gt;Secondary HBox: Right-aligned options icon&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;The class uses a static ID counter to ensure each cell instance has a unique
+ * identifier, which is crucial for drag-and-drop operations and cell state management.
+ *
+ * &lt;p&gt;Arrow icons are dynamically updated based on the cell's position in the list:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Single arrow for lone items&lt;/li&gt;
+ *   &lt;li&gt;Top arrow for first item&lt;/li&gt;
+ *   &lt;li&gt;Middle arrow for intermediate items&lt;/li&gt;
+ *   &lt;li&gt;Bottom arrow for last item&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see FilterListView
+ */
+
+public class CustomCell {
+
+    private static int idCnt;
+    private final Label label;
+    private final ImageView arrowIcon;
+    private final int id;
+    private final StackPane stackPane;
+
+    static {
+<span class="fc" id="L64">        idCnt = 0;</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * constructor that creates a CustomCell with specified text.
+     *
+     * @param text The text to display in the cell label.
+     */
+    public CustomCell( String text) {
+<span class="fc" id="L73">        this();  //calls the private no args constructor</span>
+<span class="fc" id="L74">        label.setText(text);</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * protected constructor for internal setup, initializing the label,
+     * arrow icon, and layout structure.
+     */
+<span class="fc" id="L81">    protected CustomCell() {</span>
+<span class="fc" id="L82">        label = new Label();</span>
+<span class="fc" id="L83">        stackPane = new StackPane();</span>
+<span class="fc" id="L84">        arrowIcon = new ImageView();</span>
+
+        // horizontal box containing arrow icon and label
+<span class="fc" id="L87">        HBox hbox = new HBox();</span>
+<span class="fc" id="L88">        hbox.setSpacing(10);</span>
+<span class="fc" id="L89">        id = idCnt++;  // assigns a unique ID to this cell instance</span>
+<span class="fc" id="L90">        arrowIcon.setFitWidth(16);</span>
+<span class="fc" id="L91">        arrowIcon.setFitHeight(16);</span>
+
+        // More options icon setup
+<span class="fc" id="L94">        ImageView moreOptionsIcon = new ImageView(new Image(</span>
+<span class="fc" id="L95">                Objects.requireNonNull(getClass().getResourceAsStream(&quot;/images/listCell/img1.png&quot;))</span>
+        ));
+<span class="fc" id="L97">        moreOptionsIcon.setFitWidth(16);</span>
+<span class="fc" id="L98">        moreOptionsIcon.setFitHeight(16);</span>
+
+        // Horizontal box for more options icon, aligned to the right
+<span class="fc" id="L101">        HBox hbox2 = new HBox();</span>
+<span class="fc" id="L102">        hbox2.setSpacing(10);</span>
+<span class="fc" id="L103">        hbox2.setAlignment(Pos.CENTER_RIGHT);</span>
+<span class="fc" id="L104">        hbox2.setPadding(new Insets(0, 20, 0, 0));  // right padding</span>
+<span class="fc" id="L105">        hbox2.getChildren().add(moreOptionsIcon);</span>
+
+        // arrow icon and label set to the primary HBox layout
+<span class="fc" id="L108">        hbox.getChildren().addAll(arrowIcon, label);</span>
+
+        //adds both HBoxes to the StackPane, with hbox2 positioned to the right
+<span class="fc" id="L111">        stackPane.getChildren().addAll(hbox, hbox2);</span>
+<span class="fc" id="L112">    }</span>
+
+
+    /**
+     * gets the root node of the CustomCell, which includes the layout structure and
+     * graphical elements.
+     *
+     * @return The StackPane containing the cell's UI components.
+     */
+    public Node getRootNode() {
+<span class="fc" id="L122">        return stackPane;</span>
+    }
+
+    public int getId() {
+<span class="fc" id="L126">        return id;</span>
+    }
+
+    public String getText() {
+<span class="fc" id="L130">        return label.getText();</span>
+    }
+
+    public void setArrowImage(Image image) {
+<span class="fc" id="L134">        arrowIcon.setImage(image);</span>
+<span class="fc" id="L135">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

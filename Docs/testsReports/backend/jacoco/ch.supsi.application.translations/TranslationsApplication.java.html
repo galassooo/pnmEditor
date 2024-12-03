@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranslationsApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.application.translations</a> &gt; <span class="el_source">TranslationsApplication.java</span></div><h1>TranslationsApplication.java</h1><pre class="source lang-java linenums">package ch.supsi.application.translations;
+
+import ch.supsi.application.preferences.PreferencesBusinessInterface;
+import ch.supsi.business.preferences.PreferencesBusiness;
+import ch.supsi.business.translations.TranslationBusiness;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+/**
+ * Provides an application-level interface for managing translations and language settings.
+ * Implements the Singleton pattern to ensure a single instance is used throughout the application.
+ */
+public class TranslationsApplication {
+
+    private static TranslationsApplication myself;
+    private final TranslationsBusinessInterface translationsModel;
+
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     * Initializes the translation model and sets the current language based on user preferences.
+     */
+<span class="fc" id="L25">    private TranslationsApplication() {</span>
+<span class="fc" id="L26">        PreferencesBusinessInterface preferencesModel = PreferencesBusiness.getInstance();</span>
+<span class="fc" id="L27">        this.translationsModel = TranslationBusiness.getInstance();</span>
+
+        // Set the current language based on user preferences
+<span class="fc" id="L30">        String currentLanguage = preferencesModel.getCurrentLanguage().orElse(&quot;N/A&quot;);</span>
+<span class="fc" id="L31">        this.translationsModel.changeLanguage(currentLanguage);</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Retrieves the Singleton instance of the {@link TranslationsApplication}.
+     *
+     * @return the Singleton instance of this class
+     */
+    public static TranslationsApplication getInstance() {
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L41">            myself = new TranslationsApplication();</span>
+        }
+<span class="fc" id="L43">        return myself;</span>
+    }
+
+    /**
+     * Retrieves the translation associated with the specified key.
+     * Delegates the operation to the translations business model.
+     *
+     * @param key the key associated with the desired translation
+     * @return an {@link Optional} containing the translation if found, or empty if not found
+     */
+    public Optional&lt;String&gt; translate(String key) {
+<span class="fc" id="L54">        return this.translationsModel.translate(key);</span>
+    }
+
+    /**
+     * Retrieves a list of all supported languages in the application.
+     * Delegates the operation to the translations business model.
+     *
+     * @return a {@link List} of strings representing the supported languages
+     */
+    public List&lt;String&gt; getSupportedLanguages() {
+<span class="fc" id="L64">        return this.translationsModel.getSupportedLanguages();</span>
+    }
+
+    /**
+     * Retrieves the UI translation bundle for the specified locale.
+     * Delegates the operation to the translations business model.
+     *
+     * @param locale the selected locale for which the resource bundle is required
+     * @return an {@link Optional} containing the {@link ResourceBundle} if found, or empty if not found
+     */
+    public Optional&lt;ResourceBundle&gt; getTranslationBundle(Locale locale) {
+<span class="fc" id="L75">        return this.translationsModel.getUIResourceBundle(locale);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

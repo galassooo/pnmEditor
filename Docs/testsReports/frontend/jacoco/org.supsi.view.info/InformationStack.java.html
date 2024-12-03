@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InformationStack.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.info</a> &gt; <span class="el_source">InformationStack.java</span></div><h1>InformationStack.java</h1><pre class="source lang-java linenums">package org.supsi.view.info;
+
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LogEntry;
+import org.supsi.model.info.LoggerModel;
+import javafx.collections.ListChangeListener;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.HBox;
+import javafx.util.Callback;
+
+/**
+ * Represents the information stack view that displays a list of log entries.
+ * The view listens for updates in the log model and dynamically updates the displayed list.
+ * Each log entry is styled based on its type.
+ */
+<span class="fc" id="L19">public class InformationStack {</span>
+
+    @FXML
+    private ListView&lt;LogEntry&gt; list;
+
+
+    /**
+     * Initializes the information stack view.
+     * Sets up the {@link ListView} to display log entries and listens for changes in the log model.
+     * Configures a custom cell factory for styling log entries based on their type.
+     */
+    @FXML
+    private void initialize() {
+<span class="fc" id="L32">        ILoggerModel model = LoggerModel.getInstance();</span>
+
+<span class="fc" id="L34">        model.getLogs().addListener((ListChangeListener&lt;LogEntry&gt;) change -&gt; {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            while (change.next()) {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">                if (change.wasAdded()) {</span>
+<span class="fc" id="L37">                    list.getItems().addAll(0, change.getAddedSubList());</span>
+                }
+            }
+<span class="fc" id="L40">        });</span>
+
+<span class="fc" id="L42">        list.setCellFactory(new Callback&lt;&gt;() {</span>
+            @Override
+            public ListCell&lt;LogEntry&gt; call(ListView&lt;LogEntry&gt; listView) {
+<span class="fc" id="L45">                return new ListCell&lt;&gt;() {</span>
+                    @Override
+                    protected void updateItem(LogEntry item, boolean empty) {
+<span class="fc" id="L48">                        super.updateItem(item, empty); //not null item, throws ex before this point</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                        if (empty) {</span>
+<span class="fc" id="L50">                            setText(null);</span>
+<span class="fc" id="L51">                            setGraphic(null);</span>
+                        } else {
+<span class="fc" id="L53">                            Label label = new Label(&quot;[&quot; + item.type().name() + &quot;] &quot;);</span>
+<span class="fc" id="L54">                            Label message = new Label(item.message());</span>
+
+                            // Imposta lo stile inline per il colore del testo usando hexColor
+<span class="fc" id="L57">                            label.setStyle(&quot;-fx-text-fill: &quot; + item.getHexColor() + &quot;;&quot;);</span>
+
+                            // Layout orizzontale con etichetta colorata e messaggio normale
+<span class="fc" id="L60">                            HBox hBox = new HBox(label, message);</span>
+<span class="fc" id="L61">                            setGraphic(hBox);</span>
+                        }
+<span class="fc" id="L63">                    }</span>
+                };
+            }
+        });
+<span class="fc" id="L67">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

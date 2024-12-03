@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.filter</a> &gt; <span class="el_source">FilterController.java</span></div><h1>FilterController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.filter;
+
+import org.supsi.view.filter.FilterEvent;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventSubscriber;
+import org.supsi.model.filters.FilterModel;
+import org.supsi.model.filters.IFilterModel;
+import org.supsi.model.image.ImageModel;
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+
+/**
+ * Controller class responsible for managing filters and handling filter-related events.
+ */
+public class FilterController {
+
+    private static FilterController myself;
+    private final IFilterModel model;
+    private final ILoggerModel loggerModel;
+
+    /**
+     * Constructs the controller and subscribes to filter-related events.
+     */
+<span class="fc" id="L24">    protected FilterController() {</span>
+<span class="fc" id="L25">        model = FilterModel.getInstance();</span>
+<span class="fc" id="L26">        loggerModel  = LoggerModel.getInstance();</span>
+
+<span class="fc" id="L28">        EventSubscriber subscriber = EventManager.getSubscriber();</span>
+<span class="fc" id="L29">        subscriber.subscribe(FilterEvent.FilterAddRequested.class,</span>
+                this::onFilterAdded);
+<span class="fc" id="L31">        subscriber.subscribe(FilterEvent.FilterMoveRequested.class,</span>
+                this::onFilterMoved);
+<span class="fc" id="L33">        subscriber.subscribe(FilterEvent.FilterExecutionRequested.class,</span>
+                this::onFiltersActivated);
+<span class="fc" id="L35">        subscriber.subscribe(FilterEvent.FilterRemoveRequested.class,</span>
+                this::onFilterRemoved);
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Returns the singleton instance of this controller.
+     *
+     * @return Singleton instance of {@link FilterController}.
+     */
+    public static FilterController getInstance(){
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if(myself == null){</span>
+<span class="fc" id="L46">            myself = new FilterController();</span>
+        }
+<span class="fc" id="L48">        return myself;</span>
+    }
+
+    /**
+     * Handles the event for adding a new filter to the top of the filter list.
+     *
+     * @param event Event containing the filter to be added.
+     */
+    public void onFilterAdded(FilterEvent.FilterAddRequested event) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(ImageModel.getInstance().getImageName() == null){</span>
+<span class="fc" id="L58">            loggerModel.addWarning(&quot;ui_no_image_added&quot;);</span>
+        }
+<span class="fc" id="L60">        loggerModel.addDebug(&quot;ui_filter_added&quot;);</span>
+<span class="fc" id="L61">        model.addFilterToPipeline(event.filterName());</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Handles the event for moving a filter in the filter list.
+     *
+     * @param event Event containing the source and destination indexes.
+     */
+    public void onFilterMoved(FilterEvent.FilterMoveRequested event) {
+<span class="fc" id="L70">        loggerModel.addDebug(&quot;ui_filter_moved&quot;);</span>
+<span class="fc" id="L71">        model.moveFilter(event.fromIndex(), event.toIndex());</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Handles the event for executing all filters in the pipeline.
+     *
+     * @param event Event triggering the execution of filters.
+     */
+    public void onFiltersActivated(FilterEvent.FilterExecutionRequested event) {
+<span class="fc" id="L80">        loggerModel.addInfo(&quot;ui_pipeline_processed&quot;);</span>
+<span class="fc" id="L81">        model.processFilters();</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Handles the event for removing a filter from the filter list.
+     *
+     * @param event Event containing the index of the filter to be removed.
+     */
+    public void onFilterRemoved(FilterEvent.FilterRemoveRequested event) {
+<span class="fc" id="L90">        loggerModel.addDebug(&quot;ui_filter_removed&quot;);</span>
+<span class="fc" id="L91">        model.removeFilter(event.index());</span>
+<span class="fc" id="L92">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

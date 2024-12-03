@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.filter</a> &gt; <span class="el_source">FilterManager.java</span></div><h1>FilterManager.java</h1><pre class="source lang-java linenums">package ch.supsi.business.filter;
+
+import ch.supsi.application.filters.FilterPipelineInterface;
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.filter.chain.FilterChainLink;
+import ch.supsi.business.filter.chain.command.FilterCommand;
+
+/**
+ * Manages a chain of filters applied to an image. Implements the Singleton pattern to ensure
+ * a single instance is used throughout the application. Filters are organized in a chain structure
+ * and can be executed sequentially on an image.
+ */
+public class FilterManager implements FilterPipelineInterface {
+
+    private static FilterManager instance;
+    private FilterChainLink pipeline;
+<span class="fc" id="L17">    private int size = 0;</span>
+
+<span class="fc" id="L19">    private FilterManager() {</span>
+<span class="fc" id="L20">    }</span>
+
+    /**
+     * Retrieves the Singleton instance of {@link FilterManager}.
+     *
+     * @return the Singleton instance
+     */
+    public static FilterManager getInstance() {
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L29">            instance = new FilterManager();</span>
+        }
+<span class="fc" id="L31">        return instance;</span>
+    }
+
+    /**
+     * Executes the entire filter pipeline on the given image.
+     * Clears the pipeline after execution.
+     *
+     * @param image the {@link WritableImage} to process
+     */
+    @Override
+    public void executePipeline(WritableImage image) {
+<span class="fc bfc" id="L42" title="All 4 branches covered.">        if (image == null || pipeline == null) return;</span>
+<span class="fc" id="L43">        pipeline.execute(image);</span>
+<span class="fc" id="L44">        pipeline = null;</span>
+<span class="fc" id="L45">        size = 0;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Adds a filter to the end of the pipeline.
+     *
+     * @param command the {@link FilterCommand} to add
+     */
+    @Override
+    public void addFilter(FilterCommand command) {
+<span class="fc" id="L55">        FilterChainLink link = new FilterChainLink(command);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (pipeline == null) {</span>
+<span class="fc" id="L57">            pipeline = link;</span>
+<span class="fc" id="L58">            size++;</span>
+        } else {
+<span class="fc" id="L60">            size++;</span>
+<span class="fc" id="L61">            FilterChainLink current = pipeline;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            while (current.getNext() != null) {</span>
+<span class="fc" id="L63">                current = current.getNext();</span>
+            }
+<span class="fc" id="L65">            current.setNext(link);</span>
+        }
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Adds a filter to a specific position in the pipeline.
+     *
+     * @param command the {@link FilterCommand} to add
+     * @param index   the position in the pipeline where the filter should be inserted
+     * @throws IndexOutOfBoundsException if the index is invalid
+     */
+    @Override
+    public void addFilter(FilterCommand command, int index) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (index &lt; 0) {</span>
+<span class="fc" id="L79">            throw new IndexOutOfBoundsException(&quot;invalid index&quot;);</span>
+        }
+
+<span class="fc" id="L82">        FilterChainLink newLink = new FilterChainLink(command);</span>
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (index == 0) {</span>
+<span class="fc" id="L85">            newLink.setNext(pipeline);</span>
+<span class="fc" id="L86">            pipeline = newLink;</span>
+<span class="fc" id="L87">            size++;</span>
+<span class="fc" id="L88">            return;</span>
+        }
+
+<span class="fc" id="L91">        FilterChainLink current = pipeline;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (int i = 0; i &lt; index - 1; i++) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (current == null) {</span>
+<span class="fc" id="L94">                throw new IndexOutOfBoundsException(&quot;invalid index&quot;);</span>
+            }
+<span class="fc" id="L96">            current = current.getNext();</span>
+        }
+
+<span class="fc" id="L99">        size++;</span>
+<span class="fc" id="L100">        newLink.setNext(current.getNext());</span>
+<span class="fc" id="L101">        current.setNext(newLink);</span>
+<span class="fc" id="L102">    }</span>
+
+    /**
+     * Removes a filter from a specific position in the pipeline.
+     *
+     * @param index the position of the filter to remove
+     * @return the name of the removed filter
+     * @throws IndexOutOfBoundsException if the index is invalid
+     */
+    @Override
+    public String remove(int index) {
+<span class="fc bfc" id="L113" title="All 4 branches covered.">        if (index &lt; 0 || pipeline == null) {</span>
+<span class="fc" id="L114">            throw new IndexOutOfBoundsException(&quot;invalid index&quot;);</span>
+        }
+
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (index == 0) {</span>
+<span class="fc" id="L118">            String name = pipeline.getName();</span>
+<span class="fc" id="L119">            pipeline = pipeline.getNext();</span>
+<span class="fc" id="L120">            size--;</span>
+<span class="fc" id="L121">            return name;</span>
+        }
+
+<span class="fc" id="L124">        FilterChainLink current = pipeline;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (int i = 0; i &lt; index - 1; i++) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (current.getNext() == null) {</span>
+<span class="fc" id="L127">                throw new IndexOutOfBoundsException(&quot;invalid index&quot;);</span>
+            }
+<span class="fc" id="L129">            current = current.getNext();</span>
+        }
+
+<span class="fc" id="L132">        String name = current.getNext().getName();</span>
+<span class="fc" id="L133">        current.setNext(current.getNext().getNext());</span>
+<span class="fc" id="L134">        size--;</span>
+<span class="fc" id="L135">        return name;</span>
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getSize() {
+<span class="fc" id="L144">        return size;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

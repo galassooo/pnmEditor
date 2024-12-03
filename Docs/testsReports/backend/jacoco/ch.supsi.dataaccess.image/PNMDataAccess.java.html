@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PNMDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">PNMDataAccess.java</span></div><h1>PNMDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.image.*;
+import ch.supsi.business.strategy.ConvertStrategy;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+/**
+ * Abstract base class for handling PNM (Portable AnyMap) image formats.
+ * This class provides shared functionality for reading and writing PNM images, including headers,
+ * dimensions, and pixel data in both ASCII and binary formats.
+ * &lt;p&gt;
+ * Permits subclasses for specific PNM types (PBM, PGM, PPM).
+ *
+ * @see PBMDataAccess
+ * @see PGMDataAccess
+ * @see PPMDataAccess
+ *
+ */
+<span class="fc" id="L27">public abstract sealed class PNMDataAccess implements ImageDataAccess</span>
+        permits PBMDataAccess, PNMWithMaxValueDataAccess {
+
+<span class="fc" id="L30">    private static final List&lt;String&gt; ALL_ASCII_HEADERS = List.of(&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;);</span>
+<span class="fc" id="L31">    private static final List&lt;String&gt; ALL_BINARY_HEADERS = List.of(&quot;P4&quot;, &quot;P5&quot;, &quot;P6&quot;);</span>
+
+    protected int width;
+    protected int height;
+    private String format;
+
+    /**
+     * Processes binary PNM data. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} containing the binary PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    protected abstract long[] [] processBinary(InputStream is) throws IOException;
+
+    /**
+     * Processes ASCII PNM data. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} containing the ASCII PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    protected abstract long[] [] processAscii(InputStream is) throws IOException;
+
+    /**
+     * Writes ASCII pixel data to the output stream. To be implemented by subclasses.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    protected abstract void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
+
+    /**
+     * Writes binary pixel data to the output stream. To be implemented by subclasses.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    protected abstract void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
+
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on the PNM format.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
+    protected abstract ConvertStrategy getArgbConvertStrategy();
+
+
+    /**
+     * Reads a PNM image file from the specified path and processes it as either binary or ASCII.
+     *
+     * @param path The path of the image file to read
+     * @return An ImageBusiness object representing the processed image
+     * @throws IOException if the file is not found or there is an error reading it
+     */
+    @Override
+    public final WritableImage read(String path) throws IOException {
+<span class="fc" id="L92">        try (InputStream is = new FileInputStream(path)) { //da cambiare in FIS</span>
+<span class="fc" id="L93">            readHeader(is);</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">            long[][] processedMatrix = isBinaryFormat(format) ? processBinary(is) : processAscii(is);</span>
+
+<span class="fc" id="L96">            ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());</span>
+
+<span class="fc" id="L98">            ImageBuilder builder = new ImageBuilder()</span>
+<span class="fc" id="L99">                    .withPixels(processedMatrix)</span>
+<span class="fc" id="L100">                    .withFilePath(path)</span>
+<span class="fc" id="L101">                    .withMagicNumber(format)</span>
+<span class="fc" id="L102">                    .withImageAdapter(adapter)</span>
+<span class="fc" id="L103">                    .build();</span>
+
+<span class="fc" id="L105">            return new ImageBusiness(builder);</span>
+        }
+    }
+
+    /**
+     * Writes the PNM image (header and pixel data) to the specified path.
+     *
+     * @param image The image to be written
+     * @return The ImageBusinessInterface instance of the image written
+     * @throws IOException if there's an error writing to the file
+     */
+    @Override
+    @SuppressWarnings(&quot;All&quot;)
+    public final WritableImage write(WritableImage image) throws IOException {
+<span class="fc" id="L119">        String outputPath = image.getFilePath();</span>
+<span class="fc" id="L120">        File outputFile = new File(outputPath);</span>
+
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (!outputFile.exists()) {</span>
+<span class="fc" id="L123">            outputFile.createNewFile();</span>
+        }
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (!outputFile.canWrite()) {</span>
+<span class="fc" id="L126">            throw new IOException(&quot;Unable to write to file: &quot; + outputPath);</span>
+        }
+
+<span class="fc" id="L129">        try (FileOutputStream os = new FileOutputStream(outputFile)) {</span>
+            // Write the PNM header
+<span class="fc" id="L131">            writeHeader(image, os);</span>
+
+            // Prepare to write pixel data
+<span class="fc" id="L134">            ImageAdapterInterface adapter = new ImageAdapter(getArgbConvertStrategy());</span>
+
+<span class="fc" id="L136">            long[][] pixels = adapter.argbToRaw(image.getPixels());</span>
+
+<span class="fc" id="L138">            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());</span>
+
+            // Write pixel data based on format
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (isBinaryFormat(image.getMagicNumber())) {</span>
+<span class="fc" id="L142">                writeBinary(os, pixels, executor);</span>
+            } else {
+<span class="fc" id="L144">                writeAscii(os, pixels, executor);</span>
+            }
+
+<span class="fc" id="L147">            executor.shutdown();</span>
+        }
+<span class="fc" id="L149">        return image;</span>
+    }
+
+    /**
+     * Reads a single line from an InputStream.
+     *
+     * @param is InputStream to be read
+     * @return The read line as a String
+     * @throws IOException if there was an error while reading the byte
+     */
+    protected String readLine(InputStream is) throws IOException {
+<span class="fc" id="L160">        StringBuilder line = new StringBuilder();</span>
+        int byteRead;
+<span class="fc bfc" id="L162" title="All 4 branches covered.">        while ((byteRead = is.read()) != -1 &amp;&amp; byteRead != '\n') {</span>
+<span class="fc" id="L163">            line.append((char) byteRead);</span>
+        }
+<span class="fc" id="L165">        return line.toString();</span>
+    }
+
+    protected boolean isBinaryFormat(String imgFormat) {
+<span class="fc" id="L169">        return ALL_BINARY_HEADERS.contains(imgFormat);</span>
+    }
+
+
+    protected void writePixels(OutputStream os, long[][] pixels, ExecutorService executor, RowGenerator generator) throws IOException {
+<span class="fc" id="L174">        List&lt;Future&lt;byte[]&gt;&gt; futures = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (int y = 0; y &lt; pixels.length; y++) {</span>
+<span class="fc" id="L176">            final int row = y;</span>
+<span class="fc" id="L177">            futures.add(executor.submit(() -&gt; generator.generateRow(pixels, row, pixels[0].length)));</span>
+        }
+<span class="fc" id="L179">        writeFuturesToStream(futures, os);</span>
+<span class="fc" id="L180">    }</span>
+
+    protected void writeFuturesToStream(List&lt;Future&lt;byte[]&gt;&gt; futures, OutputStream os) throws IOException {
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        for (Future&lt;byte[]&gt; future : futures) {</span>
+            try {
+<span class="fc" id="L185">                os.write(future.get());</span>
+<span class="fc" id="L186">            } catch (InterruptedException | ExecutionException ignored) {</span>
+
+<span class="fc" id="L188">            }</span>
+<span class="fc" id="L189">        }</span>
+<span class="fc" id="L190">    }</span>
+
+    /**
+     * Reads the header of a generic PNM image.
+     *
+     * @param is InputStream containing the image bytes
+     * @throws IOException if there's an error reading from the InputStream
+     */
+    private void readHeader(InputStream is) throws IOException {
+<span class="fc" id="L199">        format = readLine(is).trim();</span>
+<span class="fc bfc" id="L200" title="All 4 branches covered.">        if (!ALL_ASCII_HEADERS.contains(format) &amp;&amp; !ALL_BINARY_HEADERS.contains(format)) {</span>
+<span class="fc" id="L201">            throw new IOException(&quot;Invalid format&quot;);</span>
+        }
+
+        String dimensionLine;
+        do {
+<span class="fc" id="L206">            dimensionLine = readLine(is).trim();</span>
+<span class="fc bfc" id="L207" title="All 4 branches covered.">        } while (dimensionLine.startsWith(&quot;#&quot;) || dimensionLine.isEmpty());</span>
+
+<span class="fc" id="L209">        String[] dimensions = dimensionLine.split(&quot;\\s+&quot;);</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        if (dimensions.length != 2) {</span>
+<span class="fc" id="L211">            throw new IOException(&quot;Width or height is missing&quot;);</span>
+        }
+
+<span class="fc" id="L214">        width = Integer.parseInt(dimensions[0]);</span>
+<span class="fc" id="L215">        height = Integer.parseInt(dimensions[1]);</span>
+
+<span class="fc bfc" id="L217" title="All 4 branches covered.">        if (width &lt;= 0 || height &lt;= 0) {</span>
+<span class="fc" id="L218">            throw new IOException(&quot;Invalid dimension in header&quot;);</span>
+        }
+<span class="fc" id="L220">    }</span>
+
+    /**
+     * Writes the PNM image header to the specified path.
+     *
+     * @param image The image whose header will be written
+     * @param os    The output stream to write the header to
+     * @throws IOException if there's an error writing to the file
+     */
+    private void writeHeader(WritableImage image, OutputStream os) throws IOException {
+<span class="fc" id="L230">        os.write((image.getMagicNumber() + &quot;\n&quot; + image.getWidth() + &quot; &quot; + image.getHeight() + &quot;\n&quot;).getBytes());</span>
+
+<span class="fc" id="L232">    }</span>
+
+    /**
+     * Functional interface for generating rows of pixel data.
+     */
+    @FunctionalInterface
+    protected interface RowGenerator {
+        byte[] generateRow(long[][] pixels, int row, int width) throws IOException;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

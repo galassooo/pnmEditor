@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RotateRightCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.filter.chain.command</a> &gt; <span class="el_source">RotateRightCommand.java</span></div><h1>RotateRightCommand.java</h1><pre class="source lang-java linenums">package ch.supsi.business.filter.chain.command;
+
+import ch.supsi.application.image.WritableImage;
+
+<span class="fc" id="L5">public class RotateRightCommand implements FilterCommand {</span>
+
+    /**
+     * {@inheritDoc}
+     * @param img the {@link WritableImage} to process
+     */
+    @Override
+    public void execute(WritableImage img) {
+<span class="fc" id="L13">        long[][] pixels = img.getPixels();</span>
+<span class="fc bfc" id="L14" title="All 6 branches covered.">        if (pixels == null || pixels.length == 0 || pixels[0].length == 0) {</span>
+<span class="fc" id="L15">            return;</span>
+        }
+<span class="fc" id="L17">        long[][] rotatedPixels = rotate(pixels);</span>
+<span class="fc" id="L18">        img.setPixels(rotatedPixels);</span>
+<span class="fc" id="L19">    }</span>
+
+    /**
+     * {@inheritDoc}
+     * @return name
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L27">        return &quot;Rotate_Right&quot;;</span>
+    }
+
+    /**
+     * apply rotation function on the given pixels
+     * @param pixels a 2D array of {@link Long} containing pixels
+     * @return another array of the rotated pixels
+     */
+    private long[][] rotate(long[][] pixels) {
+
+<span class="fc" id="L37">        int width = pixels.length;</span>
+<span class="fc" id="L38">        int height = pixels[0].length;</span>
+<span class="fc" id="L39">        long[][] rotated = new long[height][width];</span>
+
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (int i = 0; i &lt; width; i++) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            for (int j = 0; j &lt; height; j++) {</span>
+<span class="fc" id="L43">                rotated[j][width - 1 - i] = pixels[i][j]; // Rotazione a destra</span>
+
+            }
+        }
+<span class="fc" id="L47">        return rotated;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

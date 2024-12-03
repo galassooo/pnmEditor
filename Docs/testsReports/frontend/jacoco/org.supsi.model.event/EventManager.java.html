@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.event</a> &gt; <span class="el_source">EventManager.java</span></div><h1>EventManager.java</h1><pre class="source lang-java linenums">package org.supsi.model.event;
+
+import java.util.*;
+
+/**
+ * Central event management system implementing a type-safe event bus pattern.
+ * This class serves as the core message broker for the application, enabling
+ * loose coupling between components through event-based communication.
+ *
+ * &lt;p&gt;The EventManager follows these key design principles:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Singleton pattern for centralized event management&lt;/li&gt;
+ *   &lt;li&gt;Type-safe event handling using generics&lt;/li&gt;
+ *   &lt;li&gt;Support for multiple handlers per event type&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Implementation Details:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Supports dynamic registration and deregistration of handlers&lt;/li&gt;
+ *   &lt;li&gt;Provides separate interfaces for publishing and subscribing&lt;/li&gt;
+ *   &lt;li&gt;Implements error handling for event processing&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Usage Example:
+ * &lt;pre&gt;{@code
+ * // Getting the event manager instances
+ * EventPublisher publisher = EventManager.getPublisher();
+ * EventSubscriber subscriber = EventManager.getSubscriber();
+ *
+ * // Subscribing to events
+ * subscriber.subscribe(MyEvent.class, event -&gt; {
+ *     // Handle the event
+ * });
+ *
+ * // Publishing events
+ * publisher.publish(new MyEvent());
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;Event Processing Flow:
+ * &lt;ol&gt;
+ *   &lt;li&gt;Event is published through the publisher interface&lt;/li&gt;
+ *   &lt;li&gt;EventManager identifies all handlers registered for the event type&lt;/li&gt;
+ *   &lt;li&gt;Each handler is executed in the order of registration&lt;/li&gt;
+ *   &lt;li&gt;Exceptions in handlers are caught and logged without affecting other handlers&lt;/li&gt;
+ * &lt;/ol&gt;
+ *
+ * @see EventPublisher
+ * @see EventSubscriber
+ * @see EventHandler
+ */
+public class EventManager implements EventPublisher, EventSubscriber {
+
+    @SuppressWarnings(&quot;all&quot;) //not final -&gt; reset with reflection for test
+<span class="fc" id="L54">    private static EventManager instance = new EventManager();</span>
+    private final Map&lt;Class&lt;?&gt;, List&lt;EventHandler&lt;?&gt;&gt;&gt; handlers;
+
+    /**
+     * Constructs a new {@code EventManager} instance.
+     * Initializes the internal map for storing event handlers.
+     */
+<span class="fc" id="L61">    protected EventManager() {</span>
+<span class="fc" id="L62">        handlers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Retrieves the instance of {@link EventPublisher} for publishing events.
+     * This ensures the caller only has access to the methods related to publishing.
+     *
+     * @return the {@link EventPublisher} instance
+     */
+    public static EventPublisher getPublisher() {
+<span class="fc" id="L72">        return instance; //cast di se stesso -&gt; espone solo i metodi di un publisher</span>
+        // ma gestisce tutto
+    }
+
+    /**
+     * Retrieves the instance of {@link EventSubscriber} for subscribing to events.
+     * This ensures the caller only has access to the methods related to subscribing.
+     *
+     * @return the {@link EventSubscriber} instance
+     */
+    public static EventSubscriber getSubscriber() {
+<span class="fc" id="L83">        return instance; //cast di se stesso -&gt; espone solo i metodi di un subscriber</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public &lt;T&gt; void subscribe(Class&lt;T&gt; eventType, EventHandler&lt;T&gt; handler) {
+<span class="fc" id="L91">        handlers.computeIfAbsent(eventType, k -&gt; new ArrayList&lt;&gt;()).add(handler);</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public &lt;T&gt; void unsubscribe(Class&lt;T&gt; eventType, EventHandler&lt;T&gt; handler) {
+<span class="fc" id="L99">        var eventHandlers = handlers.get(eventType);</span>
+<span class="fc" id="L100">        eventHandlers.remove(handler); //impossible null on eventHandlers</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T&gt; void publish(T event) {
+<span class="fc" id="L109">        List&lt;EventHandler&lt;?&gt;&gt; eventHandlers = handlers.getOrDefault(event.getClass(),</span>
+<span class="fc" id="L110">                Collections.emptyList());</span>
+<span class="fc" id="L111">        eventHandlers.forEach(handler -&gt; {</span>
+            try {
+<span class="fc" id="L113">                ((EventHandler&lt;T&gt;) handler).handle(event);</span>
+<span class="fc" id="L114">            } catch (Exception e) {</span>
+<span class="fc" id="L115">                System.err.println(&quot;Error handling view event: &quot; + e.getMessage());</span>
+<span class="fc" id="L116">            }</span>
+<span class="fc" id="L117">        });</span>
+<span class="fc" id="L118">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

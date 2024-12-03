@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranslationModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.translations</a> &gt; <span class="el_source">TranslationModel.java</span></div><h1>TranslationModel.java</h1><pre class="source lang-java linenums">package org.supsi.model.translations;
+
+import ch.supsi.application.preferences.PreferencesApplication;
+import ch.supsi.application.translations.TranslationsApplication;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+/**
+ * Represents the model for managing translations and language settings in the application.
+ * Utilizes the controllers to retrieve and cache translations and user preferences.
+ */
+public class TranslationModel implements ITranslationsModel {
+
+    private static TranslationModel myself;
+    private static TranslationsApplication translationsController;
+    private static PreferencesApplication preferencesController;
+
+    private ResourceBundle uiBundle;
+    private Locale locale;
+
+<span class="fc" id="L24">    private TranslationModel() {</span>
+<span class="fc" id="L25">        translationsController = TranslationsApplication.getInstance();</span>
+<span class="fc" id="L26">        preferencesController = PreferencesApplication.getInstance();</span>
+<span class="fc" id="L27">    }</span>
+
+    /**
+     * Retrieves the singleton instance of this class.
+     *
+     * @return the singleton instance of {@code TranslationModel}
+     */
+    public static TranslationModel getInstance() {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L36">            myself = new TranslationModel();</span>
+        }
+<span class="fc" id="L38">        return myself;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceBundle getUiBundle() throws IOException {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (uiBundle == null) { //load only once</span>
+<span class="fc" id="L47">            uiBundle = translationsController.getTranslationBundle(getLocale()).orElseThrow(</span>
+<span class="fc" id="L48">                    () -&gt; new IOException(&quot;Translation bundle not found&quot;)</span>
+            );
+        }
+<span class="fc" id="L51">        return uiBundle;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Locale getLocale() {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (locale == null) { //load only once</span>
+<span class="fc" id="L60">            locale = Locale.forLanguageTag(preferencesController.getPreference(&quot;language-tag&quot;).orElse(&quot;N/A&quot;).toString());</span>
+        }
+<span class="fc" id="L62">        return locale;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String translate(String s) {
+<span class="fc" id="L70">        return translationsController.translate(s).orElse(&quot;Translation not found&quot;);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;String&gt; getSupportedLanguages() {
+<span class="fc" id="L78">        return translationsController.getSupportedLanguages();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Locale getCurrentLanguage() {
+<span class="fc" id="L86">        return Locale.forLanguageTag(String.valueOf(preferencesController.getPreference(&quot;language-tag&quot;)));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

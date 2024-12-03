@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.application.image</a> &gt; <span class="el_source">ImageApplication.java</span></div><h1>ImageApplication.java</h1><pre class="source lang-java linenums">package ch.supsi.application.image;
+
+import ch.supsi.business.image.ImageBusiness;
+import ch.supsi.business.state.BusinessEditorState;
+import ch.supsi.application.state.EditorStateManager;
+import ch.supsi.dataaccess.image.DataAccessFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * The {@link ImageApplication} class provides functionalities for managing image-related
+ * operations in the application. It acts as an interface for loading, saving, and exporting
+ * images, while maintaining the application's editor state.
+ */
+public class ImageApplication {
+
+    private static ImageApplication myself;
+    private final EditorStateManager stateManager;
+    private WritableImage currentImage;
+
+    /**
+     * Private constructor
+     */
+<span class="fc" id="L26">    private ImageApplication() {</span>
+<span class="fc" id="L27">        stateManager = BusinessEditorState.getInstance();</span>
+<span class="fc" id="L28">    }</span>
+
+
+    /**
+     * Returns the singleton instance of the {@code ImageApplication}.
+     *
+     * @return the singleton instance of the {@code ImageApplication}.
+     */
+    public static ImageApplication getInstance() {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L38">            myself = new ImageApplication();</span>
+        }
+<span class="fc" id="L40">        return myself;</span>
+    }
+
+    /**
+     * Reads an image from the given file path.
+     *
+     * @param path the file path of the image to load.
+     * @return the loaded {@code ImageBusinessInterface} instance.
+     * @throws IOException            if an I/O error occurs during reading.
+     * @throws IllegalAccessException if the file reader cannot be accessed.
+     */
+    public WritableImage read(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L52">        stateManager.onLoading();</span>
+        try {
+<span class="fc" id="L54">            currentImage = ImageBusiness.read(path);</span>
+<span class="fc" id="L55">            stateManager.onImageLoaded();</span>
+<span class="fc" id="L56">        } catch (IllegalAccessException | IOException e) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            if (currentImage == null) {</span>
+<span class="fc" id="L58">                stateManager.onLoadingError(); //First load attempt failed</span>
+            } else {
+<span class="fc" id="L60">                stateManager.onImageLoaded(); //First image loaded but subsequent load failed</span>
+            }
+<span class="fc" id="L62">            throw e; //Re-throw the exception</span>
+<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">        return currentImage;</span>
+    }
+
+    /**
+     * Saves the current image to the given file path.
+     *
+     * @param path the file path to save the image to.
+     * @throws IOException            if an I/O error occurs during saving.
+     * @throws IllegalAccessException if the file writer cannot be accessed.
+     */
+    public void persist(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L75">        stateManager.onLoading();</span>
+<span class="fc" id="L76">        currentImage.persist(path);</span>
+<span class="fc" id="L77">        stateManager.onImageLoaded();</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Exports the current image to the specified path with the given file extension.
+     *
+     * @param extension the file extension for the export (e.g., &quot;jpg&quot;, &quot;png&quot;).
+     * @param path      the file path to save the exported image.
+     * @throws IOException            if an I/O error occurs during export.
+     * @throws IllegalAccessException if the file writer cannot be accessed.
+     */
+    public void export(String extension, String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L89">        currentImage.export(extension, path);</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Retrieves a {@link List} of all supported file extensions for images.
+     *
+     * @return a {@link List} of supported file extensions.
+     */
+    public List&lt;String&gt; getAllSupportedExtension() {
+<span class="fc" id="L98">        return DataAccessFactory.getSupportedExtensions();</span>
+    }
+
+    /**
+     * Returns the name of the currently loaded image file.
+     *
+     * @return an {@link Optional} containing the file name, or an empty {@code Optional} if no image is loaded.
+     */
+    public Optional&lt;String&gt; getImageName() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        return Optional.ofNullable(currentImage != null ? currentImage.getName() : null);</span>
+    }
+
+    /**
+     * Returns the pixel data of the currently loaded image.
+     *
+     * @return an {@link Optional} containing a 2D array of pixel data, or an empty {@code Optional} if no image is loaded.
+     */
+    public Optional&lt;long[][]&gt; getImagePixels() {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        return Optional.ofNullable(currentImage != null ? currentImage.getPixels() : null);</span>
+    }
+
+    /**
+     * Returns the currently loaded image instance.
+     *
+     * @return an {@link Optional} containing the current {@code ImageBusinessInterface}, or an empty {@code Optional} if no image is loaded.
+     */
+    public Optional&lt;WritableImage&gt; getCurrentImage() {
+<span class="fc" id="L125">        return Optional.ofNullable(currentImage);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

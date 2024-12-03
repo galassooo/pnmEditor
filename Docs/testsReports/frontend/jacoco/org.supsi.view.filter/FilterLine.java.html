@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterLine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.filter</a> &gt; <span class="el_source">FilterLine.java</span></div><h1>FilterLine.java</h1><pre class="source lang-java linenums">package org.supsi.view.filter;
+
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
+import org.supsi.model.filters.FilterModel;
+import org.supsi.model.filters.IFilterModel;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+import org.supsi.model.translations.ITranslationsModel;
+import org.supsi.model.translations.TranslationModel;
+
+import java.util.Optional;
+
+/**
+ * Represents a UI component for managing filters in the application.
+ * Displays buttons for each available filter and an &quot;Activate&quot; button for applying them.
+ * Handles the state and interactions for filters using model bindings.
+ */
+<span class="fc" id="L26">public class FilterLine {</span>
+
+    private static final String FILTER_IMAGE_PATH = &quot;/images/buttons/top/%s.png&quot;;
+    private IStateModel stateModel;
+    private EventPublisher publisher;
+
+    @FXML
+    public Button activate;
+
+    @FXML
+    public HBox hbox;
+
+
+    /**
+     * Initializes the filter line UI.
+     * Sets up the HBox layout and creates buttons for each filter.
+     * Binds the &quot;Activate&quot; button's enabled state to the application's filter application capability.
+     */
+    @FXML
+    public void initialize() {
+<span class="fc" id="L46">        stateModel = StateModel.getInstance();</span>
+<span class="fc" id="L47">        IFilterModel filterModel = FilterModel.getInstance();</span>
+<span class="fc" id="L48">        publisher = EventManager.getPublisher();</span>
+
+<span class="fc" id="L50">        ITranslationsModel translationsModel = TranslationModel.getInstance();</span>
+
+<span class="fc" id="L52">        hbox.setSpacing(5);</span>
+<span class="fc" id="L53">        hbox.setPadding(new Insets(5));</span>
+<span class="fc" id="L54">        hbox.getStyleClass().add(&quot;filter-hbox&quot;);</span>
+
+<span class="fc" id="L56">        filterModel.getFiltersKeyValues().forEach((filterKey, translatedFilter) -&gt;</span>
+<span class="fc" id="L57">                createFilterButton(filterKey, translatedFilter, translationsModel)</span>
+<span class="fc" id="L58">                        .ifPresentOrElse(button -&gt; hbox.getChildren().add(button),</span>
+<span class="fc" id="L59">                                () -&gt; System.out.println(&quot;[\u001B[33mWARNING\u001B[0m] Found a filter without an associated image - available in menu bar only&quot;))</span>
+        );
+
+<span class="fc" id="L62">        activate.disableProperty().bind(stateModel.canApplyFiltersProperty().not());</span>
+<span class="fc" id="L63">        setupActivateButton();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Creates a button for a specific filter, including its tooltip and actions.
+     *
+     * @param filterKey         the key identifying the filter
+     * @param translatedFilter  the translated name of the filter
+     * @param translationsModel the model for retrieving UI translations
+     * @return an {@link Optional} containing the created {@link Button}, or {@code Optional.empty()} if the button couldn't be created
+     */
+    private Optional&lt;Button&gt; createFilterButton(String filterKey, String translatedFilter, ITranslationsModel translationsModel) {
+<span class="fc" id="L75">        return loadImage(filterKey)</span>
+<span class="fc" id="L76">                .map(imageView -&gt; {</span>
+<span class="fc" id="L77">                    Button button = new Button();</span>
+
+<span class="fc" id="L79">                    imageView.setPreserveRatio(true);</span>
+<span class="fc" id="L80">                    imageView.setFitHeight(25);</span>
+<span class="fc" id="L81">                    imageView.setFitWidth(25);</span>
+<span class="fc" id="L82">                    button.setGraphic(imageView);</span>
+
+<span class="fc" id="L84">                    button.setId(filterKey + &quot;_line&quot;);</span>
+<span class="fc" id="L85">                    button.setTooltip(new Tooltip(translationsModel.translate(&quot;ui_apply&quot;) + &quot; &quot; + translatedFilter));</span>
+<span class="fc" id="L86">                    button.disableProperty().bind(stateModel.canApplyFiltersProperty().not());</span>
+
+<span class="fc" id="L88">                    button.setPrefSize(25, 25);</span>
+<span class="fc" id="L89">                    button.setMinSize(25, 25);</span>
+<span class="fc" id="L90">                    button.setMaxSize(25, 25);</span>
+
+<span class="fc" id="L92">                    button.getStyleClass().add(&quot;filter-button&quot;);</span>
+<span class="fc" id="L93">                    HBox.setMargin(button, new Insets(0, 10, 0, 10));</span>
+
+<span class="fc" id="L95">                    button.setOnAction(event -&gt; publisher.publish(new FilterEvent.FilterAddRequested(filterKey)));</span>
+
+<span class="fc" id="L97">                    return button;</span>
+                });
+    }
+
+    /**
+     * Loads the image associated with a filter.
+     *
+     * @param filterName the name of the filter
+     * @return an {@link Optional} containing the {@link ImageView} for the filter, or {@code Optional.empty()} if the image could not be loaded
+     */
+    private Optional&lt;ImageView&gt; loadImage(String filterName) {
+        try {
+<span class="fc" id="L109">            Image image = new Image(String.format(FILTER_IMAGE_PATH, filterName));</span>
+<span class="fc" id="L110">            return Optional.of(new ImageView(image));</span>
+<span class="fc" id="L111">        } catch (Exception e) {</span>
+<span class="fc" id="L112">            return Optional.empty();</span>
+        }
+    }
+
+    /**
+     * Configures the &quot;Activate&quot; button.
+     * Sets its size and action to publish a filter execution request.
+     */
+    private void setupActivateButton() {
+<span class="fc" id="L121">        activate.setPrefSize(30, 30);</span>
+<span class="fc" id="L122">        activate.setMinSize(30, 30);</span>
+<span class="fc" id="L123">        activate.setMaxSize(30, 30);</span>
+
+<span class="fc" id="L125">        activate.setOnAction(event -&gt; publisher.publish(new FilterEvent.FilterExecutionRequested()));</span>
+
+<span class="fc" id="L127">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

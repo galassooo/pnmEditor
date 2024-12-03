@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.filters</a> &gt; <span class="el_source">FilterModel.java</span></div><h1>FilterModel.java</h1><pre class="source lang-java linenums">package org.supsi.model.filters;
+
+import ch.supsi.application.filters.FilterApplication;
+import ch.supsi.application.image.ImageApplication;
+import ch.supsi.application.translations.TranslationsApplication;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * Represents the model for managing image filters and their pipeline.
+ * Provides methods to add, remove, and process filters, and tracks applied filters.
+ */
+public class FilterModel implements IFilterModel {
+
+    private static FilterModel mySelf;
+    private final FilterApplication application;
+    private final ImageApplication imgApplication;
+    private final TranslationsApplication translationsApplication;
+
+    private final ObservableList&lt;String&gt; filterPipeline;
+    private final ObservableList&lt;String&gt; appliedFilters;
+
+    /**
+     * Constructs a new {@code FilterModel} instance.
+     * Initializes the application controllers and observable lists for filter pipelines and applied filters.
+     */
+<span class="fc" id="L30">    protected FilterModel() {</span>
+<span class="fc" id="L31">        application = FilterApplication.getInstance();</span>
+<span class="fc" id="L32">        imgApplication = ImageApplication.getInstance();</span>
+<span class="fc" id="L33">        translationsApplication = TranslationsApplication.getInstance();</span>
+
+<span class="fc" id="L35">        filterPipeline = FXCollections.observableArrayList();</span>
+<span class="fc" id="L36">        appliedFilters = FXCollections.observableArrayList();</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Retrieves the singleton instance of the {@code FilterModel}.
+     *
+     * @return the singleton instance of {@code FilterModel}
+     */
+    public static FilterModel getInstance() {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (mySelf == null) {</span>
+<span class="fc" id="L46">            mySelf = new FilterModel();</span>
+        }
+<span class="fc" id="L48">        return mySelf;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList&lt;String&gt; getFilterPipeline() {
+<span class="fc" id="L56">        return filterPipeline;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList&lt;String&gt; getLastApplied() {
+<span class="fc" id="L64">        return appliedFilters;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFilterToPipeline(String filter) {
+<span class="fc" id="L72">        filterPipeline.add(translationsApplication.translate(filter).orElse(&quot;N/A&quot;)); // Local copy for observers</span>
+<span class="fc" id="L73">        application.addFilterToPipeline(filter);</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processFilters() {
+<span class="fc" id="L81">        appliedFilters.addAll(filterPipeline);</span>
+<span class="fc" id="L82">        filterPipeline.clear();</span>
+<span class="fc" id="L83">        application.processFilterPipeline(</span>
+<span class="fc" id="L84">                imgApplication.getCurrentImage().orElseThrow(() -&gt; new IllegalStateException(&quot;Image not set&quot;))</span>
+        );
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void moveFilter(int fromIndex, int toIndex) {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (fromIndex != toIndex) {</span>
+<span class="fc" id="L94">            var translatedItem = filterPipeline.remove(fromIndex);</span>
+<span class="fc" id="L95">            filterPipeline.add(toIndex, translatedItem);</span>
+<span class="fc" id="L96">            application.add(application.remove(fromIndex), toIndex);</span>
+        }
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map&lt;String, String&gt; getFiltersKeyValues() {
+<span class="fc" id="L105">        return application.getAllAvailableFilters().stream()</span>
+<span class="fc" id="L106">                .collect(Collectors.toMap(</span>
+<span class="fc" id="L107">                        filter -&gt; filter,</span>
+<span class="fc" id="L108">                        f -&gt; translationsApplication.translate(f).orElse(f + &quot; N/A&quot;) // Unique translation</span>
+                ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeFilter(int index) {
+<span class="fc" id="L117">        filterPipeline.remove(index);</span>
+<span class="fc" id="L118">        application.remove(index);</span>
+<span class="fc" id="L119">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

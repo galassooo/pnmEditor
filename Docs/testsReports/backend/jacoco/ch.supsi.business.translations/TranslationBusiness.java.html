@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranslationBusiness.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.translations</a> &gt; <span class="el_source">TranslationBusiness.java</span></div><h1>TranslationBusiness.java</h1><pre class="source lang-java linenums">package ch.supsi.business.translations;
+
+import ch.supsi.application.translations.TranslationsBusinessInterface;
+import ch.supsi.dataaccess.translations.TranslationsDataAccess;
+
+import java.util.*;
+
+/**
+ * Provides the business logic for managing translations in the application.
+ * This class interacts with the data access layer to retrieve and manage translations,
+ * supported languages, and UI resource bundles.
+ * Implements the Singleton pattern to ensure a single instance is used across the application.
+ */
+public class TranslationBusiness implements TranslationsBusinessInterface {
+
+    private static TranslationBusiness myself;
+
+    private final TranslationsDataAccessInterface translationsDao;
+    private final List&lt;String&gt; supportedLanguageTags;
+    private Properties translations;
+
+    /**
+     * Protected constructor to enforce Singleton pattern
+     */
+<span class="fc" id="L25">    protected TranslationBusiness() {</span>
+<span class="fc" id="L26">        this.translationsDao = TranslationsDataAccess.getInstance();</span>
+<span class="fc" id="L27">        this.supportedLanguageTags = translationsDao.getSupportedLanguageTags();</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * Retrieves the Singleton instance of {@link TranslationBusiness}.
+     *
+     * @return the Singleton instance
+     */
+    public static TranslationBusiness getInstance() {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L37">            myself = new TranslationBusiness();</span>
+        }
+<span class="fc" id="L39">        return myself;</span>
+    }
+
+    /**
+     * Retrieves all supported languages for the application.
+     *
+     * @return a {@link List} containing all supported language tags
+     */
+    @Override
+    public List&lt;String&gt; getSupportedLanguages() {
+<span class="fc" id="L49">        return List.copyOf(this.supportedLanguageTags); // Defensive copy</span>
+    }
+
+    /**
+     * Changes the current language of the application by loading the corresponding translations.
+     *
+     * @param languageTag the language tag (e.g., &quot;en&quot;, &quot;it&quot;) for the desired language
+     * @return {@code true} if the language was successfully changed, {@code false} otherwise
+     */
+    @Override
+    public boolean changeLanguage(String languageTag) {
+<span class="fc" id="L60">        this.translations = translationsDao.getTranslations(Locale.forLanguageTag(languageTag));</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        return this.translations != null;</span>
+    }
+
+    /**
+     * Retrieves the translation associated with the specified key.
+     *
+     * @param key the key for the desired translation
+     * @return an {@link Optional} containing the translation if found, or empty if the key does not exist
+     */
+    @Override
+    public Optional&lt;String&gt; translate(String key) {
+<span class="fc" id="L72">        return Optional.ofNullable(this.translations.getProperty(key));</span>
+    }
+
+    /**
+     * Retrieves the UI resource bundle for the specified locale.
+     *
+     * @param locale the {@link Locale} for which the resource bundle is required
+     * @return an {@link Optional} containing the {@link ResourceBundle} if found, or empty if not available
+     */
+    @Override
+    public Optional&lt;ResourceBundle&gt; getUIResourceBundle(Locale locale) {
+<span class="fc" id="L83">        return this.translationsDao.getUIResourceBundle(locale);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

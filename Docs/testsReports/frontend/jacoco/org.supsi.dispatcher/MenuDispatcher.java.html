@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuDispatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.dispatcher</a> &gt; <span class="el_source">MenuDispatcher.java</span></div><h1>MenuDispatcher.java</h1><pre class="source lang-java linenums">package org.supsi.dispatcher;
+
+import javafx.stage.Stage;
+import org.supsi.controller.about.AboutController;
+import org.supsi.controller.about.IAboutController;
+import org.supsi.controller.exit.ExitController;
+import org.supsi.controller.exit.IExitController;
+import org.supsi.controller.image.IImageController;
+import org.supsi.controller.image.ImageController;
+import org.supsi.controller.preferences.IPreferencesController;
+import org.supsi.controller.preferences.PreferencesController;
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+
+/**
+ * Manages the dispatching of menu actions to the appropriate controllers in the application.
+ */
+public class MenuDispatcher {
+
+    private final IImageController imageController;
+    private final IPreferencesController preferencesController;
+    private final IAboutController aboutController;
+    private final IExitController exitController;
+    private final IStateModel stateModel;
+
+    @FXML
+    private MenuItem saveMenuItem;
+
+    @FXML
+    private MenuItem saveAsMenuItem;
+
+    private Stage stage;
+
+<span class="fc" id="L36">    public MenuDispatcher(){</span>
+<span class="fc" id="L37">        stateModel = StateModel.getInstance();</span>
+<span class="fc" id="L38">        imageController = ImageController.getInstance();</span>
+<span class="fc" id="L39">        preferencesController = PreferencesController.getInstance();</span>
+<span class="fc" id="L40">        aboutController = AboutController.getInstance();</span>
+<span class="fc" id="L41">        exitController = ExitController.getInstance();</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Initializes the menu dispatcher by binding menu items to state properties.
+     */
+    @FXML
+    void initialize(){
+<span class="fc" id="L49">        saveMenuItem.disableProperty().bind(stateModel.canSaveProperty().not());</span>
+<span class="fc" id="L50">        saveAsMenuItem.disableProperty().bind(stateModel.canSaveAsProperty().not());</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Sets the primary stage of the application.
+     *
+     * @param stage the primary stage
+     */
+    public void setStage(Stage stage){
+<span class="fc" id="L59">        this.stage = stage;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Handles the &quot;Save&quot; menu action.
+     *
+     */
+    public void save() {
+<span class="fc" id="L67">        imageController.save();</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Handles the &quot;Save As&quot; menu action.
+     */
+    public void saveAs(){
+<span class="fc" id="L74">        imageController.saveAs();</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Handles the &quot;Preferences&quot; menu action, opening the preferences popup.
+     */
+    public void preferences(){
+<span class="fc" id="L81">        preferencesController.showPreferencesPopup();</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Handles the &quot;Open&quot; menu action, opening an image file.
+     */
+    public void open(){
+<span class="fc" id="L88">        imageController.open();</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Handles the &quot;Close&quot; menu action, closing the application.
+     */
+    public void close(){
+<span class="fc" id="L95">        exitController.handleExit(stage);</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Handles the &quot;About&quot; menu action, displaying the about popup.
+     */
+    public void about(){
+<span class="fc" id="L102">        aboutController.showPopup();</span>
+<span class="fc" id="L103">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

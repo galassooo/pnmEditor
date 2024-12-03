@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranslationsDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.translations</a> &gt; <span class="el_source">TranslationsDataAccess.java</span></div><h1>TranslationsDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.translations;
+
+import ch.supsi.business.translations.TranslationsDataAccessInterface;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+/**
+ * Provides access to translations and supported languages for both backend and frontend modules.
+ * It uses properties files to load translations and handles locale fallback mechanisms.
+ */
+public class TranslationsDataAccess implements TranslationsDataAccessInterface {
+
+    public static TranslationsDataAccess myself;
+    private static final String SUPPORTED_LANGUAGES_PROPERTIES = &quot;/supported-languages.properties&quot;;
+    private static final String LABELS_PATH = &quot;i18n/labels/&quot;;
+    private static final String LABELS_FORMAT = &quot;.properties&quot;;
+    private static final String FRONTEND_PATH = &quot;/i18n/ui_labels&quot;;
+
+<span class="fc" id="L25">    protected TranslationsDataAccess() {</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Singleton instantiation method for TranslationsDataAccess.
+     *
+     * @return the singleton instance of TranslationsDataAccess
+     */
+    public static TranslationsDataAccess getInstance() {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L35">            myself = new TranslationsDataAccess();</span>
+        }
+
+<span class="fc" id="L38">        return myself;</span>
+    }
+
+    /**
+     * Retrieves the resource bundle containing UI labels for the specified locale.
+     * If the locale is invalid, a fallback locale is used.
+     *
+     * @param locale the locale to load UI labels for
+     * @return an {@link Optional} containing the ResourceBundle for the specified locale, or empty if not found
+     */
+    @Override
+    public Optional&lt;ResourceBundle&gt; getUIResourceBundle(Locale locale) {
+<span class="fc" id="L50">        List&lt;ResourceBundle&gt; bundles = loadFrontendResources(locale);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (bundles.isEmpty()) {</span>
+<span class="fc" id="L52">            Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));</span>
+<span class="fc" id="L53">            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);</span>
+        }
+<span class="fc" id="L55">        return Optional.of(bundles.get(0)); //cannot be empty -&gt; we use fallback handleMissingResouce</span>
+    }
+
+    /**
+     * Retrieves a list of supported language tags loaded from a properties file.
+     *
+     * @return a {@link List} of strings representing the supported language tags
+     */
+    @Override
+    public List&lt;String&gt; getSupportedLanguageTags() {
+<span class="fc" id="L65">        List&lt;String&gt; supportedLanguageTags = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L66">        Properties props = this.loadSupportedLanguageTags();</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (Object key : props.keySet()) {</span>
+<span class="fc" id="L68">            supportedLanguageTags.add(props.getProperty((String) key));</span>
+<span class="fc" id="L69">        }</span>
+<span class="fc" id="L70">        return supportedLanguageTags;</span>
+    }
+
+    /**
+     * Loads translations for the given locale. If the locale is invalid, a fallback
+     * mechanism loads the default locale translations.
+     *
+     * @param locale the locale to load translations for
+     * @return a {@link Properties} object containing the translations for the specified locale
+     */
+    @Override
+    public Properties getTranslations(Locale locale) {
+<span class="fc" id="L82">        Properties translations = new Properties();</span>
+
+<span class="fc" id="L84">        List&lt;ResourceBundle&gt; bundles = getResourceBundlesForLocale(locale, LABELS_PATH);</span>
+        // It means it failed to load translations for the given locale, fallback to a default one
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (bundles.isEmpty()) {</span>
+<span class="fc" id="L87">            Locale fallbackLocale = Locale.forLanguageTag(this.getSupportedLanguageTags().get(0));</span>
+            // This assumes that the pathToResources is valid, and the only thing that's not valid is the locale
+<span class="fc" id="L89">            bundles = handleMissingResource(locale, fallbackLocale, LABELS_PATH);</span>
+        }
+<span class="fc" id="L91">        bundles.forEach((b) -&gt; {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            for (String key : b.keySet()) {</span>
+<span class="fc" id="L93">                translations.setProperty(key, b.getString(key));</span>
+<span class="fc" id="L94">            }</span>
+<span class="fc" id="L95">        });</span>
+<span class="fc" id="L96">        return translations;</span>
+    }
+
+    /**
+     * Loads and returns the supported language tags.
+     * The supported language tags are loaded from a default properties file.
+     *
+     * @return a {@link Properties} object representing the supported language tags
+     */
+    private Properties loadSupportedLanguageTags() {
+<span class="fc" id="L106">        Properties supportedLanguageTags = new Properties();</span>
+        //errore bytecode non preciso del tool di coverage intellij -&gt; jacoco lo legge come 100%
+<span class="fc" id="L108">        try (InputStream supportedLanguageTagsStream = getResourceAsStream(SUPPORTED_LANGUAGES_PROPERTIES)) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (supportedLanguageTagsStream != null) {</span>
+<span class="fc" id="L110">                supportedLanguageTags.load(supportedLanguageTagsStream);</span>
+            }
+<span class="fc" id="L112">        } catch (IOException e) {</span>
+<span class="fc" id="L113">            System.err.printf(&quot;Error while loading file %s%n&quot;, SUPPORTED_LANGUAGES_PROPERTIES);</span>
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">        return supportedLanguageTags;</span>
+    }
+
+    /**
+     * Retrieves all resource bundles for the specified locale.
+     *
+     * @param locale the locale to load resource bundles for
+     * @return a {@link List} of {@link ResourceBundle} objects for the specified locale
+     */
+    private List&lt;ResourceBundle&gt; getResourceBundlesForLocale(Locale locale, String pathToResources) {
+<span class="fc" id="L125">        List&lt;ResourceBundle&gt; resourceBundles = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L127">        resourceBundles.addAll(loadBackendResources(locale, pathToResources));</span>
+<span class="fc" id="L128">        resourceBundles.addAll(loadFrontendResources(locale));</span>
+
+<span class="fc" id="L130">        return resourceBundles;</span>
+    }
+
+    /**
+     * Loads all resources associated with the specified locale from the backend module.
+     *
+     * @param locale the locale to load backend resources for
+     * @return a {@link List} of {@link ResourceBundle} objects from the backend module
+     */
+    protected List&lt;ResourceBundle&gt; loadBackendResources(Locale locale, String pathToResources) {
+<span class="fc" id="L140">        List&lt;ResourceBundle&gt; resourceBundles = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L141">        PathMatchingResourcePatternResolver resolver = createResourcePatternResolver();</span>
+
+        try {
+<span class="fc" id="L144">            Resource[] resources = resolver.getResources(String.format(&quot;classpath:%s*%s&quot;, pathToResources, LABELS_FORMAT));</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            for (Resource resource : resources) {</span>
+<span class="fc" id="L146">                String filename = resource.getFilename();</span>
+<span class="fc bfc" id="L147" title="All 4 branches covered.">                if (filename != null &amp;&amp; filename.contains(String.format(&quot;_%s%s&quot;, locale, LABELS_FORMAT))) {</span>
+<span class="fc" id="L148">                    try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L149">                        ResourceBundle resourceBundle = new PropertyResourceBundle(reader);</span>
+<span class="fc" id="L150">                        resourceBundles.add(resourceBundle);</span>
+                    }
+                }
+            }
+<span class="fc" id="L154">        } catch (IOException e) {</span>
+<span class="fc" id="L155">            System.err.printf(&quot;Error while loading file %s for locale %s%n&quot;, pathToResources, locale);</span>
+<span class="fc" id="L156">        }</span>
+<span class="fc" id="L157">        return resourceBundles;</span>
+    }
+
+    protected PathMatchingResourcePatternResolver createResourcePatternResolver() {
+<span class="fc" id="L161">        return new PathMatchingResourcePatternResolver();</span>
+    }
+    /**
+     * Loads all resources associated with the specified locale from the frontend module.
+     *
+     * @param locale the locale to load frontend resources for
+     * @return a {@link List} of {@link ResourceBundle} objects from the frontend module
+     */
+    private List&lt;ResourceBundle&gt; loadFrontendResources(Locale locale) {
+<span class="fc" id="L170">        List&lt;ResourceBundle&gt; resourceBundles = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L171">        Optional&lt;Module&gt; frontendModule = ModuleLayer.boot().findModule(&quot;frontend&quot;);</span>
+
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (frontendModule.isPresent()) {</span>
+            try{
+<span class="fc" id="L175">                String frontendPath = loadFrontendPath();</span>
+
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                if (frontendPath != null) {</span>
+<span class="fc" id="L178">                    String localeCode = locale.toLanguageTag().replace('-', '_');</span>
+<span class="fc" id="L179">                    String resourceName = String.format(&quot;%s_%s.properties&quot;, frontendPath, localeCode);</span>
+
+<span class="fc" id="L181">                    try (InputStream inputStream = getStreamFromModule( frontendModule.get(), resourceName)) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                        if (inputStream != null) {</span>
+<span class="fc" id="L183">                            try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L184">                                ResourceBundle resourceBundle = new PropertyResourceBundle(reader);</span>
+<span class="fc" id="L185">                                resourceBundles.add(resourceBundle);</span>
+                            }
+                        }
+                    }
+                }
+<span class="fc" id="L190">            } catch (IOException e) {</span>
+<span class="fc" id="L191">                System.err.println(&quot;Error loading resource %s from the frontend module%n&quot;);</span>
+<span class="fc" id="L192">            }</span>
+        } else { //jar
+<span class="fc" id="L194">            String localeCode = locale.toLanguageTag().replace('-', '_');</span>
+<span class="fc" id="L195">            String resourceName = String.format(&quot;%s_%s.properties&quot;, FRONTEND_PATH.substring(1), localeCode);</span>
+
+<span class="fc" id="L197">            try (InputStream inputStream = getClassLoaderResourceAsStream(resourceName)) {</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                if (inputStream != null) {</span>
+<span class="fc" id="L199">                    try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L200">                        ResourceBundle resourceBundle = new PropertyResourceBundle(reader);</span>
+<span class="fc" id="L201">                        resourceBundles.add(resourceBundle);</span>
+                    }
+                } else {
+<span class="fc" id="L204">                    System.err.printf(&quot;Resource not found: %s in the JAR%n&quot;, resourceName);</span>
+                }
+<span class="fc" id="L206">            } catch (IOException e) {</span>
+<span class="fc" id="L207">                System.err.printf(&quot;Error loading resource %s from JAR%n&quot;, resourceName);</span>
+<span class="fc" id="L208">            }</span>
+        }
+<span class="fc" id="L210">        return resourceBundles;</span>
+    }
+
+    /**
+     * Loads the path for frontend labels from the `application.properties` file.
+     *
+     * @return a {@link String} containing the frontend labels path
+     */
+    private String loadFrontendPath() throws IOException {
+<span class="fc" id="L219">        InputStream is = getResourceAsStream(&quot;/application.properties&quot;);</span>
+<span class="fc" id="L220">        Properties properties = new Properties();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if (is != null) {</span>
+<span class="fc" id="L222">            properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));</span>
+
+<span class="fc" id="L224">            is.close(); //non prendeva il branch col try-catch -&gt; unico modo spezzare declaration e forzare close</span>
+<span class="fc" id="L225">            return properties.getProperty(&quot;frontend.labels.path&quot;);</span>
+        } else {
+<span class="fc" id="L227">            System.err.println(&quot;Application.properties file not found.&quot;);</span>
+        }
+<span class="fc" id="L229">        return null;</span>
+    }
+
+    /**
+     * Handles loading resources when the specified locale is invalid.
+     *
+     * @param invalidLocale  the invalid locale
+     * @param fallbackLocale the fallback locale to use
+     * @return a {@link List} of ResourceBundle objects for the fallback locale
+     */
+    @SuppressWarnings(&quot;all&quot;)
+    private List&lt;ResourceBundle&gt; handleMissingResource( Locale invalidLocale, Locale fallbackLocale, String pathToResources) {
+<span class="fc" id="L241">        System.err.printf(&quot;Invalid locale: %s. Loading new locale: %s\n&quot;, invalidLocale, fallbackLocale);</span>
+<span class="fc" id="L242">        return getResourceBundlesForLocale(fallbackLocale, pathToResources);</span>
+    }
+
+    protected InputStream getResourceAsStream(String path) throws IOException {
+<span class="fc" id="L246">        return this.getClass().getResourceAsStream(path);</span>
+    }
+    protected InputStream getClassLoaderResourceAsStream(String path) throws IOException {
+<span class="fc" id="L249">        return this.getClass().getClassLoader().getResourceAsStream(path);</span>
+    }
+    protected InputStream getStreamFromModule(Module module, String path) throws IOException {
+<span class="fc" id="L252">        return module.getResourceAsStream(path);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

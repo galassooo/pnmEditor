@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterMenuItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.filter</a> &gt; <span class="el_source">FilterMenuItem.java</span></div><h1>FilterMenuItem.java</h1><pre class="source lang-java linenums">package org.supsi.view.filter;
+
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
+import org.supsi.model.filters.FilterModel;
+import org.supsi.model.filters.IFilterModel;
+import javafx.fxml.FXML;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+
+import java.util.Map;
+
+/**
+ * Represents a menu component for selecting and applying filters.
+ * Dynamically populates the menu with filter options and handles filter selection events.
+ */
+<span class="fc" id="L19">public class FilterMenuItem{</span>
+
+    private EventPublisher publisher;
+
+    @FXML
+    private Menu filterMenu;
+
+
+
+    /**
+     * Initializes the filter menu.
+     * Populates the menu with filter options and associates actions to publish filter-related events.
+     */
+    @FXML
+    void initialize() {
+<span class="fc" id="L34">        publisher = EventManager.getPublisher();</span>
+<span class="fc" id="L35">        IStateModel stateModel = StateModel.getInstance();</span>
+<span class="fc" id="L36">        IFilterModel model = FilterModel.getInstance();</span>
+
+<span class="fc" id="L38">        Map&lt;String, String&gt; filtersKeyValues = model.getFiltersKeyValues();</span>
+
+<span class="fc" id="L40">        filtersKeyValues.forEach((filterKey, translatedFilter) -&gt; {</span>
+<span class="fc" id="L41">            MenuItem item = new MenuItem(translatedFilter);</span>
+<span class="fc" id="L42">            item.setId(filterKey);</span>
+<span class="fc" id="L43">            item.setOnAction(actionEvent -&gt;</span>
+<span class="fc" id="L44">                    publisher.publish(new FilterEvent.FilterAddRequested(filterKey))</span>
+            );
+<span class="fc" id="L46">            item.setDisable(true);</span>
+<span class="fc" id="L47">            stateModel.canApplyFiltersProperty().addListener((observable, oldValue, newValue) -&gt; {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                if(newValue){</span>
+<span class="fc" id="L49">                    item.setDisable(false);</span>
+                }
+<span class="fc" id="L51">            });</span>
+<span class="fc" id="L52">            filterMenu.getItems().add(item);</span>
+<span class="fc" id="L53">        });</span>
+<span class="fc" id="L54">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

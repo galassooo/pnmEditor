@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExitController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.exit</a> &gt; <span class="el_source">ExitController.java</span></div><h1>ExitController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.exit;
+
+import org.supsi.controller.confirmation.ConfirmationController;
+import org.supsi.controller.confirmation.IConfirmationController;
+import javafx.stage.Stage;
+import javafx.application.Platform;
+/**
+ * The `ExitController` manages the application exit process, ensuring proper user confirmation
+ * before shutting down the application. It uses an instance of {@link ConfirmationController}
+ * to handle confirmation dialogs.
+ */
+public class ExitController implements IExitController{
+
+    //*NO* EXTENDS CONFIRMATIONCONTROLLER!!!
+    // viola liskov -&gt; aggiunge responsabilità completamente diversa dal padre
+    // viola SRP -&gt; si occupa sia di conferma che di uscita
+    //dunque per rispettare i SOLID è giusto che sia una classe a parte
+
+    //OKAY 'has a' in quanto *USA* il confirmation ma NON LO DEVE ESTENDERE!!
+
+    private static ExitController instance;
+    private final IConfirmationController confirmationController;
+
+<span class="fc" id="L24">    protected ExitController() {</span>
+<span class="fc" id="L25">        this.confirmationController = ConfirmationController.getInstance();</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Returns the Singleton instance of the {@link ExitController}
+     *
+     * @return The singleton instance.
+     */
+    public static ExitController getInstance() {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L35">            instance = new ExitController();</span>
+        }
+<span class="fc" id="L37">        return instance;</span>
+    }
+
+    /**
+     * Handles the application exit process. Requests user confirmation before closing the stage,
+     * exiting the JavaFX platform, and terminating the JVM process.
+     *
+     * @param stage The primary {@link Stage} of the application to be closed. Can be null if no specific stage is involved.
+     */
+    @Override
+    public void handleExit(Stage stage) {
+<span class="fc" id="L48">        confirmationController.requestConfirm(result -&gt; {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (stage != null) {</span>
+<span class="fc" id="L50">                stage.close();</span>
+            }
+<span class="fc" id="L52">        });</span>
+<span class="fc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

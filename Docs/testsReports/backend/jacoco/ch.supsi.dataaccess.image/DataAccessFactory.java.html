@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataAccessFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">DataAccessFactory.java</span></div><h1>DataAccessFactory.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+import ch.supsi.DataAccessComponent;
+import ch.supsi.annotation.ImageAccessFactory;
+import ch.supsi.annotation.Register;
+import ch.supsi.business.image.ImageDataAccess;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+
+/**
+ * Factory class for managing and instantiating image data access components.
+ * This class uses registered {@link DataAccessComponent} entries to provide instances
+ * of image data access implementations based on file extension or magic number.
+ * @see ImageDataAccess
+ */
+@ImageAccessFactory
+<span class="fc" id="L22">public class DataAccessFactory {</span>
+
+    /**
+     * {@link List} of registered data access components.
+     */
+    @Register
+    private static List&lt;DataAccessComponent&gt; dataAccessComponents;
+
+    /**
+     * Retrieves a list of supported file extensions from the registered data access components.
+     *
+     * @return a {@link List} of supported file extensions
+     */
+    public static List&lt;String&gt; getSupportedExtensions() {
+<span class="fc" id="L36">        return dataAccessComponents.stream().map(e -&gt; e.extension).toList();</span>
+    }
+
+    /**
+     * Retrieves the default magic number associated with a given file extension.
+     *
+     * @param extension the file extension
+     * @return an {@link Optional} containing the default magic number, or empty if not found
+     */
+    public static Optional&lt;String&gt; getDefaultMagicNumberFromExtension(String extension) {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (DataAccessComponent component : dataAccessComponents) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            if (component.extension.equals(extension)) {</span>
+<span class="fc" id="L48">                return Optional.of(component.magicNumber[0]);</span>
+            }
+<span class="fc" id="L50">        }</span>
+<span class="fc" id="L51">        return Optional.empty();</span>
+    }
+
+    /**
+     * Creates an instance of {@link ImageDataAccess} for a given file path.
+     * The factory determines the appropriate implementation by reading the file's magic number.
+     *
+     * @param path the path to the image file
+     * @return an instance of {@link ImageDataAccess}
+     * @throws IOException            if the file cannot be read or the file type is unsupported
+     * @throws IllegalAccessException if an error occurs while creating the instance
+     */
+    public static ImageDataAccess getInstance(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L64">        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {</span>
+
+
+<span class="fc" id="L67">            String firstLine = reader.readLine();</span>
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            while (firstLine.isEmpty()) { //skip empty line</span>
+<span class="fc" id="L70">                firstLine = reader.readLine();</span>
+            }
+<span class="fc" id="L72">            return getInstanceFromMagicNumber(firstLine);</span>
+        }
+    }
+
+    /**
+     * Creates an instance of {@link ImageDataAccess} based on the provided magic number.
+     *
+     * @param magicNumber the magic number of the image file
+     * @return an instance of {@link ImageDataAccess}
+     * @throws IOException            if the magic number is unsupported
+     * @throws IllegalAccessException if an error occurs while creating the instance
+     */
+    public static ImageDataAccess getInstanceFromMagicNumber(String magicNumber) throws IOException, IllegalAccessException {
+<span class="fc" id="L85">        Class&lt;?&gt; clazz = getFromMagicNumber(magicNumber);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (clazz == null) {</span>
+<span class="fc" id="L87">            throw new IOException(&quot;Unsupported file type&quot;);</span>
+        }
+<span class="fc" id="L89">        return loadClazz(clazz);</span>
+    }
+
+    /**
+     * Creates an instance of {@link ImageDataAccess} based on the provided file extension.
+     *
+     * @param extension the file extension
+     * @return an instance of {@link ImageDataAccess}
+     * @throws IOException            if the file extension is unsupported
+     * @throws IllegalAccessException if an error occurs while creating the instance
+     */
+    public static ImageDataAccess getInstanceFromExtension(String extension) throws IOException, IllegalAccessException {
+<span class="fc" id="L101">        Class&lt;?&gt; clazz = getFromExtension(extension);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (clazz == null) {</span>
+<span class="fc" id="L103">            throw new IOException(&quot;Unsupported file type&quot;);</span>
+        }
+<span class="fc" id="L105">        return loadClazz(clazz);</span>
+    }
+
+    /**
+     * Retrieves the singleton instance of a class by invoking its `getInstance` method.
+     *
+     * @param clazz the class to retrieve the instance from
+     * @return the singleton instance of the class
+     * @throws IllegalAccessException if the `getInstance` method throws an exception or is inaccessible
+     */
+    static Object getSingletonInstance(Class&lt;?&gt; clazz) throws IllegalAccessException {
+        try {
+<span class="fc" id="L117">            Method getInstanceMethod = clazz.getDeclaredMethod(&quot;getInstance&quot;);</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if (!java.lang.reflect.Modifier.isPublic(getInstanceMethod.getModifiers())) {</span>
+<span class="fc" id="L119">                getInstanceMethod.setAccessible(true);</span>
+            }
+
+<span class="fc" id="L122">            return getInstanceMethod.invoke(null);</span>
+
+<span class="fc" id="L124">        } catch (NoSuchMethodException | IllegalAccessException ignored) {</span>
+<span class="fc" id="L125">            return null; //impossible exception,  singleton integrity in plugin</span>
+<span class="fc" id="L126">        } catch (InvocationTargetException e) {</span>
+<span class="fc" id="L127">            throw new IllegalAccessException(&quot;Singleton method thrown an exception.&quot;);</span>
+        }
+    }
+
+    /**
+     * Loads an instance of {@link ImageDataAccess} from a class.
+     *
+     * @param clazz the class to load
+     * @return an instance of {@link ImageDataAccess}
+     * @throws IllegalAccessException if an error occurs while creating the instance
+     */
+    static ImageDataAccess loadClazz(Class&lt;?&gt; clazz) throws IllegalAccessException {
+        ImageDataAccess instance;
+<span class="fc" id="L140">        instance = (ImageDataAccess) getSingletonInstance(clazz);</span>
+<span class="fc" id="L141">        return instance;</span>
+    }
+
+    /**
+     * Retrieves the class corresponding to the given magic number from the registered components.
+     *
+     * @param magicNumber the magic number to search for
+     * @return the {@link Class} associated with the magic number, or null if not found
+     */
+    private static Class&lt;?&gt; getFromMagicNumber(String magicNumber) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for (DataAccessComponent component : dataAccessComponents) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if (Arrays.asList(component.magicNumber).contains(magicNumber)) {</span>
+<span class="fc" id="L153">                return component.clazz;</span>
+            }
+<span class="fc" id="L155">        }</span>
+<span class="fc" id="L156">        return null;</span>
+    }
+
+    /**
+     * Retrieves the class corresponding to the given file extension from the registered components.
+     *
+     * @param extension the file extension to search for
+     * @return the {@link Class} associated with the file extension, or null if not found
+     */
+    static Class&lt;?&gt; getFromExtension(String extension) {
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        for (DataAccessComponent component : dataAccessComponents) {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            if (component.extension.equals(extension)) {</span>
+<span class="fc" id="L168">                return component.clazz;</span>
+            }
+<span class="fc" id="L170">        }</span>
+<span class="fc" id="L171">        return null;</span>
+    }
+<span class="fc" id="L173">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

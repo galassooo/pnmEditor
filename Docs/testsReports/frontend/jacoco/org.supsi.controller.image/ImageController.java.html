@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.image</a> &gt; <span class="el_source">ImageController.java</span></div><h1>ImageController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.image;
+
+import org.supsi.controller.confirmation.ConfirmationController;
+import org.supsi.controller.confirmation.IConfirmationController;
+import org.supsi.controller.errors.ErrorController;
+import org.supsi.controller.errors.IErrorController;
+import org.supsi.view.image.ExportEvent;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventSubscriber;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+import org.supsi.model.image.IImageModel;
+import org.supsi.model.image.ImageModel;
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+import org.supsi.view.fileSystem.FileSystemView;
+import org.supsi.view.fileSystem.IFileSystemView;
+import org.supsi.view.image.IImageView;
+import javafx.stage.Stage;
+
+import java.io.File;
+
+/**
+ * Controls image-related operations and manages interactions between the image view and model.
+ * Handles file operations such as opening, saving, and exporting images.
+ */
+public class ImageController implements IImageController {
+
+    private static ImageController myself;
+    private final IImageModel model;
+    private final IErrorController errorController;
+    private final ILoggerModel loggerModel;
+    private final IConfirmationController confirmationController;
+    private IImageView mainImageView;
+    private Stage root;
+
+    /**
+     * Private constructor for the ImageController.
+     * Initializes the required components and sets up listeners for state changes and events:
+     * - Instantiates the image model, error controller, logger, and confirmation controller.
+     * - Registers a listener to refresh the image view when the state model indicates a refresh is required.
+     * - Subscribes to export events to handle image export requests dynamically.
+     */
+<span class="fc" id="L44">    protected ImageController() {</span>
+<span class="fc" id="L45">        model = ImageModel.getInstance();</span>
+<span class="fc" id="L46">        errorController = ErrorController.getInstance();</span>
+<span class="fc" id="L47">        loggerModel = LoggerModel.getInstance();</span>
+<span class="fc" id="L48">        confirmationController = ConfirmationController.getInstance();</span>
+
+<span class="fc" id="L50">        IStateModel stateModel = StateModel.getInstance();</span>
+<span class="fc" id="L51">        stateModel.refreshRequiredProperty().addListener((obs, old, newValue) -&gt; {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (newValue) {</span>
+<span class="fc" id="L53">                mainImageView.update();</span>
+            }
+<span class="fc" id="L55">        });</span>
+<span class="fc" id="L56">        EventSubscriber subscriber = EventManager.getSubscriber();</span>
+<span class="fc" id="L57">        subscriber.subscribe(ExportEvent.ExportRequested.class, this::onExportRequested);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Retrieves the singleton instance of the controller.
+     *
+     * @return the singleton instance
+     */
+    public static ImageController getInstance() {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L67">            myself = new ImageController();</span>
+        }
+<span class="fc" id="L69">        return myself;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void open() {
+<span class="fc" id="L77">        confirmationController.requestConfirm((event) -&gt; openImage());</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void save() {
+        try {
+<span class="fc" id="L86">            model.writeImage(null);</span>
+<span class="fc" id="L87">        } catch (Exception e) {</span>
+<span class="fc" id="L88">            errorController.showError(e.getMessage());</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">        loggerModel.addInfo(&quot;ui_image_saved&quot;);</span>
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveAs() {
+<span class="fc" id="L98">        IFileSystemView fsPopUp = getFileSystemView(root);</span>
+<span class="fc" id="L99">        File chosen = fsPopUp.askForDirectory();</span>
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (chosen == null) { //popup closed</span>
+<span class="fc" id="L102">            return;</span>
+        }
+        try {
+<span class="fc" id="L105">            model.writeImage(chosen.getPath());</span>
+<span class="fc" id="L106">        } catch (Exception e) {</span>
+<span class="fc" id="L107">            errorController.showError(e.getMessage());</span>
+<span class="fc" id="L108">        }</span>
+<span class="fc" id="L109">        loggerModel.addInfo(&quot;ui_image_saved&quot;);</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setImage(IImageView image) {
+<span class="fc" id="L117">        this.mainImageView = image;</span>
+<span class="fc" id="L118">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStage(Stage stage) {
+<span class="fc" id="L125">        this.root = stage;</span>
+<span class="fc" id="L126">    }</span>
+
+    protected FileSystemView getFileSystemView(Stage root){
+<span class="fc" id="L129">        return new FileSystemView(root);</span>
+    }
+
+    /**
+     * Handles export events, allowing the user to save the image in a different format.
+     *
+     * @param event the export request event containing the desired file extension
+     */
+    protected void onExportRequested(ExportEvent.ExportRequested event) {
+<span class="fc" id="L138">        IFileSystemView fsPopUp = getFileSystemView(root);</span>
+<span class="fc" id="L139">        fsPopUp.setFileExtension(event.extension());</span>
+<span class="fc" id="L140">        File chosen = fsPopUp.askForDirectory();</span>
+
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (chosen == null) { //popup closed</span>
+<span class="fc" id="L144">            return;</span>
+        }
+        try {
+<span class="fc" id="L147">            model.export(event.extension(), chosen.getPath());</span>
+<span class="fc" id="L148">        } catch (Exception e) {</span>
+<span class="fc" id="L149">            errorController.showError(e.getMessage());</span>
+<span class="fc" id="L150">        }</span>
+<span class="fc" id="L151">        loggerModel.addInfo(&quot;ui_image_exported&quot;);</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Opens an image file selected by the user and loads it into the model.
+     */
+    private void openImage() {
+
+<span class="fc" id="L159">        IFileSystemView fsPopUp = getFileSystemView(root);</span>
+<span class="fc" id="L160">        File chosen = fsPopUp.askForFile();</span>
+
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (chosen == null) { //popup closed</span>
+<span class="fc" id="L163">            return;</span>
+        }
+
+        try {
+<span class="fc" id="L167">            model.readImage(chosen.getPath());</span>
+<span class="fc" id="L168">            loggerModel.addInfo(&quot;ui_image_loaded&quot;);</span>
+<span class="fc" id="L169">        } catch (Exception e) {</span>
+<span class="fc" id="L170">            errorController.showError(e.getMessage());</span>
+<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

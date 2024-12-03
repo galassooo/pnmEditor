@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileSystemView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.fileSystem</a> &gt; <span class="el_source">FileSystemView.java</span></div><h1>FileSystemView.java</h1><pre class="source lang-java linenums">package org.supsi.view.fileSystem;
+
+import org.supsi.model.image.IImageModel;
+import org.supsi.model.image.ImageModel;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
+
+/**
+ * Represents a file system view for interacting with file and directory dialogs in the application.
+ * Provides functionality to open and save files using a {@link FileChooser}.
+ */
+public class FileSystemView implements IFileSystemView {
+
+    private final Stage root;
+    private final IImageModel model;
+    private String extension;
+
+    /**
+     * Constructs a new {@code FileSystemView} with the given root stage.
+     *
+     * @param root the {@link Stage} used as the owner for file dialogs
+     * @throws IllegalArgumentException if the provided {@code root} is {@code null}
+     */
+<span class="fc" id="L26">    public FileSystemView(Stage root) {</span>
+<span class="fc" id="L27">        model = ImageModel.getInstance();</span>
+
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (root == null) {</span>
+<span class="fc" id="L30">            throw new IllegalArgumentException(&quot;root must not be null&quot;);</span>
+        }
+<span class="fc" id="L32">        this.root = root;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public File askForFile() {
+<span class="fc" id="L40">        FileChooser fileChooser = new FileChooser();</span>
+<span class="fc" id="L41">        fileChooser.setTitle(&quot;Open file&quot;);</span>
+<span class="fc" id="L42">        return fileChooser.showOpenDialog(root);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public File askForDirectory() {
+<span class="fc" id="L50">        FileChooser fileChooser = new FileChooser();</span>
+
+<span class="fc" id="L52">        fileChooser.setTitle(&quot;Save File&quot;);</span>
+<span class="fc" id="L53">        fileChooser.setInitialDirectory(new File(System.getProperty(&quot;user.home&quot;)));</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        fileChooser.setInitialFileName(extension == null ? model.getImageName() : model.getImageName().replaceAll(&quot;\\.[^.]+$&quot;, &quot;.&quot; + extension));</span>
+
+<span class="fc" id="L56">        return fileChooser.showSaveDialog(root);</span>
+
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param fileExtension the file extension to use (e.g., &quot;png&quot;, &quot;jpg&quot;)
+     */
+    @Override
+    public void setFileExtension(String fileExtension) {
+<span class="fc" id="L66">        extension = fileExtension;</span>
+<span class="fc" id="L67">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

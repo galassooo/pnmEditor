@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.image</a> &gt; <span class="el_source">ImageAdapter.java</span></div><h1>ImageAdapter.java</h1><pre class="source lang-java linenums">package ch.supsi.business.image;
+
+import ch.supsi.business.strategy.ConvertStrategy;
+
+import java.util.Objects;
+import java.util.function.Function;
+
+/*
+Non implementa il pattern adapter, perchè non abbiamo un'incompatibilità tra i tipi
+in quanto abbiamo un long[][] come input e un long[][] come output.
+ */
+public class ImageAdapter implements ImageAdapterInterface {
+
+    private final ConvertStrategy strategy;
+
+<span class="fc" id="L16">    public ImageAdapter(ConvertStrategy strategy) {</span>
+<span class="fc" id="L17">        this.strategy = strategy;</span>
+<span class="fc" id="L18">    }</span>
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public long[][] rawToArgb(long[][] rawImage) {
+<span class="fc" id="L25">        var function = new Function&lt;Long, Long&gt;() {</span>
+            @Override
+            public Long apply(Long aLong) {
+<span class="fc" id="L28">                return strategy.toArgb(aLong);</span>
+            }
+        };
+<span class="fc" id="L31">        return process(rawImage, function);</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public long[][] argbToRaw(long[][] rawImage) {
+<span class="fc" id="L39">        var function = new Function&lt;Long, Long&gt;() {</span>
+            @Override
+            public Long apply(Long aLong) {
+<span class="fc" id="L42">                return strategy.ArgbToOriginal(aLong);</span>
+            }
+        };
+<span class="fc" id="L45">        return process(rawImage, function);</span>
+    }
+
+    /**
+     * apply the conversion function to all pixels
+     * @param pixels 2D array of long representing an image
+     * @param function conversion function to be applied
+     * @return a new array with converted pixels
+     */
+    private long[][] process(long[][] pixels, Function&lt;Long, Long&gt; function) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (pixels == null)</span>
+<span class="fc" id="L56">            return new long[0][];</span>
+<span class="fc" id="L57">        int height = pixels.length;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (height == 0) {</span>
+<span class="fc" id="L59">            return new long[0][];</span>
+        }
+<span class="fc" id="L61">        int width = pixels[0].length;</span>
+
+<span class="fc" id="L63">        long[][] argbMatrix = new long[height][width];</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L67">                argbMatrix[y][x] = function.apply(pixels[y][x]);</span>
+            }
+        }
+<span class="fc" id="L70">        return argbMatrix;</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (!(o instanceof ImageAdapter adapter)) return false;</span>
+<span class="fc" id="L77">        return Objects.equals(strategy, adapter.strategy);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L82">        return Objects.hashCode(strategy);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

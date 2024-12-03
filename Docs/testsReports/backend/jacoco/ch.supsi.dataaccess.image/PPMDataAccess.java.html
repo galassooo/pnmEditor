@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PPMDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">PPMDataAccess.java</span></div><h1>PPMDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+import ch.supsi.annotation.ImageAccess;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.ThreeChannel;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.*;
+
+/**
+ * Provides functionality to read and write PPM image files in both ASCII (P3) and binary (P6) formats.
+ * Implements a Singleton pattern to ensure a single instance is used across the application.
+ * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats with maxvalue.
+ *
+ * @see PNMDataAccess
+ * @see ch.supsi.business.image.ImageDataAccess
+ */
+@ImageAccess(magicNumber = {&quot;P3&quot;, &quot;P6&quot;})
+<span class="fc" id="L24">public final class PPMDataAccess extends PNMWithMaxValueDataAccess {</span>
+
+    private static PPMDataAccess instance;
+
+    /**
+     * Retrieves the Singleton instance of the {@link PPMDataAccess}.
+     *
+     * @return the Singleton instance
+     */
+    public static PPMDataAccess getInstance() {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L35">            instance = new PPMDataAccess();</span>
+        }
+<span class="fc" id="L37">        return instance;</span>
+    }
+
+    /**
+     * Reads the binary (P6) PPM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the binary PPM data from
+     * @return a 2D array of pixels where each pixel contains combined RGB data
+     * @throws IOException if an error occurs while reading the binary data
+     */
+    @Override
+    protected long[] [] readBinary(InputStream is) throws IOException {
+<span class="fc" id="L49">        long[][] pixelMatrix = new long[height][width];</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L52">                int red = readChannel(is);</span>
+<span class="fc" id="L53">                int green = readChannel(is);</span>
+<span class="fc" id="L54">                int blue = readChannel(is);</span>
+
+<span class="fc bfc" id="L56" title="All 6 branches covered.">                if (red == -1 || green == -1 || blue == -1) {</span>
+<span class="fc" id="L57">                    throw new IOException(&quot;Insufficient data in binary ppm file&quot;);</span>
+                }
+
+<span class="fc" id="L60">                pixelMatrix[y][x] = combineRgb(red, green, blue);</span>
+            }
+        }
+<span class="fc" id="L63">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Reads an individual color channel value from the input stream.
+     *
+     * @param is the {@link InputStream} to read the channel data from
+     * @return the channel value as an integer
+     * @throws IOException if an error occurs while reading the channel data
+     */
+    private int readChannel(InputStream is) throws IOException {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        return super.getMaxValue() &lt;= 255 ? is.read() : (is.read() &lt;&lt; 8) | is.read();</span>
+    }
+
+    /**
+     * Combines red, green, and blue channel values into a single long value.
+     *
+     * @param red   the red channel value
+     * @param green the green channel value
+     * @param blue  the blue channel value
+     * @return a long value representing the combined RGB data
+     */
+    private long combineRgb(int red, int green, int blue) {
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        return super.getMaxValue() &lt;= 255</span>
+<span class="fc" id="L87">                ? ((long) red &lt;&lt; 16) | ((long) green &lt;&lt; 8) | blue</span>
+<span class="fc" id="L88">                : ((long) red &lt;&lt; 32) | ((long) green &lt;&lt; 16) | blue;</span>
+    }
+
+    /**
+     * Reads the ASCII (P3) PPM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the ASCII PPM data from
+     * @return a 2D array of pixels where each pixel contains combined RGB data
+     * @throws IOException if an error occurs while reading the ASCII data
+     */
+    @Override
+    protected long[] [] readAscii(InputStream is) throws IOException {
+<span class="fc" id="L100">        long[][] pixelMatrix = new long[height][width];</span>
+<span class="fc" id="L101">        try (Scanner scanner = new Scanner(is)) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L104">                    int[] rgb = readRgb(scanner);</span>
+<span class="fc" id="L105">                    pixelMatrix[y][x] = combineRgb(rgb[0], rgb[1], rgb[2]);</span>
+                }
+            }
+        }
+<span class="fc" id="L109">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Writes binary (P6) PPM pixel data to the output stream.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L122">        List&lt;Future&lt;byte[]&gt;&gt; futures = createRowTasks(pixels, executor, this::generateBinaryRowBuffer);</span>
+<span class="fc" id="L123">        writeFuturesToStream(futures, os);</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Writes ASCII (P3) PPM pixel data to the output stream.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L136">        List&lt;Future&lt;byte[]&gt;&gt; futures = createRowTasks(pixels, executor, this::generateAsciiRowBuffer);</span>
+<span class="fc" id="L137">        writeFuturesToStream(futures, os);</span>
+<span class="fc" id="L138">    }</span>
+
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on the maximum pixel value.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
+    @Override
+    protected ConvertStrategy getArgbConvertStrategy() {
+<span class="fc" id="L147">        return new ThreeChannel(super.getMaxValue());</span>
+    }
+
+    /**
+     * Creates tasks for generating pixel rows in parallel using the provided executor and row generator.
+     *
+     * @param pixels    the 2D array of pixels to process
+     * @param executor  the {@link ExecutorService} to use for parallel task execution
+     * @param generator a {@link RowGenerator} to generate each row
+     * @return a {@link List} of {@link Future} objects representing the tasks for each row
+     */
+    private List&lt;Future&lt;byte[]&gt;&gt; createRowTasks(long[][] pixels, ExecutorService executor, RowGenerator generator) {
+<span class="fc" id="L159">        List&lt;Future&lt;byte[]&gt;&gt; futures = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L160">        int height = pixels.length;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc" id="L162">            final int row = y;</span>
+<span class="fc" id="L163">            futures.add(executor.submit(() -&gt; generator.generateRow(pixels, row, pixels[0].length)));</span>
+        }
+<span class="fc" id="L165">        return futures;</span>
+    }
+
+    /**
+     * Generates a binary buffer for a single row of pixels.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the binary data for the row
+     */
+    private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        boolean is16bit = super.getMaxValue() &gt; 255;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        int m = is16bit ? 2 : 1;</span>
+<span class="fc" id="L179">        byte[] rowBuffer = new byte[width * 3 * m];</span>
+<span class="fc" id="L180">        int index = 0;</span>
+
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L183">            long pixel = pixels[row][x];</span>
+<span class="fc" id="L184">            index = writeRgbToBuffer(rowBuffer, index, pixel, is16bit);</span>
+        }
+<span class="fc" id="L186">        return rowBuffer;</span>
+    }
+
+    /**
+     * Generates an ASCII buffer for a single row of pixels.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the ASCII data for the row
+     */
+    private byte[] generateAsciiRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        boolean is16bit = super.getMaxValue() &gt; 255;</span>
+<span class="fc" id="L199">        StringBuilder rowContent = new StringBuilder();</span>
+
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L202">            long pixel = pixels[row][x];</span>
+<span class="fc bfc" id="L203" title="All 4 branches covered.">            int red = (int) ((pixel &gt;&gt; (is16bit ? 32 : 16)) &amp; (is16bit ? 0xFFFF : 0xFF));</span>
+<span class="fc bfc" id="L204" title="All 4 branches covered.">            int green = (int) ((pixel &gt;&gt; (is16bit ? 16 : 8)) &amp; (is16bit ? 0xFFFF : 0xFF));</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            int blue = (int) (pixel &amp; (is16bit ? 0xFFFF : 0xFF));</span>
+
+<span class="fc" id="L207">            rowContent.append(red).append(&quot; &quot;).append(green).append(&quot; &quot;).append(blue).append(&quot; &quot;);</span>
+        }
+
+<span class="fc" id="L210">        rowContent.append(&quot;\n&quot;);</span>
+<span class="fc" id="L211">        return rowContent.toString().getBytes();</span>
+    }
+
+    /**
+     * Writes the RGB data of a pixel to the buffer.
+     *
+     * @param buffer  the byte array buffer to write to
+     * @param index   the starting index in the buffer
+     * @param pixel   the pixel containing combined RGB data
+     * @param is16bit whether the pixel data is 16-bit
+     * @return the updated index after writing the pixel data
+     */
+    private int writeRgbToBuffer(byte[] buffer, int index, long pixel, boolean is16bit) {
+<span class="fc" id="L224">        int[] rgb = extractRgb(pixel, is16bit);</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        for (int color : rgb) {</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if (is16bit) {</span>
+<span class="fc" id="L227">                buffer[index++] = (byte) (color &gt;&gt; 8);</span>
+            }
+<span class="fc" id="L229">            buffer[index++] = (byte) color;</span>
+        }
+<span class="fc" id="L231">        return index;</span>
+    }
+
+    /**
+     * Extracts the RGB components from a pixel.
+     *
+     * @param pixel   the pixel containing combined RGB data
+     * @param is16bit whether the pixel data is 16-bit
+     * @return an array of integers containing the red, green, and blue components
+     */
+    private int[] extractRgb(long pixel, boolean is16bit) {
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        int shift = is16bit ? 16 : 8;</span>
+<span class="fc" id="L243">        return new int[]{</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">                (int) ((pixel &gt;&gt; (2 * shift)) &amp; (is16bit ? 0xFFFF : 0xFF)),</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">                (int) ((pixel &gt;&gt; shift) &amp; (is16bit ? 0xFFFF : 0xFF)),</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                (int) (pixel &amp; (is16bit ? 0xFFFF : 0xFF))</span>
+        };
+    }
+
+    /**
+     * Writes the results of row generation tasks to the output stream.
+     *
+     * @param futures the list of {@link Future} objects representing row data tasks
+     * @param os      the {@link OutputStream} to write the data to
+     * @throws IOException if an error occurs during writing
+     */
+    @Override
+    protected void writeFuturesToStream(List&lt;Future&lt;byte[]&gt;&gt; futures, OutputStream os) throws IOException {
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        for (Future&lt;byte[]&gt; future : futures) {</span>
+            try {
+<span class="fc" id="L261">                os.write(future.get());</span>
+<span class="fc" id="L262">            } catch (InterruptedException | ExecutionException ignored) {</span>
+
+<span class="fc" id="L264">            }</span>
+<span class="fc" id="L265">        }</span>
+<span class="fc" id="L266">    }</span>
+
+    /**
+     * Reads an RGB triplet from the scanner.
+     *
+     * @param scanner the {@link Scanner} to read data from
+     * @return an array containing the red, green, and blue values
+     * @throws IOException if the data is invalid or out of range
+     */
+    private int[] readRgb(Scanner scanner) throws IOException {
+<span class="fc" id="L276">        int[] rgb = new int[3];</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        for (int i = 0; i &lt; 3; i++) {</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">            if (!scanner.hasNextInt()) throw new IOException(&quot;Invalid color data in ASCII PPM file&quot;);</span>
+<span class="fc" id="L279">            rgb[i] = scanner.nextInt();</span>
+<span class="fc bfc" id="L280" title="All 4 branches covered.">            if (rgb[i] &lt; 0 || rgb[i] &gt; super.getMaxValue())</span>
+<span class="fc" id="L281">                throw new IOException(&quot;Color value out of range in ASCII PPM file&quot;);</span>
+        }
+<span class="fc" id="L283">        return rgb;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

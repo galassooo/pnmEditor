@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferencesDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.preferences</a> &gt; <span class="el_source">PreferencesDataAccess.java</span></div><h1>PreferencesDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.preferences;
+
+import ch.supsi.business.preferences.PreferencesDataAccessInterface;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * Provides access to user preferences, including loading, saving, and creating default preferences.
+ * This class handles preferences stored in the user's filesystem and ensures that they are available
+ * for the application runtime. It uses a singleton pattern to guarantee a single instance.
+ */
+public class PreferencesDataAccess implements PreferencesDataAccessInterface {
+
+    private static final String DEFAULT_USER_PREFERENCES_PROPERTIES = &quot;/default-user-preferences.properties&quot;;
+    private static String USER_HOME_DIRECTORY;
+    private static final String PREFERENCES_DIRECTORY = &quot;.imageEditor&quot;;
+    private static final String PREFERENCES_FILE = &quot;/user-preferences.properties&quot;;
+    private static PreferencesDataAccess dao;
+    private Properties newProperties;
+
+    /**
+     * Protected default constructor to avoid instantiation from external clients.
+     * Initializes the user's home directory.
+     */
+<span class="fc" id="L29">    protected PreferencesDataAccess() {</span>
+<span class="fc" id="L30">        USER_HOME_DIRECTORY = System.getProperty(&quot;user.home&quot;);</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Singleton method to retrieve the instance of PreferencesDataAccess.
+     *
+     * @return the singleton instance of {@link PreferencesDataAccess}
+     */
+    public static PreferencesDataAccess getInstance() {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (dao == null) {</span>
+<span class="fc" id="L40">            dao = new PreferencesDataAccess();</span>
+        }
+
+<span class="fc" id="L43">        return dao;</span>
+    }
+
+    /**
+     * Builds the path to the preferences directory in the user's filesystem.
+     *
+     * @return the {@link Path} to the preferences directory
+     */
+    private Path getUserPreferencesDirectoryPath() {
+<span class="fc" id="L52">        return Path.of(USER_HOME_DIRECTORY, PREFERENCES_DIRECTORY);</span>
+    }
+
+    /**
+     * Checks if the preferences directory exists in the user's filesystem.
+     *
+     * @return true if the directory exists, false otherwise
+     */
+    private boolean userPreferencesDirectoryExists() {
+<span class="fc" id="L61">        return Files.exists(this.getUserPreferencesDirectoryPath());</span>
+    }
+
+    /**
+     * Creates the user preferences directory in the filesystem.
+     *
+     * @throws IOException if an error occurs while creating the directory
+     */
+    private void createUserPreferencesDirectory() throws IOException {
+        try {
+<span class="fc" id="L71">            Files.createDirectories(this.getUserPreferencesDirectoryPath());</span>
+<span class="fc" id="L72">        } catch (IOException e) {</span>
+<span class="fc" id="L73">            throw new IOException(String.format(&quot;Unable to create user preferences directory: %s\n&quot;, e.getMessage()));</span>
+<span class="fc" id="L74">        }</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Builds the path to the preferences file in the user's filesystem.
+     *
+     * @return the {@link Path} to the preferences file
+     */
+    private Path getUserPreferencesFilePath() {
+<span class="fc" id="L83">        return Path.of(USER_HOME_DIRECTORY, PREFERENCES_DIRECTORY, PREFERENCES_FILE);</span>
+    }
+
+    /**
+     * Checks if the user preferences file exists in the filesystem.
+     *
+     * @return {@code true} if the file exists, {@code false} otherwise
+     */
+    private boolean userPreferencesFileExists() {
+<span class="fc" id="L92">        return Files.exists(this.getUserPreferencesFilePath());</span>
+    }
+
+    /**
+     * Creates a user preferences file with the default preferences.
+     *
+     * @param defaultPreferences the default preferences to be stored in the file
+     * @throws IOException if an error occurs while creating the file
+     */
+    private void createUserPreferencesFile(Properties defaultPreferences) throws IOException {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (!userPreferencesDirectoryExists()) {</span>
+<span class="fc" id="L103">            this.createUserPreferencesDirectory();</span>
+        }
+        try {
+<span class="fc" id="L106">            FileOutputStream outputStream = new FileOutputStream(String.valueOf(this.getUserPreferencesFilePath()));</span>
+<span class="fc" id="L107">            defaultPreferences.store(outputStream, null);</span>
+<span class="fc" id="L108">        } catch (IOException e) {</span>
+<span class="fc" id="L109">            throw new IOException(String.format(&quot;Unable to create user preferences file: %s\n&quot;, getUserPreferencesFilePath()));</span>
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Loads the default user preferences from the properties file.
+     *
+     * @return a {@link Properties} object containing the default preferences
+     * @throws IOException if an error occurs while loading the default preferences
+     */
+    private Properties loadDefaultPreferences() throws IOException {
+<span class="fc" id="L120">        Properties defaultPreferences = new Properties();</span>
+        try {
+<span class="fc" id="L122">            InputStream defaultPreferencesStream = getPreferencesResourceAsStream(DEFAULT_USER_PREFERENCES_PROPERTIES);</span>
+<span class="fc" id="L123">            defaultPreferences.load(defaultPreferencesStream);</span>
+<span class="fc" id="L124">        } catch (IOException e) {</span>
+<span class="fc" id="L125">            throw new IOException(String.format(&quot;Unable to load user preferences file: %s\n&quot;, getUserPreferencesFilePath()));</span>
+<span class="fc" id="L126">        }</span>
+<span class="fc" id="L127">        return defaultPreferences;</span>
+    }
+
+    /**
+     * Provides an InputStream for the given resource path. Can be overridden for testing purposes.
+     *
+     * @param resource the path to the resource
+     * @return an {@link InputStream} for the resource
+     */
+    protected InputStream getPreferencesResourceAsStream(String resource) {
+<span class="fc" id="L137">        return this.getClass().getResourceAsStream(resource);</span>
+    }
+
+    /**
+     * Loads and returns the preferences from the specified file path.
+     *
+     * @param path the path to the preferences file
+     * @return a {@link Properties} object containing the loaded preferences
+     * @throws IOException if an error occurs while loading the preferences
+     */
+    private Properties loadPreferences(Path path) throws IOException {
+<span class="fc" id="L148">        Properties preferences = new Properties();</span>
+        try {
+<span class="fc" id="L150">            preferences.load(Files.newInputStream(path));</span>
+<span class="fc" id="L151">        } catch (IOException e) {</span>
+<span class="fc" id="L152">            throw new IOException(String.format(&quot;Unable to load user preferences file from the specified path: %s\n&quot;, path));</span>
+<span class="fc" id="L153">        }</span>
+<span class="fc" id="L154">        return preferences;</span>
+    }
+
+    /**
+     * Retrieves the user's preferences. If no preferences file exists, a new one is created with default preferences.
+     *
+     * @return a {@link Properties} object containing the user's preferences
+     */
+    @Override
+    public Properties getPreferences() {
+        try {
+            Properties userPreferences;
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (userPreferencesFileExists()) {</span>
+<span class="fc" id="L167">                userPreferences = this.loadPreferences(this.getUserPreferencesFilePath());</span>
+<span class="fc" id="L168">                newProperties = (Properties) userPreferences.clone();</span>
+<span class="fc" id="L169">                return userPreferences;</span>
+            }
+
+<span class="fc" id="L172">            userPreferences = this.loadDefaultPreferences();</span>
+<span class="fc" id="L173">            newProperties = (Properties) userPreferences.clone();</span>
+<span class="fc" id="L174">            createUserPreferencesFile(userPreferences);</span>
+<span class="fc" id="L175">            return userPreferences;</span>
+<span class="fc" id="L176">        } catch (IOException e) {</span>
+<span class="fc" id="L177">            return new Properties();</span>
+        }
+    }
+
+    /**
+     * Stores a preference in the user preferences file.
+     * Updates a copy of the user preferences and writes it to the filesystem.
+     *
+     * @param preference a key-value pair representing the preference to be stored
+     * @return {@code true} if the operation succeeds, {@code false} false otherwise
+     * @throws IOException if an error occurs while storing the preference
+     */
+    @Override
+    public boolean storePreference(Map.Entry&lt;String, String&gt; preference) throws IOException {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (newProperties == null) {</span>
+<span class="fc" id="L192">            newProperties = getPreferences();</span>
+        }
+
+<span class="fc" id="L195">        newProperties.setProperty(preference.getKey(), preference.getValue());</span>
+
+        try {
+<span class="fc" id="L198">            OutputStream outputStream = Files.newOutputStream(this.getUserPreferencesFilePath());</span>
+<span class="fc" id="L199">            newProperties.store(outputStream, null);</span>
+<span class="fc" id="L200">            outputStream.close();</span>
+<span class="fc" id="L201">        } catch (IOException e) {</span>
+<span class="fc" id="L202">            throw new IOException(String.format(&quot;Unable to store preference: %s\n&quot;, getUserPreferencesFilePath()), e);</span>
+<span class="fc" id="L203">        }</span>
+<span class="fc" id="L204">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

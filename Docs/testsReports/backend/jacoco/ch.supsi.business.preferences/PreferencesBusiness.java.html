@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferencesBusiness.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.preferences</a> &gt; <span class="el_source">PreferencesBusiness.java</span></div><h1>PreferencesBusiness.java</h1><pre class="source lang-java linenums">package ch.supsi.business.preferences;
+
+
+import ch.supsi.application.preferences.PreferencesBusinessInterface;
+import ch.supsi.dataaccess.preferences.PreferencesDataAccess;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+
+/**
+ * Provides business logic for managing user preferences in the application.
+ * This class interacts with the data access layer to retrieve and store preferences,
+ * including the current language setting and other key-value preferences.
+ * Implements the Singleton pattern to ensure a single instance is used across the application.
+ */
+public class PreferencesBusiness implements PreferencesBusinessInterface {
+
+    private static PreferencesBusiness myself;
+    private final PreferencesDataAccessInterface preferencesDao;
+    private Properties userPreferences;
+
+<span class="fc" id="L24">    protected PreferencesBusiness() {</span>
+<span class="fc" id="L25">        this.preferencesDao = PreferencesDataAccess.getInstance();</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Retrieves the Singleton instance of {@link PreferencesBusiness}.
+     *
+     * @return the Singleton instance
+     */
+
+    public static PreferencesBusiness getInstance() {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L36">            myself = new PreferencesBusiness();</span>
+        }
+
+<span class="fc" id="L39">        return myself;</span>
+    }
+
+    /**
+     * Retrieves the current language preference of the application.
+     *
+     * @return an {@link Optional} containing the current language tag if available, or empty otherwise
+     */
+    @Override
+    public Optional&lt;String&gt; getCurrentLanguage() {
+<span class="fc" id="L49">        userPreferences = preferencesDao.getPreferences();</span>
+<span class="fc" id="L50">        return Optional.of(userPreferences.getProperty(&quot;language-tag&quot;));</span>
+    }
+
+    /**
+     * Sets the current language preference for the application.
+     *
+     * @param languageCode the language code (e.g., &quot;en&quot;, &quot;it&quot;) to set as the current language
+     * @throws IOException if an error occurs while storing the preference
+     */
+    @Override
+    public void setCurrentLanguage(String languageCode) throws IOException {
+<span class="fc" id="L61">        Map.Entry&lt;String, String&gt; languagePreference = Map.entry(&quot;language-tag&quot;, languageCode);</span>
+<span class="fc" id="L62">        this.preferencesDao.storePreference(languagePreference);</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Retrieves the preference associated with the specified key.
+     *
+     * @param key the key for the desired preference
+     * @return an {@link Optional} containing the preference value if found, or empty if the key is invalid or not present
+     */
+    @Override
+    public Optional&lt;Object&gt; getPreference(String key) {
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        if (key == null || key.isEmpty()) {</span>
+<span class="fc" id="L74">            return Optional.empty();</span>
+        }
+<span class="fc" id="L76">        this.userPreferences = preferencesDao.getPreferences();</span>
+<span class="fc" id="L77">        return Optional.ofNullable(userPreferences.get(key));</span>
+    }
+
+    /**
+     * Sets a preference in the application by storing the specified key-value pair.
+     *
+     * @param preference the key-value pair representing the preference to store
+     * @throws IOException if an error occurs while storing the preference
+     */
+    @Override
+    public void setPreference(Map.Entry&lt;String, String&gt; preference) throws IOException {
+<span class="fc" id="L88">        this.preferencesDao.storePreference(preference);</span>
+<span class="fc" id="L89">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

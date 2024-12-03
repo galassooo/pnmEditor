@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterChainLink.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.filter.chain</a> &gt; <span class="el_source">FilterChainLink.java</span></div><h1>FilterChainLink.java</h1><pre class="source lang-java linenums">package ch.supsi.business.filter.chain;
+
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.business.filter.chain.command.FilterCommand;
+
+import java.util.Objects;
+
+/**
+ * Represents a single link in a chain of filters to be applied sequentially to an image.
+ * Each link contains a {@link FilterCommand} and may point to the next link in the chain.
+ */
+public class FilterChainLink {
+
+    private final FilterCommand command;
+    private FilterChainLink next;
+
+    /**
+     * Constructs a {@link FilterChainLink} with the specified {@link FilterCommand}.
+     *
+     * @param command the filter command to associate with this chain link
+     */
+<span class="fc" id="L22">    public FilterChainLink(FilterCommand command) {</span>
+<span class="fc" id="L23">        this.command = command;</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * Executes the filter command on the provided image and, if a next link exists, delegates execution to it.
+     * Resets the next link after execution to avoid re-execution.
+     *
+     * @param image the {@link WritableImage} to process
+     */
+    public void execute(WritableImage image) {
+<span class="fc" id="L33">        command.execute(image);</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (next != null) {</span>
+<span class="fc" id="L35">            next.execute(image);</span>
+<span class="fc" id="L36">            next = null; // Reset dopo l'esecuzione</span>
+        }
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Sets the next link in the chain.
+     *
+     * @param next the next {@link FilterChainLink}
+     */
+    public void setNext(FilterChainLink next) {
+<span class="fc" id="L46">        this.next = next;</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Retrieves the next link in the chain.
+     *
+     * @return the next {@link FilterChainLink}, or {@code null} if this is the last link
+     */
+    public FilterChainLink getNext() {
+<span class="fc" id="L55">        return next;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L59">        return command.getName();</span>
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (!(o instanceof FilterChainLink that)) return false;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return Objects.equals(command, that.command)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                &amp;&amp; Objects.equals(getNext(), that.getNext());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L73">        return Objects.hash(command, getNext());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

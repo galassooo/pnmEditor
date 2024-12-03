@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PNMWithMaxValueDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">PNMWithMaxValueDataAccess.java</span></div><h1>PNMWithMaxValueDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+
+/**
+ * Abstract base class for handling PNM image formats that include a &quot;max value&quot; field in their headers.
+ * This class extends {@link PNMDataAccess} and provides shared functionality for formats like PPM and PGM,
+ * which support pixel values up to a defined maximum.
+ *
+ * @see PNMDataAccess
+ * @see PPMDataAccess
+ * @see PGMDataAccess
+ */
+<span class="fc" id="L18">public abstract sealed class PNMWithMaxValueDataAccess extends PNMDataAccess</span>
+        permits PPMDataAccess, PGMDataAccess {
+
+<span class="fc" id="L21">    private int maxValue = 255; //default</span>
+
+    /**
+     * Processes binary PNM data, reading the max value from the header and delegating to the specific implementation.
+     *
+     * @param is the {@link InputStream} containing the binary PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    @Override
+    protected final long[] [] processBinary(InputStream is) throws IOException {
+<span class="fc" id="L32">        readMaxValue(is);</span>
+<span class="fc" id="L33">        return readBinary(is);</span>
+    }
+
+    /**
+     * Processes ASCII PNM data, reading the max value from the header and delegating to the specific implementation.
+     *
+     * @param is the {@link InputStream} containing the ASCII PNM data
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    @Override
+    protected final long[]  [] processAscii(InputStream is) throws IOException {
+<span class="fc" id="L45">        readMaxValue(is);</span>
+<span class="fc" id="L46">        return readAscii(is);</span>
+    }
+
+    /**
+     * Writes binary PNM data, including the max value in the header, and delegates pixel writing to the specific implementation.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    @Override
+    protected final void writeBinary(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+<span class="fc" id="L59">        writeMaxValue(os);</span>
+<span class="fc" id="L60">        writeBinaryPixels(os, pixels, ex);</span>
+<span class="fc" id="L61">    }</span>
+
+
+    /**
+     * Writes ASCII PNM data, including the max value in the header, and delegates pixel writing to the specific implementation.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    @Override
+    protected final void writeAscii(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException {
+<span class="fc" id="L74">        writeMaxValue(os);</span>
+<span class="fc" id="L75">        writeAsciiPixels(os, pixels, ex);</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Reads binary pixel data after the header. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} to read from
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    protected abstract long[] [] readBinary(InputStream is) throws IOException;
+
+    /**
+     * Reads ASCII pixel data after the header. To be implemented by subclasses.
+     *
+     * @param is the {@link InputStream} to read from
+     * @return a 2D array of pixels
+     * @throws IOException if an error occurs while reading the data
+     */
+    protected abstract long[] [] readAscii(InputStream is) throws IOException;
+
+    /**
+     * Writes binary pixel data. To be implemented by subclasses.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    protected abstract void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
+
+    /**
+     * Writes ASCII pixel data. To be implemented by subclasses.
+     *
+     * @param os     the {@link OutputStream} to write to
+     * @param pixels the 2D array of pixels to write
+     * @param ex     the {@link ExecutorService} for parallel processing
+     * @throws IOException if an error occurs while writing the data
+     */
+    protected abstract void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService ex) throws IOException;
+
+    /**
+     * Retrieves the maximum pixel value read from the PNM header.
+     *
+     * @return the max pixel value
+     */
+    protected int getMaxValue() {
+<span class="fc" id="L122">        return maxValue;</span>
+    }
+
+    /**
+     * Reads the maximum pixel value from the PNM header.
+     *
+     * @param is the {@link InputStream} to read from
+     * @throws IOException if the max value is invalid or out of range
+     */
+    private void readMaxValue(InputStream is) throws IOException {
+<span class="fc" id="L132">        String line = readLine(is);</span>
+        try {
+<span class="fc" id="L134">            maxValue = Integer.parseInt(line.trim());</span>
+<span class="fc bfc" id="L135" title="All 4 branches covered.">            if (maxValue &lt;= 0 || maxValue &gt; 65535) {</span>
+<span class="fc" id="L136">                throw new IOException(&quot;Max value out of range in header&quot;);</span>
+            }
+<span class="fc" id="L138">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L139">            throw new IOException(&quot;Max value is invalid in header&quot;);</span>
+<span class="fc" id="L140">        }</span>
+<span class="fc" id="L141">    }</span>
+
+    /**
+     * writes the max value to the output stream
+     * @param os the {@link OutputStream} to be written
+     * @throws IOException if an error occurs during writing operation
+     */
+    private void writeMaxValue(OutputStream os) throws IOException {
+<span class="fc" id="L149">        os.write((maxValue + &quot;\n&quot;).getBytes());</span>
+<span class="fc" id="L150">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

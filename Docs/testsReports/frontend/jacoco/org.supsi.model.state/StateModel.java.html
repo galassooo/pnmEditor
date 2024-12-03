@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.state</a> &gt; <span class="el_source">StateModel.java</span></div><h1>StateModel.java</h1><pre class="source lang-java linenums">package org.supsi.model.state;
+
+import ch.supsi.application.state.StateApplication;
+import ch.supsi.application.state.StateChangeListener;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
+/**
+ * Represents the state model for managing application states and exposing them to the view.
+ * Observes changes in the application state and updates internal properties for bindings.
+ */
+public class StateModel implements StateChangeListener, IStateModel {
+
+    private static StateModel myself;
+    private final StateApplication stateApp;
+    private final SimpleBooleanProperty canSave;
+    private final SimpleBooleanProperty canSaveAs;
+    private final SimpleBooleanProperty canExport;
+    private final SimpleBooleanProperty canApplyFilters;
+    private final SimpleBooleanProperty canAddFilter;
+    private final SimpleBooleanProperty refreshRequired;
+    private final SimpleBooleanProperty areChangesPending;
+
+    /**
+     * Initializes the {@code StateModel} and registers it as a state listener.
+     * Creates bindings for state properties.
+     */
+<span class="fc" id="L28">    protected StateModel() {</span>
+<span class="fc" id="L29">        stateApp = StateApplication.getInstance();</span>
+<span class="fc" id="L30">        canSave = new SimpleBooleanProperty();</span>
+<span class="fc" id="L31">        canSaveAs = new SimpleBooleanProperty();</span>
+<span class="fc" id="L32">        canExport = new SimpleBooleanProperty();</span>
+<span class="fc" id="L33">        canApplyFilters = new SimpleBooleanProperty();</span>
+<span class="fc" id="L34">        canAddFilter  = new SimpleBooleanProperty();</span>
+<span class="fc" id="L35">        refreshRequired = new SimpleBooleanProperty();</span>
+<span class="fc" id="L36">        areChangesPending = new SimpleBooleanProperty();</span>
+
+<span class="fc" id="L38">        stateApp.registerStateListener(this);</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Retrieves the singleton instance of the {@code StateModel}.
+     *
+     * @return the singleton instance of {@code StateModel}
+     */
+    public static StateModel getInstance() {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L48">            myself = new StateModel();</span>
+        }
+<span class="fc" id="L50">        return myself;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onStateChange() {
+<span class="fc" id="L58">        canSave.set(stateApp.canSave());</span>
+<span class="fc" id="L59">        canSaveAs.set(stateApp.canSaveAs());</span>
+<span class="fc" id="L60">        canExport.set(stateApp.canExport());</span>
+<span class="fc" id="L61">        canApplyFilters.set(stateApp.canApplyFilters());</span>
+<span class="fc" id="L62">        canAddFilter.set(stateApp.canAddFilter());</span>
+<span class="fc" id="L63">        refreshRequired.set(stateApp.isRefreshRequired());</span>
+<span class="fc" id="L64">        areChangesPending.set(stateApp.areChangesPending());</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+<span class="fc" id="L71">    public ReadOnlyBooleanProperty canSaveProperty() { return canSave; }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+<span class="fc" id="L77">    public ReadOnlyBooleanProperty canSaveAsProperty() { return canSaveAs; }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+<span class="fc" id="L83">    public ReadOnlyBooleanProperty canExportProperty() { return canExport; }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+<span class="fc" id="L89">    public ReadOnlyBooleanProperty canApplyFiltersProperty() { return canApplyFilters; }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+<span class="fc" id="L95">    public ReadOnlyBooleanProperty refreshRequiredProperty() { return refreshRequired; }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReadOnlyBooleanProperty areChangesPending() {
+<span class="fc" id="L102">        return areChangesPending;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

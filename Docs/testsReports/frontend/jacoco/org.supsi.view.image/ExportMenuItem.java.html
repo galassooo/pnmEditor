@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExportMenuItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.image</a> &gt; <span class="el_source">ExportMenuItem.java</span></div><h1>ExportMenuItem.java</h1><pre class="source lang-java linenums">package org.supsi.view.image;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
+import org.supsi.model.image.IImageModel;
+import org.supsi.model.image.ImageModel;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+
+import java.util.List;
+
+/**
+ * Represents a menu component for exporting images in different formats.
+ * Dynamically populates the export menu with supported file extensions and handles export events.
+ */
+<span class="fc" id="L19">public class ExportMenuItem{</span>
+
+    private EventPublisher publisher;
+
+    @FXML
+    protected Menu exportMenu;
+
+
+    /**
+     * Initializes the export menu.
+     * Populates the menu with supported file extensions and binds their enabled state
+     * to the application's export capability.
+     */
+    @FXML
+    private void initialize() {
+<span class="fc" id="L34">        publisher = EventManager.getPublisher();</span>
+<span class="fc" id="L35">        IImageModel model = ImageModel.getInstance();</span>
+<span class="fc" id="L36">        IStateModel stateModel = StateModel.getInstance();</span>
+
+<span class="fc" id="L38">        List&lt;String&gt; filtersKeyValues = model.getSupportedExtensions();</span>
+
+<span class="fc" id="L40">        filtersKeyValues.forEach(extension -&gt; {</span>
+<span class="fc" id="L41">            MenuItem item = new MenuItem(extension);</span>
+
+<span class="fc" id="L43">            item.disableProperty().bind(stateModel.canExportProperty().not());</span>
+<span class="fc" id="L44">            item.setOnAction(actionEvent -&gt; publisher.publish(new ExportEvent.ExportRequested(extension)));</span>
+<span class="fc" id="L45">            item.setId(extension);</span>
+
+<span class="fc" id="L47">            exportMenu.getItems().add(item);</span>
+<span class="fc" id="L48">        });</span>
+<span class="fc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

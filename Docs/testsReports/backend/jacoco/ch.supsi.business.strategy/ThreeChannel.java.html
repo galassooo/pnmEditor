@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreeChannel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.strategy</a> &gt; <span class="el_source">ThreeChannel.java</span></div><h1>ThreeChannel.java</h1><pre class="source lang-java linenums">package ch.supsi.business.strategy;
+
+import java.util.Objects;
+
+public class ThreeChannel implements ConvertStrategy {
+
+    private final int maxValue;
+
+<span class="fc" id="L9">    public ThreeChannel(int maxValue) {</span>
+<span class="fc" id="L10">        this.maxValue = maxValue;</span>
+<span class="fc" id="L11">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long toArgb(long pixel) {
+        long red;
+        long green;
+        long blue;
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (maxValue &gt; 255) {</span>
+            //nel caso dei 16 bit per canale va normalizzato a 8 poichè
+            //l'argb impone 8 bit per canale + alpha
+<span class="fc" id="L24">            red = (pixel &gt;&gt; 32) &amp; 0xFFFF; //extract 16 bit values</span>
+<span class="fc" id="L25">            green = (pixel &gt;&gt; 16) &amp; 0xFFFF;</span>
+<span class="fc" id="L26">            blue = pixel &amp; 0xFFFF;</span>
+
+        } else {
+<span class="fc" id="L29">            red = (pixel &gt;&gt; 16) &amp; 0xFF;</span>
+<span class="fc" id="L30">            green = (pixel &gt;&gt; 8) &amp; 0xFF;</span>
+<span class="fc" id="L31">            blue = pixel &amp; 0xFF;</span>
+
+        }
+        // normalize to 8-bit range for ARGB
+<span class="fc" id="L35">        red = (long) ((red / (double) maxValue) * 255);</span>
+<span class="fc" id="L36">        green = (long) ((green / (double) maxValue) * 255);</span>
+<span class="fc" id="L37">        blue = (long) ((blue / (double) maxValue) * 255);</span>
+
+<span class="fc" id="L39">        return (0xFFL &lt;&lt; 24) | (red &lt;&lt; 16) | (green &lt;&lt; 8) | blue;</span>
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long ArgbToOriginal(long pixel) {
+<span class="fc" id="L48">        long red = (pixel &gt;&gt; 16) &amp; 0xFF;</span>
+<span class="fc" id="L49">        long green = (pixel &gt;&gt; 8) &amp; 0xFF;</span>
+<span class="fc" id="L50">        long blue = pixel &amp; 0xFF;</span>
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (maxValue &gt; 255) {</span>
+<span class="fc" id="L53">            red = (long) ((red / 255.0) * maxValue);</span>
+<span class="fc" id="L54">            green = (long) ((green / 255.0) * maxValue);</span>
+<span class="fc" id="L55">            blue = (long) ((blue / 255.0) * maxValue);</span>
+
+<span class="fc" id="L57">            return red &lt;&lt; 32 | green &lt;&lt; 16 | blue;</span>
+        } else {
+<span class="fc" id="L59">            return red &lt;&lt; 16 | green &lt;&lt; 8 | blue;</span>
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (!(o instanceof ThreeChannel that)) return false;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return maxValue == that.maxValue;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L72">        return Objects.hashCode(maxValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

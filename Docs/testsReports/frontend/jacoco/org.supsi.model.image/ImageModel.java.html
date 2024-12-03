@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.model.image</a> &gt; <span class="el_source">ImageModel.java</span></div><h1>ImageModel.java</h1><pre class="source lang-java linenums">package org.supsi.model.image;
+
+import ch.supsi.application.image.ImageApplication;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Represents the model for managing image data and operations.
+ * Acts as a bridge between the view and the backend controller for image-related functionality.
+ */
+public class ImageModel implements IImageModel {
+
+    private static ImageModel myself;
+    private final ImageApplication backendController;
+
+    /**
+     * Constructs a new {@code ImageModel} instance and initializes the backend controller.
+     */
+<span class="fc" id="L20">    protected ImageModel() {</span>
+<span class="fc" id="L21">        backendController = ImageApplication.getInstance();</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * Retrieves the singleton instance of this class.
+     *
+     * @return the singleton instance of {@code ImageModel}
+     */
+    public static ImageModel getInstance() {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L31">            myself = new ImageModel();</span>
+        }
+<span class="fc" id="L33">        return myself;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void readImage(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L41">        backendController.read(path);</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getImageName() {
+<span class="fc" id="L49">        return backendController.getImageName().orElse(&quot;N/A&quot;);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long[][] getImagePixels() {
+<span class="fc" id="L57">        return backendController.getImagePixels().orElse(new long[0][]);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeImage(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L65">        backendController.persist(path);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;String&gt; getSupportedExtensions() {
+<span class="fc" id="L73">        return backendController.getAllSupportedExtension();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void export(String extension, String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L81">        backendController.export(extension, path);</span>
+<span class="fc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

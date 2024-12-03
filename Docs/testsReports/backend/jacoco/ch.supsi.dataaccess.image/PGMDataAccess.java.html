@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PGMDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">PGMDataAccess.java</span></div><h1>PGMDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+import ch.supsi.annotation.ImageAccess;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.SingleChannel;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+
+/**
+ Provides functionality to read and write PPM image files in both ASCII (P2) and binary (P5) formats.
+ * Implements a Singleton pattern to ensure a single instance is used throughout the application.
+ * Extends {@link PNMWithMaxValueDataAccess} for shared functionality with PNM formats with maxvalue.
+ * @see DataAccessFactory
+ * @see ch.supsi.business.image.ImageDataAccess
+ * @see PNMDataAccess
+ */
+@ImageAccess(magicNumber = {&quot;P2&quot;, &quot;P5&quot;})
+<span class="fc" id="L22">public final class PGMDataAccess extends PNMWithMaxValueDataAccess {</span>
+
+    private static PGMDataAccess instance;
+
+    /**
+     * Retrieves the Singleton instance of {@link PGMDataAccess}.
+     *
+     * @return the Singleton instance
+     */
+    public static PGMDataAccess getInstance() {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L33">            instance = new PGMDataAccess();</span>
+        }
+<span class="fc" id="L35">        return instance;</span>
+    }
+
+    /**
+     * Reads the binary (P5) PGM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the binary PGM data from
+     * @return a 2D array of pixels where each pixel contains a grayscale value
+     * @throws IOException if an error occurs while reading the binary data
+     */
+    protected long[]  [] readBinary(InputStream is) throws IOException {
+<span class="fc" id="L46">        long[][] pixelMatrix = new long[height][width];</span>
+
+        //loop on pixels
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            for (int x = 0; x &lt; width; x++) {</span>
+                int grayValue;
+
+                //check if the image is 8-bit or 16-bit based on maxGrayValue
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                if (super.getMaxValue() &lt;= 255) { // 8 bit</span>
+
+<span class="fc" id="L56">                    grayValue = is.read(); //read 8 bit value</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                    if (grayValue == -1) { //EOF before all pixels</span>
+<span class="fc" id="L58">                        throw new IOException(&quot;Insufficient data in binary pmg file&quot;);</span>
+                    }
+                } else { // 16 bit
+                    //read MSB and LSB
+<span class="fc" id="L62">                    int highByte = is.read();</span>
+<span class="fc" id="L63">                    int lowByte = is.read();</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">                    if (highByte == -1 || lowByte == -1) { //EOF check</span>
+<span class="fc" id="L65">                        throw new IOException(&quot;Insufficient data in binary pmg file for a 16 bit image&quot;);</span>
+                    }
+                    //create a 16bit value
+<span class="fc" id="L68">                    grayValue = (highByte &lt;&lt; 8) | lowByte;</span>
+                }
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if (grayValue &gt; super.getMaxValue()) { //value check</span>
+<span class="fc" id="L72">                    throw new IOException(&quot;gray pixel value out of range in binary pmg file&quot;);</span>
+                }
+
+<span class="fc" id="L75">                pixelMatrix[y][x] = grayValue;</span>
+            }
+        }
+<span class="fc" id="L78">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Reads the ASCII (P2) PGM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} to read the ASCII PGM data from
+     * @return a 2D array of pixels where each pixel contains a grayscale value
+     * @throws IOException if an error occurs while reading the ASCII data
+     */
+    @Override
+    protected long[][] readAscii(InputStream is) throws IOException {
+<span class="fc" id="L90">        long[][] pixelMatrix = new long[height][width];</span>
+<span class="fc" id="L91">        try (Scanner scanner = new Scanner(is)) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                    if (!scanner.hasNextInt()) {</span>
+<span class="fc" id="L95">                        throw new IOException(&quot;Invalid or missing data in ascii PGM file&quot;);</span>
+                    }
+<span class="fc" id="L97">                    int grayValue = scanner.nextInt();</span>
+<span class="fc bfc" id="L98" title="All 4 branches covered.">                    if (grayValue &lt; 0 || grayValue &gt; getMaxValue()) {</span>
+<span class="fc" id="L99">                        throw new IOException(&quot;gray pixel value out of range in binary pmg file&quot;);</span>
+                    }
+<span class="fc" id="L101">                    pixelMatrix[y][x] = grayValue;</span>
+                }
+            }
+        }
+<span class="fc" id="L105">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Writes binary (P5) PGM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeBinaryPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L118">        writePixels(os, pixels, executor, this::generateBinaryRowBuffer);</span>
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * Writes ASCII (P2) PGM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeAsciiPixels(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L131">        writePixels(os, pixels, executor, this::generateAsciiRowBuffer);</span>
+<span class="fc" id="L132">    }</span>
+
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on the maximum pixel value.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
+    @Override
+    protected ConvertStrategy getArgbConvertStrategy() {
+<span class="fc" id="L141">        return new SingleChannel(getMaxValue());</span>
+    }
+
+    /**
+     * Generates a binary row buffer for PGM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the binary data for the row
+     */
+    private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        boolean is16bit = getMaxValue() &gt; 255;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        byte[] rowBuffer = new byte[width * (is16bit ? 2 : 1)];</span>
+<span class="fc" id="L155">        int index = 0;</span>
+
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L158">            int grayscale = (int) pixels[row][x];</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (is16bit) rowBuffer[index++] = (byte) (grayscale &gt;&gt; 8);</span>
+<span class="fc" id="L160">            rowBuffer[index++] = (byte) grayscale;</span>
+        }
+
+<span class="fc" id="L163">        return rowBuffer;</span>
+    }
+
+    /**
+     * Generates an ASCII row buffer for PGM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the ASCII data for the row
+     */
+    private byte[] generateAsciiRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc" id="L175">        StringBuilder rowContent = new StringBuilder();</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L177">            rowContent.append(pixels[row][x]).append(&quot; &quot;);</span>
+        }
+<span class="fc" id="L179">        rowContent.append(&quot;\n&quot;);</span>
+<span class="fc" id="L180">        return rowContent.toString().getBytes();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,46 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+frontend,org.supsi.model.errors,ErrorModel,0,19,0,2,0,7,0,5,0,4
+frontend,org.supsi.controller.exit,ExitController,0,25,0,4,0,11,0,6,0,4
+frontend,org.supsi.model.state,StateModel,0,114,0,2,0,28,0,10,0,9
+frontend,org.supsi.model.about,AboutModel,0,32,0,2,0,13,0,9,0,8
+frontend,org.supsi.controller.filter,FilterController,0,86,0,4,0,26,0,8,0,6
+frontend,org.supsi.model.filters,FilterModel,0,128,0,4,0,32,0,14,0,12
+frontend,org.supsi.view.preferences,PreferencesView,0,208,0,2,0,42,0,10,0,9
+frontend,org.supsi.view.preferences,PreferenceEvent.PreferenceChanged,0,9,0,0,0,1,0,2,0,2
+frontend,org.supsi.controller.logger,LoggerController,0,81,0,2,0,19,0,5,0,4
+frontend,org.supsi.model.event,EventManager,0,66,0,0,0,20,0,9,0,9
+frontend,org.supsi.controller.image,ImageController,0,172,0,10,0,60,0,17,0,12
+frontend,org.supsi.dispatcher,MenuDispatcher,0,65,0,0,0,24,0,9,0,9
+frontend,org.supsi.controller.about,AboutController,0,181,0,8,0,54,0,10,0,6
+frontend,org.supsi.model.image,ImageModel,0,50,0,2,0,15,0,9,0,8
+frontend,org.supsi.controller.preferences,PreferencesController,0,100,0,4,0,33,0,7,0,5
+frontend,org.supsi.view.info,InformationStack,0,34,0,4,0,9,0,5,0,3
+frontend,org.supsi.view.info,ConfirmPopup,0,55,0,0,0,16,0,5,0,5
+frontend,org.supsi.view.info,InformationStack.new Callback() {...},0,11,0,0,0,2,0,2,0,2
+frontend,org.supsi.view.info,ErrorPopUp,0,74,0,2,0,20,0,8,0,7
+frontend,org.supsi.view.info,AboutView,0,61,0,0,0,15,0,6,0,6
+frontend,org.supsi.view.info,HistoryStack,0,34,0,0,0,10,0,3,0,3
+frontend,org.supsi.view.info,InformationStack.1.new ListCell() {...},0,56,0,2,0,11,0,3,0,2
+frontend,org.supsi.model.preferences,PreferencesModel,0,30,0,2,0,10,0,5,0,4
+frontend,org.supsi.model.info,LoggerModel,0,128,0,10,0,34,0,17,0,12
+frontend,org.supsi.model.info,LogEntry.LogType,0,42,0,0,0,9,0,3,0,3
+frontend,org.supsi.model.info,LogEntry,0,19,0,0,0,2,0,4,0,4
+frontend,org.supsi.view.image,ExportMenuItem,0,53,0,0,0,13,0,4,0,4
+frontend,org.supsi.view.image,MainImageView,0,57,0,4,0,14,0,5,0,3
+frontend,org.supsi.view.image,ExportEvent.ExportRequested,0,9,0,0,0,1,0,2,0,2
+frontend,org.supsi.controller.errors,ErrorController,0,88,0,4,0,28,0,6,0,4
+frontend,org.supsi,MainFx,0,387,0,28,0,109,0,39,0,25
+frontend,org.supsi,Main,0,6,0,0,0,3,0,2,0,2
+frontend,org.supsi.model.translations,TranslationModel,0,66,0,6,0,17,0,11,0,8
+frontend,org.supsi.view.filter,FilterListView,0,204,0,33,0,45,0,26,0,9
+frontend,org.supsi.view.filter,FilterMenuItem,0,62,0,2,0,18,0,6,0,5
+frontend,org.supsi.view.filter,FilterListView.1.new ListCell() {...},0,25,0,2,0,7,0,3,0,2
+frontend,org.supsi.view.filter,FilterEvent.FilterAddRequested,0,9,0,0,0,1,0,2,0,2
+frontend,org.supsi.view.filter,FilterListView.new Callback() {...},0,261,0,10,0,60,0,14,0,9
+frontend,org.supsi.view.filter,FilterLine,0,205,0,0,0,41,0,11,0,11
+frontend,org.supsi.view.filter,FilterEvent.FilterExecutionRequested,0,3,0,0,0,1,0,1,0,1
+frontend,org.supsi.view.filter,FilterEvent.FilterRemoveRequested,0,9,0,0,0,1,0,2,0,2
+frontend,org.supsi.view.filter,CustomCell,0,139,0,0,0,31,0,7,0,7
+frontend,org.supsi.view.filter,FilterEvent.FilterMoveRequested,0,15,0,0,0,1,0,3,0,3
+frontend,org.supsi.view.fileSystem,FileSystemView,0,68,0,4,0,16,0,6,0,4
+frontend,org.supsi.controller.confirmation,ConfirmationController,0,80,0,8,0,26,0,9,0,5

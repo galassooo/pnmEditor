@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterListView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.view.filter</a> &gt; <span class="el_source">FilterListView.java</span></div><h1>FilterListView.java</h1><pre class="source lang-java linenums">package org.supsi.view.filter;
+
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventPublisher;
+import org.supsi.model.filters.FilterModel;
+import org.supsi.model.filters.IFilterModel;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.util.Callback;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * A specialized ListView implementation for managing and displaying a pipeline of image filters.
+ * This class provides a drag-and-drop interface for reordering filters and supports copy-paste operations
+ * through keyboard shortcuts.
+ *
+ * &lt;p&gt;Key features:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Bi-directional synchronization with the filter model pipeline&lt;/li&gt;
+ *   &lt;li&gt;Drag-and-drop functionality for filter reordering with visual feedback&lt;/li&gt;
+ *   &lt;li&gt;Copy-paste support through keyboard shortcuts (Ctrl/Cmd + C/V)&lt;/li&gt;
+ *   &lt;li&gt;Context menu for filter deletion&lt;/li&gt;
+ *   &lt;li&gt;Dynamic visual indicators showing filter pipeline flow&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;The view maintains a reverse order relationship with the model's filter pipeline:
+ * the first filter in the model appears at the bottom of the list view, creating a
+ * visual representation of the filter processing flow from top to bottom.
+ *
+ * &lt;p&gt;Implementation details:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Uses JavaFX ListView with custom cell rendering&lt;/li&gt;
+ *   &lt;li&gt;Implements drag-and-drop using JavaFX's drag events&lt;/li&gt;
+ *   &lt;li&gt;Maintains visual consistency through dynamic arrow indicators&lt;/li&gt;
+ *   &lt;li&gt;Publishes filter-related events through the EventManager system&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Event publishing:
+ * &lt;ul&gt;
+ *   &lt;li&gt;{@code FilterAddRequested} - When a filter is copied and pasted&lt;/li&gt;
+ *   &lt;li&gt;{@code FilterRemoveRequested} - When a filter is deleted via context menu&lt;/li&gt;
+ *   &lt;li&gt;{@code FilterMoveRequested} - When a filter is moved via drag and drop&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see CustomCell
+ * @see FilterEvent
+ * @see org.supsi.model.filters.FilterModel
+ */
+<span class="fc" id="L61">public class FilterListView {</span>
+
+    @FXML
+    private ListView&lt;CustomCell&gt; list;
+
+    private ObservableList&lt;CustomCell&gt; items;
+    private CustomCell copiedItem;
+    private IFilterModel model;
+    private EventPublisher publisher;
+
+
+    /**
+     * Initializes the view, sets up list items, listeners, and drag-and-drop functionality.
+     */
+    @FXML
+    void initialize() {
+<span class="fc" id="L77">        publisher = EventManager.getPublisher();</span>
+<span class="fc" id="L78">        model = FilterModel.getInstance();</span>
+
+        // Initialize cell items from the model filter pipeline
+<span class="fc" id="L81">        items = FXCollections.observableArrayList();</span>
+
+        // Set items in the ListView only once
+<span class="fc" id="L84">        list.setItems(items);</span>
+
+        // Add a listener to observe and show changes in the model's filter pipeline
+<span class="fc" id="L87">        model.getFilterPipeline().addListener((ListChangeListener&lt;String&gt;) change -&gt; {</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            while (change.next()) {</span>
+<span class="fc bfc" id="L89" title="All 4 branches covered.">                if (change.wasAdded() || change.wasRemoved()) {</span>
+                    //!!!! since we use the list as a pipeline the first element should go on the bottom
+                    //!!!! of the screen, so the listView order IS REVERSED!!!!!
+<span class="fc" id="L92">                    List&lt;CustomCell&gt; updated = new ArrayList&lt;&gt;(model.getFilterPipeline().stream().map(CustomCell::new).toList());</span>
+<span class="fc" id="L93">                    Collections.reverse(updated); //reverse the list</span>
+<span class="fc" id="L94">                    items.setAll(updated);</span>
+<span class="fc" id="L95">                }</span>
+            }
+<span class="fc" id="L97">            updateIcons(); //once the list has been loaded -&gt; update icons</span>
+<span class="fc" id="L98">        });</span>
+
+        // set up  and key bindings for copy-paste operation
+<span class="fc" id="L101">        setupKeyBindings();</span>
+
+        // Set cell factory for the ListView to control drag-and-drop behavior within each cell
+<span class="fc" id="L104">        list.setCellFactory(new Callback&lt;&gt;() {</span>
+            @Override
+            public ListCell&lt;CustomCell&gt; call(ListView&lt;CustomCell&gt; param) {
+<span class="fc" id="L107">                ListCell&lt;CustomCell&gt; cell = new ListCell&lt;&gt;() {</span>
+                    @Override
+                    protected void updateItem(CustomCell item, boolean empty) {
+<span class="fc" id="L110">                        super.updateItem(item, empty);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                        if (item == null) {</span>
+<span class="fc" id="L112">                            setGraphic(null); //if we do not have item</span>
+                        } else { //otherwise set the right icons and set the graphic to the root node
+<span class="fc" id="L114">                            updateIcons();</span>
+<span class="fc" id="L115">                            setGraphic(item.getRootNode());</span>
+                        }
+<span class="fc" id="L117">                    }</span>
+                };
+
+                // Set drag detection for cells
+<span class="fc" id="L121">                cell.setOnDragDetected(event -&gt; {</span>
+
+                    //create a new Drag board to manage drag options and store the
+                    //cell id into the drag board content
+<span class="fc" id="L125">                    Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);</span>
+<span class="fc" id="L126">                    ClipboardContent content = new ClipboardContent();</span>
+<span class="fc" id="L127">                    content.putString(String.valueOf(cell.getItem().getId()));</span>
+<span class="fc" id="L128">                    db.setContent(content);</span>
+
+                    //create the transparent cell overlay effect
+<span class="fc" id="L131">                    Image dragViewImage = cell.snapshot(null, null);</span>
+<span class="fc" id="L132">                    db.setDragView(dragViewImage);</span>
+
+                    //add the closed hand cursor while dragging cells
+<span class="fc" id="L135">                    cell.getScene().getRoot().getStyleClass().add(&quot;dragging-hand&quot;);</span>
+<span class="fc" id="L136">                    event.consume();</span>
+
+<span class="fc" id="L138">                });</span>
+
+                // Handle drag over events to display where items can be dropped
+<span class="fc" id="L141">                cell.setOnDragOver(event -&gt; {</span>
+                    //this if makes sure to 'catch' the right drag event
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                    if (event.getGestureSource() != cell) { //dragbord has string -&gt; always true (un unico evento drag in tutta app)</span>
+<span class="fc" id="L144">                        event.acceptTransferModes(TransferMode.MOVE);</span>
+                    }
+
+                    //calculate the mouse hover
+<span class="fc" id="L148">                    double cellHeight = cell.getHeight();</span>
+<span class="fc" id="L149">                    double mouseY = event.getY();</span>
+
+                    //highlight the cell border based on the mouse hover position
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                    if (!cell.isEmpty()) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                        if (mouseY &lt; cellHeight / 2) {</span>
+<span class="fc" id="L154">                            cell.setStyle(&quot;-fx-border-color: white; -fx-border-width: 3 0 0 0;&quot;); //TOP</span>
+                        } else {
+<span class="fc" id="L156">                            cell.setStyle(&quot;-fx-border-color: white; -fx-border-width: 0 0 3 0;&quot;); //BOTTOM</span>
+                        }
+                    }
+<span class="fc" id="L159">                    event.consume();</span>
+<span class="fc" id="L160">                });</span>
+
+                // clear drag indicator style when dragging exits the cell
+<span class="fc" id="L163">                cell.setOnDragExited(event -&gt; {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if (!cell.isEmpty()) {</span>
+<span class="fc" id="L165">                        cell.setStyle(&quot;&quot;); //per il mouse</span>
+<span class="fc" id="L166">                        event.consume();</span>
+                    }
+<span class="fc" id="L168">                });</span>
+
+                // Handle the drop event to rearrange items based on drag-and-drop actions
+<span class="fc" id="L171">                cell.setOnDragDropped(event -&gt; {</span>
+<span class="fc" id="L172">                    Dragboard db = event.getDragboard();</span>
+<span class="fc" id="L173">                    boolean success = false;</span>
+
+                    //dragbord has string -&gt; always true (un unico evento drag in tutta app)
+
+                    //retrieve the dragged element id by the drag board
+                    //(the id has been stored in the db in setOnDragDetected method
+<span class="fc" id="L179">                    int draggedId = Integer.parseInt(db.getString());</span>
+<span class="fc" id="L180">                    CustomCell draggedData = findElementById(draggedId);</span>
+
+                    //calculate indexes
+<span class="fc" id="L183">                    int draggedIndex = items.indexOf(draggedData);</span>
+<span class="fc" id="L184">                    int targetIndex = items.indexOf(cell.getItem());</span>
+
+                    //if the indexes are valid (dragged index is always valid since we are retrieving it from an existing element)
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                    if (targetIndex &gt;= 0) {</span>
+                        //calculate the model indexes since the LISTVIEW ORDER IS REVERSED
+<span class="fc" id="L189">                        int modelFromIndex = items.size() - 1 - draggedIndex;</span>
+<span class="fc" id="L190">                        int modelToIndex = items.size() - 1 - targetIndex;</span>
+<span class="fc" id="L191">                        success = true;</span>
+                        //notify listeners of the item movement
+<span class="fc" id="L193">                        publisher.publish(new FilterEvent.FilterMoveRequested(modelFromIndex, modelToIndex));</span>
+
+                    }
+<span class="fc" id="L196">                    event.setDropCompleted(success);</span>
+<span class="fc" id="L197">                    event.consume();</span>
+<span class="fc" id="L198">                });</span>
+
+                // Handle the end of the drag-and-drop event
+<span class="fc" id="L201">                cell.setOnDragDone(event -&gt; {</span>
+<span class="fc" id="L202">                    cell.getScene().getRoot().getStyleClass().remove(&quot;dragging-hand&quot;);</span>
+<span class="fc" id="L203">                    event.consume();</span>
+<span class="fc" id="L204">                });</span>
+
+
+<span class="fc" id="L207">                ContextMenu contextMenu = new ContextMenu();</span>
+<span class="fc" id="L208">                MenuItem deleteItem = new MenuItem(&quot;Delete&quot;);</span>
+
+<span class="fc" id="L210">                deleteItem.setOnAction(event -&gt; {</span>
+<span class="fc" id="L211">                    CustomCell selectedItem = cell.getItem();</span>
+
+<span class="fc" id="L213">                    int index = items.indexOf(selectedItem);</span>
+<span class="fc" id="L214">                    publisher.publish(new FilterEvent.FilterRemoveRequested(items.size() - 1 - index));</span>
+<span class="fc" id="L215">                    items.remove(selectedItem);</span>
+<span class="fc" id="L216">                });</span>
+<span class="fc" id="L217">                contextMenu.getItems().add(deleteItem);</span>
+
+<span class="fc" id="L219">                cell.setOnContextMenuRequested(event -&gt; {</span>
+<span class="fc" id="L220">                    contextMenu.show(cell, event.getScreenX(), event.getScreenY());</span>
+
+<span class="fc" id="L222">                });</span>
+
+<span class="fc" id="L224">                return cell;</span>
+            }
+        });
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * Sets up key bindings for copy and paste actions.
+     */
+    private void setupKeyBindings() {
+<span class="fc" id="L233">        list.setOnKeyPressed(event -&gt; {</span>
+            //check if the ctrl or command key is pressed (works with MacOS, windows and Linux)
+<span class="fc bfc" id="L235" title="All 4 branches covered.">            boolean isControlDown = event.isControlDown() || event.isMetaDown();</span>
+
+            //switch on the key pressed
+<span class="fc bfc" id="L238" title="All 3 branches covered.">            switch (event.getCode()) {</span>
+                case C:
+                    //save the selected cell (if available) in the copiedItem variable
+<span class="fc bfc" id="L241" title="All 4 branches covered.">                    if (isControlDown &amp;&amp; list.getSelectionModel().getSelectedItem() != null) {</span>
+<span class="fc" id="L242">                        copiedItem = list.getSelectionModel().getSelectedItem();</span>
+                    }
+                    break;
+
+                case V:
+                    //it notifies all the listener that a paste operation has been requested for the item
+<span class="fc bfc" id="L248" title="All 4 branches covered.">                    if (isControlDown &amp;&amp; copiedItem != null) {</span>
+                        // Notify listeners of a new filter being added
+<span class="fc" id="L250">                        AtomicReference&lt;String&gt; filterKey = new AtomicReference&lt;&gt;();</span>
+
+<span class="fc" id="L252">                        model.getFiltersKeyValues().forEach((key, value) -&gt; {</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">                            if (value.equals(copiedItem.getText())) {</span>
+<span class="fc" id="L254">                                filterKey.set(key);</span>
+                            }
+<span class="fc" id="L256">                        });</span>
+<span class="fc" id="L257">                        publisher.publish(new FilterEvent.FilterAddRequested(filterKey.get()));</span>
+                    }
+                    break;
+            }
+<span class="fc" id="L261">        });</span>
+<span class="fc" id="L262">    }</span>
+
+    /**
+     * Updates icons in the ListView's cells based on the position of each item.
+     */
+    @SuppressWarnings(&quot;all&quot;) //replace switch with if
+    private void updateIcons() {
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        for (int i = 0; i &lt; items.size(); i++) {</span>
+            //for each cell
+<span class="fc" id="L271">            CustomCell item = items.get(i);</span>
+
+            //select the right icon according to its position in the list
+<span class="fc" id="L274">            String iconPath =</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">                    switch (items.size()) {</span>
+<span class="fc" id="L276">                        case 1 -&gt; &quot;/images/listCell/arrows/single.png&quot;;</span>
+                        default -&gt; {
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                            if (i == 0) yield &quot;/images/listCell/arrows/top.png&quot;;</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                            else if (i == items.size() - 1) yield &quot;/images/listCell/arrows/bottom.png&quot;;</span>
+<span class="fc" id="L280">                            else yield &quot;/images/listCell/arrows/middle.png&quot;;</span>
+                        }
+                    };
+
+            //set the new icon
+<span class="fc" id="L285">            item.setArrowImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));</span>
+        }
+<span class="fc" id="L287">    }</span>
+
+    /**
+     * Finds a CustomCell in the list by its ID.
+     *
+     * @param id The ID to search for.
+     * @return The CustomCell with the specified ID, or null if not found.
+     */
+    private CustomCell findElementById(int id) {
+<span class="fc" id="L296">        return items.stream()</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">                .filter(element -&gt; element.getId() == id)</span>
+<span class="fc" id="L298">                .findFirst()</span>
+<span class="fc" id="L299">                .orElse(null);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

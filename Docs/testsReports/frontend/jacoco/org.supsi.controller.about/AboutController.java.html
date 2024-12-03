@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AboutController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.about</a> &gt; <span class="el_source">AboutController.java</span></div><h1>AboutController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.about;
+
+import org.supsi.model.about.AboutModel;
+import org.supsi.model.about.IAboutModel;
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+import org.supsi.model.translations.ITranslationsModel;
+import org.supsi.model.translations.TranslationModel;
+import javafx.fxml.FXMLLoader;
+import org.supsi.view.IView;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
+import java.util.Properties;
+
+/**
+ * Controller for managing the &quot;About&quot; section of the application.
+ * Handles the logic to retrieve build information, initialize the model, and display the &quot;About&quot; view.
+ */
+public class AboutController implements IAboutController{
+
+    private static AboutController myself;
+    private final ITranslationsModel translationsModel;
+    private final IAboutModel model;
+    private final ILoggerModel loggerModel;
+    private IView&lt;IAboutModel&gt; view;
+
+    /**
+     * protected constructor to initialize the &quot;About&quot; controller.
+     * Loads the FXML, sets up the model-view relationship, and reads build information.
+     */
+<span class="fc" id="L37">    protected AboutController(){</span>
+<span class="fc" id="L38">        translationsModel = TranslationModel.getInstance();</span>
+<span class="fc" id="L39">        model = AboutModel.getInstance();</span>
+<span class="fc" id="L40">        loggerModel = LoggerModel.getInstance();</span>
+
+<span class="fc" id="L42">        URL fxmlUrl = getResource(&quot;/layout/About.fxml&quot;);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (fxmlUrl == null) {</span>
+<span class="fc" id="L44">            return;</span>
+        }
+
+        try {
+<span class="fc" id="L48">            FXMLLoader loader = new FXMLLoader(fxmlUrl,translationsModel.getUiBundle());</span>
+<span class="fc" id="L49">            loader.load();</span>
+<span class="fc" id="L50">            view = loader.getController();</span>
+<span class="fc" id="L51">            view.setModel(model);</span>
+
+<span class="fc" id="L53">        } catch (IOException e) {</span>
+<span class="fc" id="L54">            loggerModel.addError(&quot;ui_failed_to_load_component&quot;);</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        loggerModel.addDebug(&quot;ui_about_loaded&quot;);</span>
+<span class="fc" id="L57">        readBuildInfo();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Retrieves the singleton instance of the {@link AboutController}.
+     *
+     * @return the instance of AboutController.
+     */
+    public static AboutController getInstance(){
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if(myself==null){</span>
+<span class="fc" id="L67">            myself=new AboutController();</span>
+        }
+<span class="fc" id="L69">        return myself;</span>
+    }
+
+    /**
+     * Reads build information from a properties file written by maven and populates the model.
+     * Retrieves build-time, version, and developer information from `build.properties`.
+     */
+    private void readBuildInfo() {
+<span class="fc" id="L77">        try (InputStream propertiesStream = getResourceAsStream(&quot;/build.properties&quot;)) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if (propertiesStream != null) {</span>
+
+<span class="fc" id="L80">                Properties properties = new Properties();</span>
+<span class="fc" id="L81">                properties.load(propertiesStream);</span>
+
+<span class="fc" id="L83">                String buildTimeString = properties.getProperty(&quot;build-time&quot;);</span>
+<span class="fc" id="L84">                String buildVersion = properties.getProperty(&quot;build-version&quot;);</span>
+<span class="fc" id="L85">                String developer = properties.getProperty(&quot;developer&quot;);</span>
+
+<span class="fc" id="L87">                Locale locale = translationsModel.getLocale();</span>
+
+<span class="fc" id="L89">                ZonedDateTime buildTime = null;</span>
+                try {
+<span class="fc" id="L91">                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss&quot;, Locale.getDefault());</span>
+<span class="fc" id="L92">                    buildTime = ZonedDateTime.parse(buildTimeString, formatter.withZone(ZoneId.of(&quot;UTC&quot;)));</span>
+
+<span class="fc" id="L94">                    buildTime = buildTime.withZoneSameInstant(ZoneId.of(&quot;Europe/Rome&quot;));</span>
+<span class="fc" id="L95">                } catch (DateTimeParseException e) {</span>
+<span class="fc" id="L96">                    loggerModel.addDebug(&quot;ui_build_properties_date_parse_error&quot;);</span>
+<span class="fc" id="L97">                }</span>
+
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                String formattedDate = buildTime != null ? buildTime.format(DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT).withLocale(locale)) : &quot;N/A&quot;;</span>
+
+<span class="fc" id="L101">                model.setDate(formattedDate);</span>
+<span class="fc" id="L102">                model.setVersion(buildVersion);</span>
+<span class="fc" id="L103">                model.setDeveloper(developer);</span>
+
+<span class="fc" id="L105">                loggerModel.addDebug(&quot;ui_build_properties_parsed&quot;);</span>
+<span class="fc" id="L106">            } else {</span>
+<span class="fc" id="L107">                loggerModel.addDebug(&quot;ui_build_properties_not_found&quot;);</span>
+            }
+<span class="fc" id="L109">        } catch (IOException e) {</span>
+<span class="fc" id="L110">            loggerModel.addDebug(&quot;ui_build_properties_error&quot;);</span>
+<span class="fc" id="L111">        }</span>
+<span class="fc" id="L112">    }</span>
+    //used for test purpose (it doesn't alter or modify the code flow, structure or visibility in any way)
+    protected InputStream getResourceAsStream(String resourceName) throws IOException {
+<span class="fc" id="L115">        return getClass().getResourceAsStream(resourceName);</span>
+    }
+
+    //used for test purpose
+    protected URL getResource(String name) {
+<span class="fc" id="L120">        return getClass().getResource(name);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showPopup(){
+<span class="fc" id="L128">        loggerModel.addDebug(&quot;ui_start_popup_build&quot;);</span>
+<span class="fc" id="L129">        view.build();</span>
+<span class="fc" id="L130">        loggerModel.addDebug(&quot;ui_end_popup_build&quot;);</span>
+<span class="fc" id="L131">        view.show();</span>
+<span class="fc" id="L132">        loggerModel.addDebug(&quot;ui_popup_show&quot;);</span>
+<span class="fc" id="L133">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

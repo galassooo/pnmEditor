@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageBusiness.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.image</a> &gt; <span class="el_source">ImageBusiness.java</span></div><h1>ImageBusiness.java</h1><pre class="source lang-java linenums">package ch.supsi.business.image;
+
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.dataaccess.image.DataAccessFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Represents an image with pixel data, file path, and format information.
+ * Implements {@link WritableImage} to provide methods for retrieving data,
+ * persisting, and exporting images.
+ */
+public class ImageBusiness implements WritableImage {
+
+    private long[][] argbPixels;
+    private String filePath;
+    private final String magicNumber;
+
+    /**
+     * Constructs an {@link ImageBusiness} object using the specified {@link ImageBuilderInterface}.
+     *
+     * @param builder the {@link ImageBuilderInterface} containing the image attributes
+     */
+<span class="fc" id="L27">    public ImageBusiness(ImageBuilderInterface builder) {</span>
+<span class="fc" id="L28">        this.argbPixels = builder.getPixels();</span>
+<span class="fc" id="L29">        this.filePath = builder.getFilePath();</span>
+<span class="fc" id="L30">        this.magicNumber = builder.getMagicNumber();</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Reads an image from the specified file path.
+     *
+     * @param path the path of the image file to read
+     * @return a {@link WritableImage} representing the image
+     * @throws IOException            if an error occurs while reading the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
+    public static WritableImage read(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L42">        ImageDataAccess dac = DataAccessFactory.getInstance(path);</span>
+<span class="fc" id="L43">        return dac.read(path);</span>
+    }
+
+    /**
+     * Persists the current image to the file system at the specified path.
+     *
+     * @param path the path where the image should be saved
+     * @throws IOException            if an error occurs while writing the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
+    @Override
+    public void persist(String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L55">        ImageDataAccess dac = DataAccessFactory.getInstance(filePath);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (path != null)</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            filePath = !filePath.equals(path) ? path : filePath;</span>
+<span class="fc" id="L58">        dac.write(this);</span>
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * Exports the current image to a different format and saves it at the specified path.
+     *
+     * @param extension the desired file extension for the exported image
+     * @param path      the path where the exported image should be saved
+     * @throws IOException            if an error occurs while writing the file
+     * @throws IllegalAccessException if there is an issue accessing the data access component
+     */
+    @Override
+    public void export(String extension, String path) throws IOException, IllegalAccessException {
+<span class="fc" id="L71">        ImageDataAccess dac = DataAccessFactory.getInstanceFromExtension(extension);</span>
+<span class="fc" id="L72">        String magicNumber = (DataAccessFactory.getDefaultMagicNumberFromExtension(extension)).get();</span>
+
+<span class="fc" id="L74">        ImageBuilder exportedImage = new ImageBuilder()</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                .withFilePath(!filePath.equals(path) ? path : filePath)</span>
+<span class="fc" id="L76">                .withMagicNumber(magicNumber)</span>
+<span class="fc" id="L77">                .withPixels(argbPixels)</span>
+<span class="fc" id="L78">                .build();</span>
+
+<span class="fc" id="L80">        dac.write(new ImageBusiness(exportedImage));</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public long[][] getPixels() {
+<span class="fc" id="L88">        return argbPixels;</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public int getWidth() {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        return argbPixels.length &gt; 0 ? argbPixels[0].length : 0;</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public int getHeight() {
+<span class="fc" id="L104">        return argbPixels.length;</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public String getFilePath() {
+<span class="fc" id="L112">        return filePath;</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public String getMagicNumber() {
+<span class="fc" id="L120">        return magicNumber;</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L128">        File file = new File(filePath);</span>
+<span class="fc" id="L129">        return file.getName();</span>
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public void setPixels(long[][] rotatedPixels) {
+<span class="fc" id="L137">        argbPixels = rotatedPixels;</span>
+<span class="fc" id="L138">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (!(o instanceof ImageBusiness that)) return false;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        return Objects.deepEquals(argbPixels, that.argbPixels) &amp;&amp;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                Objects.equals(getFilePath(), that.getFilePath()) &amp;&amp;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                Objects.equals(getMagicNumber(), that.getMagicNumber());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L151">        return Objects.hash(Arrays.deepHashCode(argbPixels), getFilePath(), getMagicNumber());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

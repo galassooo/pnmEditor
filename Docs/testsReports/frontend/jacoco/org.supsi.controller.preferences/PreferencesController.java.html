@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferencesController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.preferences</a> &gt; <span class="el_source">PreferencesController.java</span></div><h1>PreferencesController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.preferences;
+
+import org.supsi.controller.errors.ErrorController;
+import org.supsi.view.IView;
+import org.supsi.view.preferences.PreferenceEvent;
+import org.supsi.model.event.EventManager;
+import org.supsi.model.event.EventSubscriber;
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+import org.supsi.model.preferences.IPreferencesModel;
+import org.supsi.model.preferences.PreferencesModel;
+import org.supsi.model.translations.ITranslationsModel;
+import org.supsi.model.translations.TranslationModel;
+import javafx.fxml.FXMLLoader;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.URL;
+
+/**
+ * The {@code PreferencesController} class manages user preferences within the application.
+ * It provides functionalities for displaying the preferences UI, handling preference changes,
+ * and updating the underlying preferences model. This controller also integrates logging and
+ * error reporting functionalities.
+ */
+public class PreferencesController implements IPreferencesController {
+
+    private static PreferencesController mySelf;
+    private IView&lt;ITranslationsModel&gt; view;
+    private final IPreferencesModel model;
+    private final ILoggerModel loggerModel;
+
+    /**
+     * Protected constructor to enforce the singleton pattern.
+     * Initializes the preferences model, logger model, event subscriptions, and loads the
+     * preferences popup view.
+     */
+<span class="fc" id="L38">    protected PreferencesController() {</span>
+<span class="fc" id="L39">        model = PreferencesModel.getInstance();</span>
+<span class="fc" id="L40">        loggerModel = LoggerModel.getInstance();</span>
+
+<span class="fc" id="L42">        EventSubscriber subscriber = EventManager.getSubscriber();</span>
+<span class="fc" id="L43">        subscriber.subscribe(PreferenceEvent.PreferenceChanged.class,</span>
+                this::preferenceChange);
+<span class="fc" id="L45">        URL fxmlUrl = getResource(&quot;/layout/PreferencesPopup.fxml&quot;);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (fxmlUrl == null) {</span>
+<span class="fc" id="L47">            return;</span>
+        }
+
+        try {
+<span class="fc" id="L51">            ITranslationsModel translationsModel = TranslationModel.getInstance();</span>
+<span class="fc" id="L52">            FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());</span>
+<span class="fc" id="L53">            loader.load();</span>
+<span class="fc" id="L54">            view = loader.getController();</span>
+<span class="fc" id="L55">            view.setModel(translationsModel);</span>
+
+<span class="fc" id="L57">        } catch (IOException ignored) {</span>
+<span class="fc" id="L58">            ignored.printStackTrace();</span>
+<span class="fc" id="L59">        }</span>
+<span class="fc" id="L60">    }</span>
+
+    protected URL getResource(String path) {
+<span class="fc" id="L63">        return getClass().getResource(path);</span>
+    }
+
+    /**
+     * Returns the singleton instance of the {@code PreferencesController}.
+     *
+     * @return the singleton instance of the {@code PreferencesController}.
+     */
+    public static PreferencesController getInstance() {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (mySelf == null) {</span>
+<span class="fc" id="L73">            mySelf = new PreferencesController();</span>
+        }
+<span class="fc" id="L75">        return mySelf;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showPreferencesPopup(){
+<span class="fc" id="L83">        loggerModel.addDebug(&quot;ui_start_popup_build&quot;);</span>
+<span class="fc" id="L84">        view.build();</span>
+<span class="fc" id="L85">        loggerModel.addDebug(&quot;ui_end_popup_build&quot;);</span>
+<span class="fc" id="L86">        view.show();</span>
+<span class="fc" id="L87">        loggerModel.addDebug(&quot;ui_popup_show&quot;);</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Handles a preference change event.
+     * Updates the preferences model with the new value and logs the event.
+     * If an error occurs, it is reported to the error controller.
+     *
+     * @param parentEvent the {@code PreferenceChanged} event containing the key and new value of the preference.
+     */
+    protected void preferenceChange(PreferenceEvent.PreferenceChanged parentEvent) {
+        try {
+<span class="fc" id="L99">            model.setPreference(parentEvent.event().getKey(), parentEvent.event().getNewValue());</span>
+<span class="fc" id="L100">        } catch (IOException e) {</span>
+<span class="fc" id="L101">            ErrorController.getInstance().showError(e.getMessage());</span>
+<span class="fc" id="L102">        }</span>
+<span class="fc" id="L103">        loggerModel.addInfo(&quot;ui_preferences_stored&quot;);</span>
+<span class="fc" id="L104">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.application.filters</a> &gt; <span class="el_source">FilterApplication.java</span></div><h1>FilterApplication.java</h1><pre class="source lang-java linenums">package ch.supsi.application.filters;
+
+import ch.supsi.application.image.WritableImage;
+import ch.supsi.application.state.EditorStateManager;
+import ch.supsi.business.filter.FilterFactory;
+import ch.supsi.business.filter.FilterManager;
+import ch.supsi.business.filter.chain.command.FilterCommand;
+import ch.supsi.business.state.BusinessEditorState;
+
+import java.util.List;
+
+/**
+ * The {@link FilterApplication} class provides functionalities for managing and applying filters
+ * to images. It serves as an interface for interacting with the filter pipeline, allowing filters
+ * to be added, removed, and processed, while updating the application state.
+ */
+public class FilterApplication {
+
+    private static FilterApplication myself;
+    private final List&lt;String&gt; allFilters;
+    private final FilterPipelineInterface model;
+    private final EditorStateManager stateManager;
+
+    /**
+     * Private constructor to enforce the singleton pattern.
+     */
+<span class="fc" id="L27">    private FilterApplication() {</span>
+<span class="fc" id="L28">        allFilters = FilterFactory.getFilters();</span>
+<span class="fc" id="L29">        model = FilterManager.getInstance();</span>
+<span class="fc" id="L30">        stateManager = BusinessEditorState.getInstance();</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Returns the singleton instance of the {@code FilterApplication}.
+     *
+     * @return the singleton instance of the {@code FilterApplication}.
+     */
+    public static FilterApplication getInstance() {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L40">            myself = new FilterApplication();</span>
+        }
+<span class="fc" id="L42">        return myself;</span>
+    }
+
+    /**
+     * Retrieves a list of all available filters.
+     *
+     * @return a read-only {@link List} of all available filter names.
+     */
+    public List&lt;String&gt; getAllAvailableFilters() {
+<span class="fc" id="L51">        return List.copyOf(allFilters);</span>
+    }
+
+    /**
+     * Adds a filter to the filter pipeline by its name.
+     *
+     * @param filterName the name of the filter to add.
+     * @throws IllegalArgumentException if the filterName does not correspond to a valid filter.
+     */
+    public void addFilterToPipeline(String filterName) {
+<span class="fc" id="L61">        FilterCommand filter = FilterFactory.getFilter(filterName);</span>
+<span class="fc" id="L62">        model.addFilter(filter);</span>
+<span class="fc" id="L63">        stateManager.onFilterAdded();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Processes the filter pipeline on the given image.
+     *
+     * @param image the image to apply the filters on.
+     * @throws IllegalStateException if the filter pipeline is empty or cannot be processed.
+     */
+    public void processFilterPipeline(WritableImage image) {
+<span class="fc" id="L73">        model.executePipeline(image);</span>
+<span class="fc" id="L74">        stateManager.onFilterProcessed();</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Adds a filter to a specific index in the filter pipeline.
+     *
+     * @param filterName the name of the filter to add.
+     * @param index      the position in the pipeline where the filter should be added.
+     * @throws IndexOutOfBoundsException if the index is out of range.
+     */
+    public void add(String filterName, int index) {
+<span class="fc" id="L85">        FilterCommand filter = FilterFactory.getFilter(filterName);</span>
+<span class="fc" id="L86">        model.addFilter(filter, index);</span>
+<span class="fc" id="L87">        stateManager.onFilterAdded();</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Removes a filter from the filter pipeline at a specific index.
+     *
+     * @param index the position of the filter to remove.
+     * @return the name of the removed filter.
+     * @throws IndexOutOfBoundsException if the index is out of range.
+     */
+    public String remove(int index) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (model.getSize() == 1) {</span>
+<span class="fc" id="L99">            stateManager.onFiltersRemoved();</span>
+        }
+<span class="fc" id="L101">        return model.remove(index); //not nullable -&gt; se errore lancia ex</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

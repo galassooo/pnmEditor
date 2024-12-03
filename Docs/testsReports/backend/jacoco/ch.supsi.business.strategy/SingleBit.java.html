@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SingleBit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.strategy</a> &gt; <span class="el_source">SingleBit.java</span></div><h1>SingleBit.java</h1><pre class="source lang-java linenums">package ch.supsi.business.strategy;
+
+<span class="fc" id="L3">public class SingleBit implements ConvertStrategy {</span>
+
+    private static final long ARGB_WHITE = 0xFFFFFFFFL; // Bianco opaco
+    private static final long ARGB_BLACK = 0xFF000000L; // Nero opaco
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long toArgb(long pixel) {
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        return pixel == 1 ? ARGB_BLACK : ARGB_WHITE;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long ArgbToOriginal(long pixel) {
+        // Estrai i componenti
+<span class="fc" id="L22">        int r = (int) ((pixel &gt;&gt; 16) &amp; 0xFF);</span>
+<span class="fc" id="L23">        int g = (int) ((pixel &gt;&gt; 8) &amp; 0xFF);</span>
+<span class="fc" id="L24">        int b = (int) (pixel &amp; 0xFF);</span>
+
+        // Se è un'immagine a colori, converti prima in grayscale
+<span class="fc bfc" id="L27" title="All 4 branches covered.">        if (r != g || g != b) {</span>
+<span class="fc" id="L28">            double grayValue = 0.299 * r + 0.587 * g + 0.114 * b;</span>
+            // Usa la metà (127.5) come threshold
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            return grayValue &gt; 127.5 ? 0 : 1;</span>
+        } else {
+            // È già in scala di grigi, usa direttamente la threshold
+<span class="fc bfc" id="L33" title="All 2 branches covered.">            return b &gt; 127 ? 0 : 1;</span>
+        }
+    }
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

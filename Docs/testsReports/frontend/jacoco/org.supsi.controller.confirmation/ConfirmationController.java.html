@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConfirmationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.confirmation</a> &gt; <span class="el_source">ConfirmationController.java</span></div><h1>ConfirmationController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.confirmation;
+
+import javafx.fxml.FXMLLoader;
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+import org.supsi.model.state.IStateModel;
+import org.supsi.model.state.StateModel;
+import org.supsi.model.translations.ITranslationsModel;
+import org.supsi.model.translations.TranslationModel;
+import org.supsi.view.info.IConfirmPopup;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.function.Consumer;
+
+/**
+ * Controller class for managing confirmation dialogs.
+ * Handles user confirmation requests when changes are pending.
+ */
+public class ConfirmationController implements IConfirmationController {
+
+    private static ConfirmationController myself;
+    private IConfirmPopup view;
+<span class="fc" id="L24">    private boolean changesPending = false;</span>
+
+    /**
+     * Protected constructor to ensure singleton pattern.
+     * Sets up listeners for state changes and initializes the confirmation popup view.
+     */
+<span class="fc" id="L30">    protected ConfirmationController() {</span>
+
+<span class="fc" id="L32">        IStateModel stateModel = StateModel.getInstance();</span>
+<span class="fc" id="L33">        stateModel.areChangesPending().addListener((obs, old, newValue) -&gt; changesPending = newValue);</span>
+
+<span class="fc" id="L35">        URL fxmlUrl = getResource(&quot;/layout/ConfirmPopup.fxml&quot;);</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (fxmlUrl == null) {</span>
+<span class="fc" id="L37">            return;</span>
+        }
+
+<span class="fc" id="L40">        ILoggerModel loggerModel = LoggerModel.getInstance();</span>
+        try {
+<span class="fc" id="L42">            ITranslationsModel translationsModel = TranslationModel.getInstance();</span>
+<span class="fc" id="L43">            FXMLLoader loader = new FXMLLoader(fxmlUrl, translationsModel.getUiBundle());</span>
+<span class="fc" id="L44">            loader.load();</span>
+<span class="fc" id="L45">            view = loader.getController();</span>
+
+<span class="fc" id="L47">        } catch (IOException e) {</span>
+<span class="fc" id="L48">            loggerModel.addError(&quot;ui_failed_to_load_component&quot;);</span>
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">        loggerModel.addDebug(&quot;ui__loaded&quot;);</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Returns the singleton instance of the {@link ConfirmationController}.
+     *
+     * @return the singleton instance
+     */
+    public static ConfirmationController getInstance() {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L60">            myself = new ConfirmationController();</span>
+        }
+<span class="fc" id="L62">        return myself;</span>
+    }
+
+    protected URL getResource(String name) {
+<span class="fc" id="L66">        return getClass().getResource(name);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void requestConfirm(Consumer&lt;?&gt; onConfirm) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if(changesPending) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (view.showConfirmationDialog()) {</span>
+<span class="fc" id="L76">                onConfirm.accept(null);</span>
+            }
+        }else {
+<span class="fc" id="L79">            onConfirm.accept(null);</span>
+        }
+<span class="fc" id="L81">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.business.filter</a> &gt; <span class="el_source">FilterFactory.java</span></div><h1>FilterFactory.java</h1><pre class="source lang-java linenums">package ch.supsi.business.filter;
+
+import ch.supsi.business.filter.chain.command.FilterCommand;
+import ch.supsi.dataaccess.translations.TranslationsDataAccess;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
+
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Factory class for managing and providing filter commands in the application.
+ * Dynamically loads available filters using reflection and verifies their translations.
+ * Provides access to loaded filters and supports runtime reload of filters.
+ */
+public class FilterFactory {
+
+    private static final List&lt;String&gt; filters;
+    private static final Map&lt;String, FilterCommand&gt; filterInstances;
+
+    static {
+<span class="fc" id="L25">        filters = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L26">        filterInstances = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L27">        load();</span>
+<span class="fc" id="L28">    }</span>
+
+    private FilterFactory() {
+    }
+
+    /**
+     * Dynamically loads filter commands from the specified package and verifies their translations.
+     * Filters without translations are logged with a warning and excluded from the list.
+     */
+    private static void load() {
+<span class="fc" id="L38">        Reflections reflections = new Reflections(new ConfigurationBuilder()</span>
+<span class="fc" id="L39">                .forPackages(&quot;ch.supsi.business.filter.chain.command&quot;)</span>
+<span class="fc" id="L40">                .addScanners(Scanners.SubTypes)</span>
+<span class="fc" id="L41">                .setExpandSuperTypes(false));</span>
+
+<span class="fc" id="L43">        Set&lt;Class&lt;? extends FilterCommand&gt;&gt; classes = reflections.getSubTypesOf(FilterCommand.class);</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (var c : classes) {</span>
+            try {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                if (Modifier.isAbstract(c.getModifiers())) {</span>
+<span class="fc" id="L48">                    continue; // Skip abstract classes</span>
+                }
+
+                // Create a single instance for each filter command
+<span class="fc" id="L52">                FilterCommand command = c.getDeclaredConstructor().newInstance();</span>
+
+                // Verify translations for the filter
+<span class="fc" id="L55">                AtomicBoolean process = new AtomicBoolean(true);</span>
+<span class="fc" id="L56">                TranslationsDataAccess tac = TranslationsDataAccess.getInstance();</span>
+<span class="fc" id="L57">                tac.getSupportedLanguageTags().forEach(tag -&gt; {</span>
+<span class="fc" id="L58">                    Properties p = tac.getTranslations(Locale.forLanguageTag(tag));</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                    if (p.get(command.getName()) == null) {</span>
+<span class="fc" id="L60">                        System.out.println(&quot;\u001B[33m[WARNING] \u001B[0m&quot; +</span>
+<span class="fc" id="L61">                                &quot;Filter &quot; + command.getName() +</span>
+                                &quot; should have a translation associated. Update language bundle (&quot; +
+                                tag + &quot;) to process the filter.&quot;);
+<span class="fc" id="L64">                        process.set(false);</span>
+                    }
+<span class="fc" id="L66">                });</span>
+
+                // Add the filter to the list and map if it passes translation checks
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                if (process.get()) {</span>
+<span class="fc" id="L70">                    filters.add(command.getName());</span>
+<span class="fc" id="L71">                    filterInstances.put(command.getName(), command);</span>
+                }
+
+<span class="fc" id="L74">            } catch (Exception e) {</span>
+<span class="fc" id="L75">                System.err.println(&quot;Error loading filter command: &quot; + c.getName());</span>
+<span class="fc" id="L76">            }</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Retrieves the list of loaded filter names.
+     *
+     * @return a {@link List} of filter names
+     */
+    public static List&lt;String&gt; getFilters() {
+<span class="fc" id="L86">        return filters;</span>
+    }
+
+    /**
+     * Retrieves the {@link FilterCommand} associated with the given filter name.
+     *
+     * @param name the name of the filter
+     * @return the corresponding {@link FilterCommand}, or {@code null} if not found
+     */
+    public static FilterCommand getFilter(String name) {
+<span class="fc" id="L96">        return filterInstances.get(name);</span>
+    }
+
+    /**
+     * Reloads the filters at runtime, clearing the current filters and reloading them from the specified package.
+     * Useful for adding new filters without restarting the application.
+     */
+    public static void reload() {
+<span class="fc" id="L104">        filters.clear();</span>
+<span class="fc" id="L105">        filterInstances.clear();</span>
+<span class="fc" id="L106">        load();</span>
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

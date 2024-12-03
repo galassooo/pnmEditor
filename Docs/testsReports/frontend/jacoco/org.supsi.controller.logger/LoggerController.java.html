@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoggerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontend</a> &gt; <a href="index.source.html" class="el_package">org.supsi.controller.logger</a> &gt; <span class="el_source">LoggerController.java</span></div><h1>LoggerController.java</h1><pre class="source lang-java linenums">package org.supsi.controller.logger;
+
+import org.supsi.model.info.ILoggerModel;
+import org.supsi.model.info.LoggerModel;
+import org.supsi.model.preferences.IPreferencesModel;
+import org.supsi.model.preferences.PreferencesModel;
+
+import java.util.Objects;
+
+/**
+ * The {@code LoggerController} class manages the logging behavior of the application,
+ * coordinating between the logger model and user preferences. It is responsible for loading
+ * logging preferences and adding log messages.
+ */
+public class LoggerController implements ILoggerController{
+
+    private static LoggerController myself;
+    private final ILoggerModel model;
+    private final IPreferencesModel preferences;
+
+    /**
+     * Protected constructor to enforce the singleton pattern.
+     * Initializes the logger model and preferences, and loads the logging properties.
+     */
+<span class="fc" id="L25">    protected LoggerController() {</span>
+<span class="fc" id="L26">        model = LoggerModel.getInstance();</span>
+<span class="fc" id="L27">        preferences = PreferencesModel.getInstance();</span>
+
+<span class="fc" id="L29">        loadProperties();</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Returns the singleton instance of the {@code LoggerController}.
+     *
+     * @return the singleton instance of the {@link LoggerController}.
+     */
+    public static LoggerController getInstance() {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L39">            myself = new LoggerController();</span>
+        }
+<span class="fc" id="L41">        return myself;</span>
+    }
+
+    /**
+     * Loads the logging preferences (e.g., whether to show debug, info, warning, or error messages)
+     * and configures the logger model accordingly.
+     */
+    private void loadProperties() {
+<span class="fc" id="L49">        Object debug = preferences.getPreference(&quot;show-debug&quot;).orElse(false);</span>
+<span class="fc" id="L50">        Object info =  preferences.getPreference(&quot;show-info&quot;).orElse(false);</span>
+<span class="fc" id="L51">        Object warning = preferences.getPreference(&quot;show-warning&quot;).orElse(false);</span>
+<span class="fc" id="L52">        Object error = preferences.getPreference(&quot;show-error&quot;).orElse(false);</span>
+
+<span class="fc" id="L54">        model.setShowDebug(Boolean.parseBoolean(Objects.toString(debug)));</span>
+<span class="fc" id="L55">        model.setShowError(Boolean.parseBoolean(Objects.toString(error)));</span>
+<span class="fc" id="L56">        model.setShowInfo(Boolean.parseBoolean(Objects.toString(info)));</span>
+<span class="fc" id="L57">        model.setShowWarning(Boolean.parseBoolean(Objects.toString(warning)));</span>
+
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * {@inheritDoc}
+     * @param message The debug message to be logged
+     */
+    @Override
+    public void addDebug(String message) {
+<span class="fc" id="L67">        model.addDebug(message);</span>
+<span class="fc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PBMDataAccess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.dataaccess.image</a> &gt; <span class="el_source">PBMDataAccess.java</span></div><h1>PBMDataAccess.java</h1><pre class="source lang-java linenums">package ch.supsi.dataaccess.image;
+
+import ch.supsi.annotation.ImageAccess;
+import ch.supsi.business.strategy.ConvertStrategy;
+import ch.supsi.business.strategy.SingleBit;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+
+/**
+ * Provides functionality to read and write PBM image files in both ASCII (P1) and binary (P4) formats.
+ * Implements a Singleton pattern to ensure a single instance is used across the application.
+ * Extends {@link PNMDataAccess} for shared functionality with PNM formats.
+ *
+ * @see DataAccessFactory
+ * @see ch.supsi.business.image.ImageDataAccess
+ */
+
+@ImageAccess(magicNumber = {&quot;P1&quot;, &quot;P4&quot;})
+<span class="fc" id="L23">public final class PBMDataAccess extends PNMDataAccess {</span>
+
+    private static PBMDataAccess myself;
+
+    /**
+     * Retrieves the Singleton instance of {@link PBMDataAccess}.
+     *
+     * @return the Singleton instance
+     */
+    public static PBMDataAccess getInstance() {
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L34">            myself = new PBMDataAccess();</span>
+        }
+<span class="fc" id="L36">        return myself;</span>
+    }
+
+    /**
+     * Processes binary (P4) PBM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} containing the binary PBM data
+     * @return a 2D array of pixels where each pixel is either 0 (white) or 1 (black)
+     * @throws IOException if the input stream contains insufficient data or if there's an error while reading
+     */
+    @Override
+    protected long[] [] processBinary(InputStream is) throws IOException {
+<span class="fc" id="L48">        long[][] pixelMatrix = new long[height][width];</span>
+<span class="fc" id="L49">        int bytesPerRow = (width + 7) / 8;</span>
+
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            for (int byteIndex = 0; byteIndex &lt; bytesPerRow; byteIndex++) {</span>
+<span class="fc" id="L53">                int byteValue = is.read();</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                if (byteValue == -1) {</span>
+<span class="fc" id="L55">                    throw new IOException(&quot;Insufficient data in pbm binary file&quot;);</span>
+                }
+
+                //splitta il byte in bit e assegna il valore
+<span class="fc bfc" id="L59" title="All 4 branches covered.">                for (int bit = 0; bit &lt; 8 &amp;&amp; (byteIndex * 8 + bit) &lt; width; bit++) {</span>
+<span class="fc" id="L60">                    int x = byteIndex * 8 + bit;</span>
+<span class="fc" id="L61">                    pixelMatrix[y][x] = (byteValue &gt;&gt; (7 - bit)) &amp; 1;</span>
+                }
+            }
+        }
+<span class="fc" id="L65">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Processes ASCII (P1) PBM image data from the input stream and converts it into a 2D pixel array.
+     *
+     * @param is the {@link InputStream} containing the ASCII PBM data
+     * @return a 2D array of pixels where each pixel is either 0 (white) or 1 (black)
+     * @throws IOException if the input stream contains invalid or insufficient data
+     */
+    @Override
+    protected long[] [] processAscii(InputStream is) throws IOException {
+<span class="fc" id="L77">        long[][] pixelMatrix = new long[height][width];</span>
+<span class="fc" id="L78">        try (Scanner scanner = new Scanner(is)) {</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                    if (scanner.hasNextInt()) {</span>
+<span class="fc" id="L82">                        pixelMatrix[y][x] = scanner.nextInt();</span>
+                    } else {
+<span class="fc" id="L84">                        throw new IOException(&quot;Insufficient data in pbm ascii file&quot;);</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L89">        return pixelMatrix;</span>
+    }
+
+    /**
+     * Writes binary (P4) PBM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeBinary(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L102">        writePixels(os, pixels, executor, this::generateBinaryRowBuffer);</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Writes ASCII (P1) PBM pixel data to the output stream using an executor for parallel processing.
+     *
+     * @param os       the {@link OutputStream} to write to
+     * @param pixels   the 2D array of pixels to write
+     * @param executor the {@link ExecutorService} used for parallel processing
+     * @throws IOException if an error occurs while writing
+     */
+    @Override
+    protected void writeAscii(OutputStream os, long[][] pixels, ExecutorService executor) throws IOException {
+<span class="fc" id="L115">        writePixels(os, pixels, executor, this::generateAsciiRowBuffer);</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Retrieves the conversion strategy for ARGB representation based on PBM (single bit) format.
+     *
+     * @return the {@link ConvertStrategy} for ARGB conversion
+     */
+    @Override
+    protected ConvertStrategy getArgbConvertStrategy() {
+<span class="fc" id="L125">        return new SingleBit();</span>
+    }
+
+    /**
+     * Generates an ASCII row buffer for PBM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the ASCII data for the row
+     */
+    private byte[] generateAsciiRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc" id="L137">        StringBuilder rowContent = new StringBuilder();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L139">            rowContent.append(pixels[row][x]).append(&quot; &quot;);</span>
+        }
+<span class="fc" id="L141">        rowContent.append(&quot;\n&quot;);</span>
+<span class="fc" id="L142">        return rowContent.toString().getBytes();</span>
+    }
+
+    /**
+     * Generates a binary row buffer for PBM data.
+     *
+     * @param pixels the 2D array of pixels
+     * @param row    the row index to process
+     * @param width  the width of the row
+     * @return a byte array representing the binary data for the row
+     */
+    private byte[] generateBinaryRowBuffer(long[][] pixels, int row, int width) {
+<span class="fc" id="L154">        int byteWidth = (width + 7) / 8;</span>
+<span class="fc" id="L155">        byte[] rowBuffer = new byte[byteWidth];</span>
+<span class="fc" id="L156">        int index = 0;</span>
+
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (int x = 0; x &lt; width; x++) {</span>
+<span class="fc" id="L159">            int bitPosition = 7 - (x % 8);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (pixels[row][x] == 1) {</span>
+<span class="fc" id="L161">                rowBuffer[index] |= (byte) (1 &lt;&lt; bitPosition); //posiziona il bit nella posizione corretta</span>
+            }
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (bitPosition == 0) index++; //se abbiamo scritto il byte andiamo al prox</span>
+        }
+
+<span class="fc" id="L166">        return rowBuffer;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

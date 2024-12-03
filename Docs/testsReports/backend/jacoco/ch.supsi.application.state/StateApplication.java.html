@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">ch.supsi.application.state</a> &gt; <span class="el_source">StateApplication.java</span></div><h1>StateApplication.java</h1><pre class="source lang-java linenums">package ch.supsi.application.state;
+
+import ch.supsi.business.state.BusinessEditorState;
+import ch.supsi.business.state.EditorState;
+import ch.supsi.business.state.StateChangeEvent;
+
+/**
+ * Provides an application-level implementation of editor state management.
+ * This class handles state queries and manages state change listeners by delegating
+ * operations to the business logic.
+ * &lt;p&gt;
+ * Implements the Singleton pattern to ensure a single instance is used throughout the application.
+ */
+public class StateApplication implements EditorState, StateChangeEvent {
+
+    private static StateApplication myself;
+    private final EditorStateManager businessEditorState;
+
+    /**
+     * Private constructor to enforce Singleton pattern.
+     * Initializes the business layer's editor state manager.
+     */
+<span class="fc" id="L23">    private StateApplication() {</span>
+<span class="fc" id="L24">        businessEditorState = BusinessEditorState.getInstance();</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Retrieves the Singleton instance of the {@link StateApplication}.
+     *
+     * @return the Singleton instance of this class
+     */
+    public static StateApplication getInstance() {
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (myself == null) {</span>
+<span class="fc" id="L34">            myself = new StateApplication();</span>
+        }
+<span class="fc" id="L36">        return myself;</span>
+    }
+
+    /**
+     * Checks if filters can be applied in the current state.
+     *
+     * @return {@code true} if filters can be applied, {@code false} otherwise
+     */
+    @Override
+    public boolean canApplyFilters() {
+<span class="fc" id="L46">        return businessEditorState.canApplyFilters();</span>
+    }
+
+    /**
+     * Checks if the current state allows saving the file.
+     *
+     * @return {@code true} if saving is allowed, {@code false} otherwise
+     */
+    @Override
+    public boolean canSave() {
+<span class="fc" id="L56">        return businessEditorState.canSave();</span>
+    }
+
+    /**
+     * Checks if the current state allows saving the file under a new name.
+     *
+     * @return {@code true} if &quot;Save As&quot; is allowed, {@code false} otherwise
+     */
+    @Override
+    public boolean canSaveAs() {
+<span class="fc" id="L66">        return businessEditorState.canSaveAs();</span>
+    }
+
+    /**
+     * Checks if a new filter can be added in the current state.
+     *
+     * @return {@code true} if adding a filter is allowed, {@code false} otherwise
+     */
+    @Override
+    public boolean canAddFilter() {
+<span class="fc" id="L76">        return businessEditorState.canAddFilter();</span>
+    }
+
+    /**
+     * Checks if the current state allows exporting the file.
+     *
+     * @return {@code true} if exporting is allowed, {@code false} otherwise
+     */
+    @Override
+    public boolean canExport() {
+<span class="fc" id="L86">        return businessEditorState.canExport();</span>
+    }
+
+    /**
+     * Checks if a refresh operation is required in the current state.
+     *
+     * @return {@code true} if a refresh is required, {@code false} otherwise
+     */
+    @Override
+    public boolean isRefreshRequired() {
+<span class="fc" id="L96">        return businessEditorState.isRefreshRequired();</span>
+    }
+
+    /**
+     * Checks if there are pending changes in the current state that need to be saved or processed.
+     *
+     * @return {@code true} if there are pending changes, {@code false} otherwise
+     */
+    @Override
+    public boolean areChangesPending() {
+<span class="fc" id="L106">        return businessEditorState.areChangesPending();</span>
+    }
+
+    /**
+     * Registers a listener to be notified of state changes.
+     *
+     * @param listener the listener to register
+     */
+    @Override
+    public void registerStateListener(StateChangeListener listener) {
+<span class="fc" id="L116">        ((StateChangeEvent) businessEditorState).registerStateListener(listener);</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Deregisters a previously registered state change listener.
+     *
+     * @param listener the listener to deregister
+     */
+    @Override
+    public void deregisterStateListener(StateChangeListener listener) {
+<span class="fc" id="L126">        ((StateChangeEvent) businessEditorState).deregisterStateListener(listener);</span>
+<span class="fc" id="L127">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

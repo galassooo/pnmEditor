@@ -23,6 +23,7 @@ variables:
 stages:
   - structure
   - install_package
+  - test_scripts
 
 image: gitlab-edu.supsi.ch:5050/dti-isin/labingsw/common:maven3java17
 
@@ -71,3 +72,10 @@ install-package:
   artifacts:
     paths:
       - fsciapp/client/target/*.jar
+test-scripts:
+  stage: test_scripts
+
+  script:
+    - chmod +x test.sh
+    - chmod +x test.sh
+    - ./test.sh

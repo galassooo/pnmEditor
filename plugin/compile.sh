@@ -16,6 +16,8 @@ cp src/main/java/module-info.java "$TEMP_DIR/"
 # Vai nella directory temporanea
 cd "$TEMP_DIR"
 
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
 # Compila prima l'annotazione
 javac ch/supsi/annotation/ImageAccess.java
 javac ch/supsi/annotation/Register.java

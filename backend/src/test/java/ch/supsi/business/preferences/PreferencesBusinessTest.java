@@ -53,23 +53,6 @@ class PreferencesBusinessTest {
         assertSame(instance1, instance2, "PreferencesBusiness should be a singleton");
     }
 
-    /* --------------- Language --------------- */
-    @Test
-    void testGetCurrentLanguage() throws IOException {
-        //String currentLanguage = preferencesBusiness.getCurrentLanguage();
-
-        //assertNotNull(currentLanguage, "Current language should be set in default preferences");
-    }
-
-    @Test
-    void testDoubleGetCurrentLanguage() throws IOException {
-
-        //String currentLanguage = preferencesBusiness.getCurrentLanguage();
-        //String currentLanguage2 = preferencesBusiness.getCurrentLanguage();
-
-        //assertNotNull(currentLanguage, "Current language should be set in default preferences");
-        //assertNotNull(currentLanguage2, "Current language should be set in default preferences");
-    }
 
     @Test
     void testSetLanguageTag() throws IOException {

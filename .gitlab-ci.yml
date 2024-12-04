@@ -75,6 +75,9 @@ install-package:
 test-scripts:
   stage: test_scripts
 
+  before_script:
+    - Xvfb :99 -screen 0 1920x1080x16 &
+
   script:
     - chmod +x test.sh
     - chmod +x test.sh

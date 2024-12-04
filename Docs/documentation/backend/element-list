@@ -1,0 +1,17 @@
+module:backend
+ch.supsi.application.filters
+ch.supsi.application.image
+ch.supsi.application.preferences
+ch.supsi.application.state
+ch.supsi.application.translations
+ch.supsi.business.filter
+ch.supsi.business.filter.chain
+ch.supsi.business.filter.chain.command
+ch.supsi.business.image
+ch.supsi.business.preferences
+ch.supsi.business.state
+ch.supsi.business.strategy
+ch.supsi.business.translations
+ch.supsi.dataaccess.image
+ch.supsi.dataaccess.preferences
+ch.supsi.dataaccess.translations

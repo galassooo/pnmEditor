@@ -7,6 +7,24 @@ YELLOW='\033[33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
+OUTPUT_FILE=$(mktemp)
+exec 1> >(tee -a "$OUTPUT_FILE")
+exec 2> >(tee -a "$OUTPUT_FILE" >&2)
+
+cleanup_and_ask() {
+    local exit_code=$1
+
+    echo -e "\nWould you like to see the complete output? (y/N): "
+    read -r show_output
+
+    if [[ "$show_output" =~ ^[Yy]$ ]]; then
+        less "$OUTPUT_FILE"
+    fi
+
+    rm -f "$OUTPUT_FILE"
+    exit $exit_code
+}
+
 find_java_17() {
     # MacOS, use java_home utility
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -42,7 +60,8 @@ spinner() {
     local spin='-\|/'
     local tmp_file=$(mktemp)
 
-    eval "$command"
+    # Esegui il comando e reindirizza l'output al file temporaneo
+    eval "$command" > "$tmp_file" 2>&1 &
     local pid=$!
 
     local i=0
@@ -55,6 +74,9 @@ spinner() {
 
     wait $pid
     local status=$?
+
+    # Leggi l'output del comando e scrivilo nel file di output principale
+    cat "$tmp_file" >> "$OUTPUT_FILE"
 
     printf "\r"
     rm -f "$tmp_file"
@@ -84,7 +106,7 @@ verify_jar() {
         print_success "Verified $jar_path"
     else
         print_error "JAR file missing: $jar_path"
-        exit 1
+        cleanup_and_ask 1
     fi
 }
 
@@ -93,7 +115,7 @@ export JAVA_HOME=$(find_java_17)
 
 if [ -z "$JAVA_HOME" ]; then
     print_error "Java 17 not found. Please install Java 17."
-    exit 1
+    cleanup_and_ask 1
 fi
 
 print_success "Found Java 17: $JAVA_HOME"
@@ -107,7 +129,7 @@ if [ $? -eq 0 ]; then
     print_success "Plugin compilation successful"
 else
     print_error "Plugin compilation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 spinner "./compileInstall.sh" "Installing plugin..."
@@ -115,7 +137,7 @@ if [ $? -eq 0 ]; then
     print_success "Plugin installation successful"
 else
     print_error "Plugin installation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 print_header "Testing Plugin"
@@ -124,7 +146,7 @@ if [ $? -eq 0 ]; then
     print_success "Plugin tests passed"
 else
     print_error "Plugin tests failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 cd ..
 
@@ -136,7 +158,7 @@ if [ $? -eq 0 ]; then
     print_success "Backend build and tests successful"
 else
     print_error "Backend build or tests failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 verify_jar "target/backend-1.0-SNAPSHOT.jar"
@@ -151,7 +173,7 @@ if [ $? -eq 0 ]; then
     print_success "Frontend tests passed"
 else
     print_error "Frontend tests failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 print_header "Packaging Frontend"
@@ -160,7 +182,7 @@ if [ $? -eq 0 ]; then
     print_success "Frontend packaging successful"
 else
     print_error "Frontend packaging failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 verify_jar "target/frontend-1.0-SNAPSHOT-jar-with-dependencies.jar"
@@ -176,3 +198,5 @@ echo "  • Backend JAR: backend/target/backend-1.0-SNAPSHOT.jar"
 echo "  • Frontend JAR: frontend/target/frontend-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 print_success "Build and tests completed successfully!"
+
+cleanup_and_ask 0

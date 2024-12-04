@@ -7,6 +7,11 @@ YELLOW='\033[33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
+
+OUTPUT_FILE=$(mktemp)
+exec 1> >(tee -a "$OUTPUT_FILE")
+exec 2> >(tee -a "$OUTPUT_FILE" >&2)
+
 find_java_17() {
     #MacOS, use java_home utility
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -34,6 +39,19 @@ find_java_17() {
 
     return 1
 }
+cleanup_and_ask() {
+    local exit_code=$1
+
+    echo -e "\nWould you like to see the complete output? (y/N): "
+    read -r show_output
+
+    if [[ "$show_output" =~ ^[Yy]$ ]]; then
+        less "$OUTPUT_FILE"
+    fi
+
+    rm -f "$OUTPUT_FILE"
+    exit $exit_code
+}
 
 spinner() {
     local command="$1"
@@ -55,8 +73,9 @@ spinner() {
     wait $pid
     local status=$?
 
-    printf "\r"
+    cat "$tmp_file" >> "$OUTPUT_FILE"
 
+    printf "\r"
     rm -f "$tmp_file"
 
     return $status
@@ -84,7 +103,7 @@ verify_jar() {
         print_success "Verified $jar_path"
     else
         print_error "JAR file missing: $jar_path"
-        exit 1
+        cleanup_and_ask 1
     fi
 }
 
@@ -93,7 +112,7 @@ export JAVA_HOME=$(find_java_17)
 
 if [ -z "$JAVA_HOME" ]; then
     print_error "Java 17 not found. Please install Java 17."
-    exit 1
+    cleanup_and_ask 1
 fi
 
 print_success "Found Java 17: $JAVA_HOME"
@@ -107,7 +126,7 @@ if [ $? -eq 0 ]; then
     print_success "Plugin compilation successful"
 else
     print_error "Plugin compilation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 chmod +x compileInstall.sh
@@ -117,7 +136,7 @@ if [ $? -eq 0 ]; then
     print_success "Plugin installation successful"
 else
     print_error "Plugin installation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 cd ..
 
@@ -131,7 +150,7 @@ if [ $? -eq 0 ]; then
     print_success "Backend compilation successful"
 else
     print_error "Backend compilation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 print_header "Installing Backend"
@@ -141,7 +160,7 @@ if [ $? -eq 0 ]; then
     print_success "Backend installation successful"
 else
     print_error "Backend installation failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 verify_jar "target/backend-1.0-SNAPSHOT.jar"
@@ -156,7 +175,7 @@ spinner "JAVA_HOME=\"$JAVA_HOME\" mvn clean compile" "Compiling frontend..."
 if [ $? -eq 0 ]; then
     print_success "Frontend compilation successful"
 else
-    print_warning "Frontend compilation failed but continuing build"
+    cleanup_and_ask 1
 fi
 
 print_header "Packaging Frontend"
@@ -166,7 +185,7 @@ if [ $? -eq 0 ]; then
     print_success "Frontend packaging successful"
 else
     print_error "Frontend packaging failed"
-    exit 1
+    cleanup_and_ask 1
 fi
 
 verify_jar "target/frontend-1.0-SNAPSHOT-jar-with-dependencies.jar"
@@ -182,3 +201,5 @@ echo "  • Backend JAR: backend/target/backend-1.0-SNAPSHOT.jar"
 echo "  • Frontend JAR: frontend/target/frontend-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 print_success "Build completed successfully!"
+
+cleanup_and_ask 0

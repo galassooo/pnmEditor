@@ -60,7 +60,6 @@ spinner() {
     local spin='-\|/'
     local tmp_file=$(mktemp)
 
-    # Esegui il comando e reindirizza l'output al file temporaneo
     eval "$command" > "$tmp_file" 2>&1 &
     local pid=$!
 
@@ -75,7 +74,6 @@ spinner() {
     wait $pid
     local status=$?
 
-    # Leggi l'output del comando e scrivilo nel file di output principale
     cat "$tmp_file" >> "$OUTPUT_FILE"
 
     printf "\r"

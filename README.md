@@ -22,7 +22,6 @@ A Java-based image editor that supports various image formats and provides a ran
     - Build the plugin module
     - Build the backend module
     - Build the frontend module with all dependencies
-    - Run all tests to ensure everything is working correctly
 
 ## Running the Application
 

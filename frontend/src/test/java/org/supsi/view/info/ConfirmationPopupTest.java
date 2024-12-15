@@ -1,12 +1,8 @@
 package org.supsi.view.info;
 
-import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.supsi.controller.exit.ExitController;
-import org.supsi.model.about.AboutModel;
 import org.supsi.view.AbstractGUITest;
 import org.testfx.util.WaitForAsyncUtils;
 

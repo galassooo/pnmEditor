@@ -4,7 +4,7 @@ A Java-based image editor that supports various image formats and provides a ran
 
 ## Prerequisites
 
-- Java 17 or later
+- Java 17
 - Maven (for building from source)
 - Git (for cloning the repository)
 
